@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
-import { Switch, Route } from 'react-router-dom'
 
 import { Helmet } from 'react-helmet'
+import { renderRoutes } from 'react-router-config'
 import routes from '../routes'
-import NoMatch from '../components/NoMatch'
 
 class App extends Component {
   render() {
@@ -16,10 +15,7 @@ class App extends Component {
           />
         </Helmet>
 
-        <Switch>
-          {routes.map(route => <Route key={route.path} {...route} />)}
-          <Route component={NoMatch} />
-        </Switch>
+        {renderRoutes(routes)}
       </div>
     )
   }

@@ -5,6 +5,11 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 class FirstPage extends Component {
+  shouldComponentUpdate(nextProps) {
+    // Adjust this if the container actually gets props
+    return false
+  }
+
   render() {
     return (
       <div>

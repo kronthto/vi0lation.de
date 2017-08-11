@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import { Helmet } from 'react-helmet'
 import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
+import PostList from '../components/PostList'
+
+import { renderRoutes } from 'react-router-config'
 
 import { fetchPostsIfNeeded } from '../actions/posts'
 
@@ -16,39 +18,20 @@ class PostsApiPage extends Component {
   }
 
   render() {
-    const { posts } = this.props
+    const { posts, route } = this.props
 
     return (
       <div>
         <Helmet>
           <title>Posts</title>
-          <meta
-            name="description"
-            content={'Awesome ' + (posts ? posts.length : '') + ' posts'}
-          />
         </Helmet>
 
         <h1>Posts</h1>
-        <ul>
-          {posts &&
-            posts.map(post =>
-              <li key={post.id}>
-                {post.title}
-              </li>
-            )}
-        </ul>
+        {renderRoutes(route.routes)}
+        <PostList posts={posts} />
       </div>
     )
   }
-}
-
-PostsApiPage.propTypes = {
-  posts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      title: PropTypes.string.isRequired
-    })
-  )
 }
 
 const mapStateToProps = state => ({

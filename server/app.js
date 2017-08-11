@@ -29,6 +29,14 @@ app.use(morgan('combined'))
 
 app.use('/', index)
 
+// Server JS/CSS Bundle with Cache-Control
+app.use(
+  '/static',
+  express.static(path.resolve(__dirname, '..', 'build/static'), {
+    maxAge: '30d'
+  })
+)
+
 // Serve static assets
 app.use(express.static(path.resolve(__dirname, '..', 'build')))
 

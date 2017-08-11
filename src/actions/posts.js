@@ -1,6 +1,6 @@
 import { REQUEST, RECEIVE } from '../types/posts'
 
-function requestPosts(subreddit) {
+function requestPosts() {
   return {
     type: REQUEST
   }

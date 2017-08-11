@@ -5,7 +5,8 @@ const React = require('react')
 import { Helmet } from 'react-helmet'
 const { Provider } = require('react-redux')
 const { renderToString } = require('react-dom/server')
-const { StaticRouter, matchPath } = require('react-router-dom')
+const { StaticRouter } = require('react-router-dom')
+const { matchRoutes } = require('react-router-config')
 
 const { default: configureStore } = require('../src/store')
 const { default: App } = require('../src/containers/App')
@@ -24,16 +25,11 @@ module.exports = function universalLoader(req, res) {
     const store = configureStore()
 
     const requiredData = []
-    // use `some` to imitate `<Switch>` behavior of selecting only
-    // the first to match
-    routes.some(route => {
-      const match = matchPath(req.url, route)
-
-      if (match && route.component && route.component.fetchData) {
+    const branch = matchRoutes(routes, req.url)
+    branch.forEach(({ route, match }) => {
+      if (route.component && route.component.fetchData) {
         requiredData.push(route.component.fetchData(store, match))
       }
-
-      return match
     })
 
     Promise.all(requiredData).then(() => {
