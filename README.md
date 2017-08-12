@@ -1,16 +1,27 @@
-# React Router Redux SSR Prefetch Helmet Boilerplate
+# vi0lation.de
 
-## Capabilities
-* React + Redux + ReactRouter4
-* SSR
-* Prefetch data
-* Shared Initial State
-* React helmet & server side rendering
-* 404 status code ^.^
+The Vi0 website using lots of cool new technologies.
+
+Consumes [api.vi0lation.de](https://github.com/kronthto/api.vi0lation.de).
 
 ## Install
+
+* Compile `src/style/bulma.scss`
 ``` bash
 npm install
 npm run build
 npm run start:server
 ```
+
+## Technologies
+
+* React
+* Redux
+* SSR
+* PWA
+
+## Credits
+
+- [All Contributors][link-contributors]
+
+[link-contributors]: ../../contributors
