@@ -1,0 +1,15 @@
+// Import the initial variables
+@import "../../node_modules/bulma/sass/utilities/initial-variables";
+
+// Modifications
+
+$family-sans-serif: "Roboto", sans-serif;
+
+$family-primary: $family-sans-serif;
+
+$background-color: #2b3e50;
+
+$primary: #df691a;
+
+// Import the rest of Bulma
+@import "../../node_modules/bulma/bulma.sass";

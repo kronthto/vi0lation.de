@@ -15,3 +15,7 @@ coverage
 .vscode
 npm-debug.log
 debug.log
+
+# styles
+.sass-cache
+/src/style/bulma.css
