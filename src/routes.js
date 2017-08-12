@@ -1,4 +1,4 @@
-import FirstPage from './containers/FirstPage'
+import Home from './components/Home'
 import PostsApiPage from './containers/PostsApiPage'
 import PostComments from './containers/PostComments'
 
@@ -8,7 +8,7 @@ const routes = [
   {
     path: '/',
     exact: true,
-    component: FirstPage
+    component: Home
   },
   {
     path: '/posts',
