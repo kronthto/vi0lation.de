@@ -1,0 +1,16 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+/* TEAM */
+	Creator:Tobias Kronthaler
+	From:Bavaria, Germany
+
+/* SITE */
+	Last update:2017-08-12
+	Language:English
+	Doctype:HTML5
+
+/* TECHNOLOGY COLOPHON */
+	React
+	https://github.com/kronthto/api.vi0lation.de
+	https://github.com/kronthto/vi0lation.de

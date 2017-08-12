@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: 
+
+# TODO
+# SITEMAP: https://www.vi0lation.de/sitemap.xml

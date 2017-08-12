@@ -1,16 +1,19 @@
 {
-  "short_name": "React App",
-  "name": "SSR Create React App Sample",
+  "short_name": "Vi0",
+  "name": "Vi0lation",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "192x192",
+      "src": "favicon.ico"
+    },
+    {
+      "src": "https://cdn.vi0lation.de/img/viologo.png",
+      "sizes": "72x36",
       "type": "image/png"
     }
   ],
   "start_url": "./",
   "display": "standalone",
-  "theme_color": "#000000",
+  "theme_color": "#4a4cff",
   "background_color": "#ffffff",
-  "description": "A cool, innovative app."
+  "description": "Vi0lation brigade website and AirRivals ranking"
 }
