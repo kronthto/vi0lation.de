@@ -5,6 +5,7 @@ const express = require('express')
 const morgan = require('morgan')
 const path = require('path')
 const fs = require('fs')
+const favicon = require('serve-favicon')
 
 require('babel-register')({
   ignore: /\/(build|node_modules)\//,
@@ -24,10 +25,29 @@ app.use(compression())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
+// Server favicon before to not show up in logs
+app.use(favicon(path.join(__dirname, '../build', 'favicon.ico')))
+
 // Setup logger
 app.use(morgan('combined'))
 
 app.use('/', index)
+
+// Send a version of index.html that is stripped of placeholders. The service-worker requests this file directly.
+app.use('/index.html', (req, res) => {
+  console.log('HELLO')
+  fs.readFile(
+    path.resolve(__dirname, '..', 'build', 'index.html'),
+    'utf8',
+    (err, htmlData) => {
+      // TODO: Last modified
+
+      res.send(
+        htmlData.replace(/DATA\s*=\s*{{.*?}}/g, '').replace(/{{.*?}}/g, '')
+      )
+    }
+  )
+})
 
 // Server JS/CSS Bundle with Cache-Control
 app.use(
