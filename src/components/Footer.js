@@ -10,6 +10,8 @@ class Footer extends Component {
     return (
       <footer role="contentinfo" className="footer">
         <div className="container has-text-right">
+          <Link to="/about">About</Link>
+          &nbsp;•&nbsp;
           <Link to="/contact">Contact</Link>
           <img
             src="//cdn.vi0lation.de/img/viologo.png"
