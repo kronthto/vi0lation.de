@@ -3,6 +3,11 @@
   "name": "Vi0lation",
   "icons": [
     {
+      "src": "https://cdn.vi0lation.de/img/app_icon.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
       "src": "favicon.ico"
     },
     {
