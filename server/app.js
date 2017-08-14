@@ -35,13 +35,10 @@ app.use('/', index)
 
 // Send a version of index.html that is stripped of placeholders. The service-worker requests this file directly.
 app.use('/index.html', (req, res) => {
-  console.log('HELLO')
   fs.readFile(
     path.resolve(__dirname, '..', 'build', 'index.html'),
     'utf8',
     (err, htmlData) => {
-      // TODO: Last modified
-
       res.send(
         htmlData.replace(/DATA\s*=\s*{{.*?}}/g, '').replace(/{{.*?}}/g, '')
       )
@@ -56,6 +53,13 @@ app.use(
     maxAge: '30d'
   })
 )
+
+// Server manifest with cache headers
+app.use('/manifest.json', (req, res) => {
+  res.sendFile(path.join(__dirname, '../build', 'manifest.json'), {
+    maxAge: '1d'
+  })
+})
 
 // Serve static assets
 app.use(express.static(path.resolve(__dirname, '..', 'build')))
