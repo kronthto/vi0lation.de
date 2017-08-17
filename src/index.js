@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom'
 import configureStore from './store'
 import './style/bulma.css'
 import './index.css'
+import ScrollToTop from './components/ScrollToTop'
 import App from './containers/App'
 import registerServiceWorker from './registerServiceWorker'
 
@@ -16,7 +17,9 @@ const store = configureStore(initialState)
 ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
-      <App />
+      <ScrollToTop>
+        <App />
+      </ScrollToTop>
     </BrowserRouter>
   </Provider>,
   document.getElementById('root')
