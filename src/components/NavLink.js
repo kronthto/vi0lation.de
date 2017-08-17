@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { NavLink as ReactRouterNavLink } from 'react-router-dom'
 
+import classNames from 'classnames'
+
 class NavLink extends Component {
   //shouldComponentUpdate() { // TODO
   //  return false
@@ -11,7 +13,7 @@ class NavLink extends Component {
       <ReactRouterNavLink
         {...this.props}
         activeClassName="is-active"
-        className="navbar-item is-tab"
+        className={classNames('navbar-item', this.props.className)}
       />
     )
   }
