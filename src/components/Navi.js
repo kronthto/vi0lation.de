@@ -1,15 +1,13 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import { withRouter } from 'react-router-dom'
 import NavLink from './NavLink'
+
+import classNames from 'classnames'
 
 class Navi extends Component {
   //shouldComponentUpdate() { // TODO
   //  return false
   //}
-
-  static contextTypes = {
-    router: PropTypes.object
-  }
 
   constructor(props) {
     super(props)
@@ -20,29 +18,27 @@ class Navi extends Component {
     this.setState({ toggled: !this.state.toggled })
   }
 
-  componentDidUpdate(prevProps, prevState, prevContext) {
-    // Hacky way to hide the responsive (burger) menu again after switching pages
-    if (
-      prevContext.router.route.location.key !==
-      this.context.router.route.location.key
-    ) {
+  componentDidUpdate(prevProps) {
+    // Hide the responsive (burger) menu again after switching pages
+    if (this.props.location !== prevProps.location) {
       this.setState({ toggled: false })
     }
   }
 
   render() {
+    let { toggled } = this.state
+
     return (
       <nav className="navbar has-shadow is-primary" id="top">
         <div className="container">
           <div className="navbar-brand">
-            <NavLink to="/" exact>
+            <NavLink to="/" exact className="is-tab">
               Vi0
             </NavLink>
             <div
-              className={
-                'navbar-burger burger ' +
-                (this.state.toggled ? ' is-active' : '')
-              }
+              className={classNames('navbar-burger', 'burger', {
+                'is-active': toggled
+              })}
               onClick={this.toggleMenu.bind(this)}
               data-target="mainNav"
             >
@@ -53,11 +49,18 @@ class Navi extends Component {
           </div>
           <div
             id="mainNav"
-            className={'navbar-menu' + (this.state.toggled ? ' is-active' : '')}
+            className={classNames('navbar-menu', { 'is-active': toggled })}
             style={{ paddingBottom: 0 }}
           >
             <div className="navbar-start">
-              <NavLink to="/idontexist">Nonexisting page</NavLink>
+              <div className="navbar-item has-dropdown is-hoverable">
+                <NavLink to="/ranking" className="is-tab">
+                  AR Ranking
+                </NavLink>
+                <div className="navbar-dropdown">
+                  <NavLink to="/ranking/sub">Sub TODO</NavLink>
+                </div>
+              </div>
             </div>
             <div className="navbar-end" />
           </div>
@@ -67,4 +70,4 @@ class Navi extends Component {
   }
 }
 
-export default Navi
+export default withRouter(Navi)
