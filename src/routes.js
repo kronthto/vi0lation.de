@@ -1,4 +1,7 @@
 import Home from './components/Home'
+import TS3List from './components/TS3List'
+import About from './components/About'
+import Contact from './components/Contact'
 import PostsApiPage from './containers/PostsApiPage'
 import PostComments from './containers/PostComments'
 
@@ -9,6 +12,18 @@ const routes = [
     path: '/',
     exact: true,
     component: Home
+  },
+  {
+    path: '/ts3',
+    component: TS3List
+  },
+  {
+    path: '/about',
+    component: About
+  },
+  {
+    path: '/contact',
+    component: Contact
   },
   {
     path: '/posts',

@@ -60,6 +60,9 @@ class Navi extends Component {
                 <div className="navbar-dropdown">
                   <NavLink to="/ranking/sub">Sub TODO</NavLink>
                 </div>
+                <NavLink to="/ts3" className="is-tab">
+                  TeamSpeak 3
+                </NavLink>
               </div>
             </div>
             <div className="navbar-end" />
