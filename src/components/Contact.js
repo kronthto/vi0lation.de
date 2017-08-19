@@ -76,7 +76,10 @@ class Contact extends Component {
               </div>
               <div className="content">
                 <p>
-                  📧 <a href="mailto:info@vi0lation.de">info@vi0lation.de</a> (<a
+                  <span role="img" aria-label="Email" title="Email">
+                    📧
+                  </span>{' '}
+                  <a href="mailto:info@vi0lation.de">info@vi0lation.de</a> (<a
                     href="https://cdn.vi0lation.de/secure/0x7DE1D5EB.asc"
                     title="PGP PubKey 1F60 FBDF B0F2 8AE9 68A6  50D5 DE0F 9DCA 7DE1 D5EB"
                   >
