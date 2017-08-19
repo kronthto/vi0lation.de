@@ -99,7 +99,7 @@ class Contact extends Component {
         </section>
 
         <section className="section">
-          <h2 className="title">Source-Code</h2>
+          <h2 className="title">Site Source-Code</h2>
           <ul>
             <li>
               {srcLinkFE()}
