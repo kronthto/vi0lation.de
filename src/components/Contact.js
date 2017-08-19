@@ -71,7 +71,14 @@ class Contact extends Component {
                 </div>
                 <div className="media-content">
                   <p className="title is-4">Tobias</p>
-                  <p className="subtitle is-6">IGN: DrDelay</p>
+                  <p className="subtitle is-6">
+                    <abbr
+                      title="In Game Name"
+                      style={{ textDecoration: 'none' }}
+                    >
+                      IGN
+                    </abbr>: DrDelay
+                  </p>
                 </div>
               </div>
               <div className="content">
