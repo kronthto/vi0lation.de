@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { Helmet } from 'react-helmet'
 
+import tobiasImg from '../img/techguy_t.png'
+
 const srcLinkFE = () => {
   return (
     <a
@@ -58,9 +60,32 @@ class Contact extends Component {
 
         <section className="section">
           <h2 className="title">Tech guy</h2>
-          <p>
-            TODO: Tobias Card with Contact Information (Email), _linked_ IGNs
-          </p>
+
+          <div className="card">
+            <div className="card-content">
+              <div className="media">
+                <div className="media-left">
+                  <figure className="image is-48x48" style={{ margin: 0 }}>
+                    <img src={tobiasImg} alt="Tobias" />
+                  </figure>
+                </div>
+                <div className="media-content">
+                  <p className="title is-4">Tobias</p>
+                  <p className="subtitle is-6">IGN: DrDelay</p>
+                </div>
+              </div>
+              <div className="content">
+                <p>
+                  📧 <a href="mailto:info@vi0lation.de">info@vi0lation.de</a> (<a
+                    href="https://cdn.vi0lation.de/secure/0x7DE1D5EB.asc"
+                    title="PGP PubKey 1F60 FBDF B0F2 8AE9 68A6  50D5 DE0F 9DCA 7DE1 D5EB"
+                  >
+                    PGP
+                  </a>)
+                </p>
+              </div>
+            </div>
+          </div>
         </section>
 
         <section className="section">
