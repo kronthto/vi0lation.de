@@ -13,14 +13,21 @@ class Footer extends Component {
           <Link to="/about">About</Link>
           &nbsp;•&nbsp;
           <Link to="/contact">Contact</Link>
-          <img
-            src="//cdn.vi0lation.de/img/viologo.png"
-            width="36"
-            height="18"
-            alt="Vi0 Logo"
-            title="Vi0 Logo"
-            style={{ marginLeft: '20px' }}
-          />
+          <span
+            style={{
+              marginLeft: '20px',
+              height: '18px',
+              display: 'inline-block'
+            }}
+          >
+            <img
+              src="//cdn.vi0lation.de/img/viologo.png"
+              width="36"
+              height="18"
+              alt="Vi0 Logo"
+              title="Vi0 Logo"
+            />
+          </span>
         </div>
       </footer>
     )
