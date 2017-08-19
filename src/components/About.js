@@ -3,10 +3,19 @@ import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 
 import { srcLinkFE, srcLinkBE, TS3Ref } from './Contact'
+import ytIcon from '../img/yt.png'
 
 class About extends Component {
   shouldComponentUpdate() {
     return false
+  }
+
+  static ytVideoRef(url, title) {
+    return (
+      <a href={url} title={`YouTube: AirRivals - ${title}`} target="_blank">
+        <img src={ytIcon} width="64" height="64" alt="YouTube" />
+      </a>
+    )
   }
 
   render() {
@@ -57,12 +66,16 @@ class About extends Component {
 
         <section className="section">
           <h2 className="title">Videos</h2>
-          <p>TODO</p>
-        </section>
-
-        <section className="section">
-          <h2 className="title">Partners</h2>
-          <p>TODO</p>
+          <p style={{ height: '64px' }}>
+            {this.constructor.ytVideoRef(
+              'https://www.youtube.com/watch?v=Act1YKmPt2w',
+              'AirRivals - Vi0lation 2.0'
+            )}{' '}
+            {this.constructor.ytVideoRef(
+              'https://www.youtube.com/watch?v=OBiN8E8j7AM',
+              'AirRivals - Vi0lation'
+            )}
+          </p>
         </section>
       </div>
     )
