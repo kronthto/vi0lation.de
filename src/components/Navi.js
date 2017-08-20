@@ -58,7 +58,7 @@ class Navi extends Component {
                   AR Ranking
                 </NavLink>
                 <div className="navbar-dropdown">
-                  <NavLink to="/ranking/sub">Sub TODO</NavLink>
+                  <NavLink to="/ranking/eplist">EP List</NavLink>
                 </div>
                 <NavLink to="/ts3" className="is-tab">
                   TeamSpeak 3

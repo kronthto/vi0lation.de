@@ -3,6 +3,9 @@ import TS3List from './components/TS3List'
 import TS404Server from './components/TS404Server'
 import About from './components/About'
 import Contact from './components/Contact'
+
+import EPList from './components/AR/EPList'
+
 import PostsApiPage from './containers/PostsApiPage'
 import PostComments from './containers/PostComments'
 
@@ -29,6 +32,10 @@ const routes = [
   {
     path: '/contact',
     component: Contact
+  },
+  {
+    path: '/ranking/eplist',
+    component: EPList
   },
   {
     path: '/posts',
