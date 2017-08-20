@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import NumTD from './NumTD'
 
 import level2ep from '../../data/level2ep'
 
@@ -37,14 +38,12 @@ class EPListTable extends Component {
                 <th scope="row">
                   {level}
                 </th>
-                <td className="has-text-right">
-                  {levelEp.toLocaleString()}
-                </td>
-                <td className="has-text-right">
-                  {Number.isInteger(previousEp)
-                    ? (levelEp - previousEp).toLocaleString()
-                    : '-'}
-                </td>
+                <NumTD num={levelEp} />
+                <NumTD
+                  num={
+                    Number.isInteger(previousEp) ? levelEp - previousEp : '-'
+                  }
+                />
               </tr>
             )
           })}
