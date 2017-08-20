@@ -1,20 +1,20 @@
 import React, { Component } from 'react'
 import { Helmet } from 'react-helmet'
 
+const TSRef = props => {
+  let { url, port } = props.server
+
+  return (
+    <li>
+      <a href={`ts3server://${url}`} title={`${url} TS3`}>
+        {url}
+      </a>{' '}
+      (Port: {port})
+    </li>
+  )
+}
+
 class TS3List extends Component {
-  static TSRef(server) {
-    let { url, port } = server
-
-    return (
-      <li key={url}>
-        <a href={`ts3server://${url}`} title={`${url} TS3`}>
-          {url}
-        </a>{' '}
-        (Port: {port})
-      </li>
-    )
-  }
-
   static tsServers = [
     { url: 'vi0lation.de', port: 9987 },
     { url: 'aces.vi0lation.de', port: 9994 },
@@ -45,7 +45,7 @@ class TS3List extends Component {
 
         <ul>
           {this.constructor.tsServers.map(server =>
-            this.constructor.TSRef(server)
+            <TSRef key={server.url} server={server} />
           )}
         </ul>
       </div>

@@ -3,30 +3,27 @@ import NumTD from './NumTD'
 
 import level2ep from '../../data/level2ep'
 
+const TableLegend = () =>
+  <tr>
+    <th scope="col">Level</th>
+    <th className="has-text-right" scope="col">
+      Needed EP
+    </th>
+    <th className="has-text-right" scope="col">
+      From previous
+    </th>
+  </tr>
+
 class EPListTable extends Component {
   shouldComponentUpdate() {
     return false
-  }
-
-  static tableLegend() {
-    return (
-      <tr>
-        <th scope="col">Level</th>
-        <th className="has-text-right" scope="col">
-          Needed EP
-        </th>
-        <th className="has-text-right" scope="col">
-          From previous
-        </th>
-      </tr>
-    )
   }
 
   render() {
     return (
       <table className="table is-striped">
         <thead>
-          {this.constructor.tableLegend()}
+          <TableLegend />
         </thead>
         <tbody>
           {Object.keys(level2ep).map(level => {
@@ -49,7 +46,7 @@ class EPListTable extends Component {
           })}
         </tbody>
         <tfoot>
-          {this.constructor.tableLegend()}
+          <TableLegend />
         </tfoot>
       </table>
     )

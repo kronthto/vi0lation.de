@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet'
 
 import tobiasImg from '../img/techguy_t.png'
 
-const srcLinkFE = () => {
+const SrcLinkFE = () => {
   return (
     <a
       href="https://github.com/kronthto/vi0lation.de"
@@ -16,7 +16,7 @@ const srcLinkFE = () => {
   )
 }
 
-const srcLinkBE = () => {
+const SrcLinkBE = () => {
   return (
     <a
       href="https://github.com/kronthto/api.vi0lation.de"
@@ -101,7 +101,7 @@ class Contact extends Component {
         <section className="section">
           <h2 className="title">TeamSpeak</h2>
           <p>
-            {TS3Ref()}
+            <TS3Ref />
           </p>
         </section>
 
@@ -109,10 +109,10 @@ class Contact extends Component {
           <h2 className="title">Site Source-Code</h2>
           <ul>
             <li>
-              {srcLinkFE()}
+              <SrcLinkFE />
             </li>
             <li>
-              {srcLinkBE()}
+              <SrcLinkBE />
             </li>
           </ul>
         </section>
@@ -122,4 +122,4 @@ class Contact extends Component {
 }
 
 export default Contact
-export { srcLinkFE, srcLinkBE, TS3Ref }
+export { SrcLinkFE, SrcLinkBE, TS3Ref }

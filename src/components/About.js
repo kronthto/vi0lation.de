@@ -2,20 +2,21 @@ import React, { Component } from 'react'
 import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 
-import { srcLinkFE, srcLinkBE, TS3Ref } from './Contact'
+import { SrcLinkFE, SrcLinkBE, TS3Ref } from './Contact'
 import ytIcon from '../img/youtube.svg'
+
+const YtVideoRef = props => {
+  let { url, title } = props
+  return (
+    <a href={url} title={`YouTube: AirRivals - ${title}`} target="_blank">
+      <img src={ytIcon} width="48" height="48" alt="YouTube" />
+    </a>
+  )
+}
 
 class About extends Component {
   shouldComponentUpdate() {
     return false
-  }
-
-  static ytVideoRef(url, title) {
-    return (
-      <a href={url} title={`YouTube: AirRivals - ${title}`} target="_blank">
-        <img src={ytIcon} width="48" height="48" alt="YouTube" />
-      </a>
-    )
   }
 
   render() {
@@ -60,21 +61,21 @@ class About extends Component {
             relaunches. The first version being a bunch of PHP Scripts somehow
             fitting together it has evolved into an React SPA/PWA.<br />
             The current source code is available on GitHub, seperated into{' '}
-            {srcLinkFE()} and {srcLinkBE()}.
+            <SrcLinkFE /> and <SrcLinkBE />.
           </p>
         </section>
 
         <section className="section">
           <h2 className="title">Videos</h2>
           <p style={{ minHeight: '48px' }}>
-            {this.constructor.ytVideoRef(
-              'https://www.youtube.com/watch?v=Act1YKmPt2w',
-              'AirRivals - Vi0lation 2.0'
-            )}{' '}
-            {this.constructor.ytVideoRef(
-              'https://www.youtube.com/watch?v=OBiN8E8j7AM',
-              'AirRivals - Vi0lation'
-            )}
+            <YtVideoRef
+              url="https://www.youtube.com/watch?v=Act1YKmPt2w"
+              title="AirRivals - Vi0lation 2.0"
+            />{' '}
+            <YtVideoRef
+              url="https://www.youtube.com/watch?v=OBiN8E8j7AM"
+              title="AirRivals - Vi0lation"
+            />
           </p>
         </section>
       </div>
