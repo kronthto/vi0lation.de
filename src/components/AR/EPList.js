@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Helmet } from 'react-helmet'
 
 import EPListTable from './EPListTable'
+import EPListCalculator from './EPListCalculator'
 
 class EPList extends Component {
   shouldComponentUpdate() {
@@ -9,8 +10,6 @@ class EPList extends Component {
   }
 
   render() {
-    // TODO: Calculator
-
     return (
       <div>
         <Helmet>
@@ -23,7 +22,14 @@ class EPList extends Component {
 
         <h1 className="title">EP List</h1>
 
-        <EPListTable />
+        <section className="section">
+          <h2 className="title">EP to Level Calculator</h2>
+          <EPListCalculator />
+        </section>
+
+        <section className="section">
+          <EPListTable />
+        </section>
       </div>
     )
   }

@@ -28,6 +28,9 @@ function levelByEp(ep) {
 }
 
 export function calcProgessBarByEp(ep, level) {
+  if (ep > highestEp) {
+    return '> MaxLv'
+  }
   if (typeof level === 'undefined') {
     level = levelByEp(ep)
   }
