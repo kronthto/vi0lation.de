@@ -37,7 +37,7 @@ class EPListCalculator extends Component {
   render() {
     return (
       <div className="field has-addons">
-        <div className="control">
+        <div className="control is-expanded">
           <input
             className="input"
             type="number"
@@ -46,12 +46,14 @@ class EPListCalculator extends Component {
             max="44219722864"
             placeholder="EP"
             ref="ep"
-            style={{ minWidth: '9em' }}
             onChange={this.calculate.bind(this)}
           />
         </div>
         <div className="control">
-          <strong className="button is-static" style={{ color: 'inherit' }}>
+          <strong
+            className="button is-static"
+            style={{ color: 'inherit', minWidth: '9em' }}
+          >
             {this.ep2LevelResult()}
           </strong>
         </div>
