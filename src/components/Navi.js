@@ -60,11 +60,13 @@ class Navi extends Component {
                 <div className="navbar-dropdown">
                   <NavLink to="/ranking/eplist">EP List</NavLink>
                 </div>
+              </div>
+              <div className="navbar-item has-dropdown">
                 <NavLink to="/ts3" className="is-tab">
                   TeamSpeak 3
                 </NavLink>
               </div>
-            </div>
+              </div>
             <div className="navbar-end" />
           </div>
         </div>
