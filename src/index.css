@@ -12,3 +12,8 @@ body {
 .margin-top {
   margin-top: 1em;
 }
+
+img.profile
+{
+  border-radius: 10%;
+}
