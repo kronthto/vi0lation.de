@@ -29,13 +29,11 @@ class PostList extends Component {
 
         <ul>
           {posts &&
-            posts.map(post =>
+            posts.map(post => (
               <Link key={post.id} to={`/posts/withcommentsfor/${post.id}`}>
-                <li>
-                  {post.title}
-                </li>
+                <li>{post.title}</li>
               </Link>
-            )}
+            ))}
         </ul>
       </div>
     )

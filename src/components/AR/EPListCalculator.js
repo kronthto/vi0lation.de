@@ -27,11 +27,7 @@ class EPListCalculator extends Component {
       return null
     }
 
-    return (
-      <span>
-        {calcProgessBarByEp(ep)}
-      </span>
-    )
+    return <span>{calcProgessBarByEp(ep)}</span>
   }
 
   render() {

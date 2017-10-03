@@ -50,7 +50,7 @@ module.exports = function universalLoader(req, res) {
         const helmet = Helmet.renderStatic()
 
         let storeForClient = store.getState()
-             let storeToPersist = Object.assign({}, storeForClient)
+        let storeToPersist = Object.assign({}, storeForClient)
 
         // we're good, send the response
         const RenderedApp = htmlData
@@ -61,8 +61,8 @@ module.exports = function universalLoader(req, res) {
 
         res.status(context.statusCode || 200).send(RenderedApp)
 
-                  // Persist the store data (API Results) for the next request
-                     saveStoreData(storeToPersist)
+        // Persist the store data (API Results) for the next request
+        saveStoreData(storeToPersist)
       }
     })
   })

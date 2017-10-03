@@ -44,9 +44,9 @@ class TS3List extends Component {
         <h1 className="title">TeamSpeak 3 Server</h1>
 
         <ul>
-          {this.constructor.tsServers.map(server =>
+          {this.constructor.tsServers.map(server => (
             <TSRef key={server.url} server={server} />
-          )}
+          ))}
         </ul>
       </div>
     )

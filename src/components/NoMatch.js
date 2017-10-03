@@ -31,7 +31,9 @@ class NoMatch extends Component {
           Maybe you mistyped something, maybe the page isn't there anymore,
           maybe it did never exist and maybe it will in the future
         </p>
-        <Link to={'/'} title="Home page">Go to home page</Link>
+        <Link to={'/'} title="Home page">
+          Go to home page
+        </Link>
       </div>
     )
   }

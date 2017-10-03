@@ -15,13 +15,13 @@ const initialState = window.DATA ? window.DATA : {}
 const store = configureStore(initialState)
 
 ReactDOM.hydrate(
-   <HydratedAppProvider store={store}>
-     <BrowserRouter>
-       <ScrollToTop>
-         <App />
-       </ScrollToTop>
-     </BrowserRouter>
-   </HydratedAppProvider>,
+  <HydratedAppProvider store={store}>
+    <BrowserRouter>
+      <ScrollToTop>
+        <App />
+      </ScrollToTop>
+    </BrowserRouter>
+  </HydratedAppProvider>,
   document.getElementById('root')
 )
 registerServiceWorker()

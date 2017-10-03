@@ -66,7 +66,7 @@ class Navi extends Component {
                   TeamSpeak 3
                 </NavLink>
               </div>
-              </div>
+            </div>
             <div className="navbar-end" />
           </div>
         </div>

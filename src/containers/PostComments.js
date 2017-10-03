@@ -39,16 +39,14 @@ class PostComments extends Component {
 
     return (
       <div>
-        <h3>
-          Comments to Post {this.props.match.params.id}
-        </h3>
+        <h3>Comments to Post {this.props.match.params.id}</h3>
         <ul>
           {comments &&
-            comments.map(comment =>
+            comments.map(comment => (
               <li key={comment.id}>
                 <strong>{comment.email}</strong> {comment.body}
               </li>
-            )}
+            ))}
         </ul>
       </div>
     )

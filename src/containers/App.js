@@ -30,9 +30,7 @@ class App extends Component {
         </header>
 
         <main className="section">
-          <div className="container content">
-            {renderRoutes(routes)}
-          </div>
+          <div className="container content">{renderRoutes(routes)}</div>
         </main>
 
         <Footer />

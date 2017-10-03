@@ -3,7 +3,7 @@ import NumTD from './NumTD'
 
 import level2ep from '../../data/level2ep'
 
-const TableLegend = () =>
+const TableLegend = () => (
   <tr>
     <th scope="col">Level</th>
     <th className="has-text-right" scope="col">
@@ -13,6 +13,7 @@ const TableLegend = () =>
       From previous
     </th>
   </tr>
+)
 
 class EPListTable extends Component {
   shouldComponentUpdate() {
@@ -32,9 +33,7 @@ class EPListTable extends Component {
 
             return (
               <tr key={level}>
-                <th scope="row">
-                  {level}
-                </th>
+                <th scope="row">{level}</th>
                 <NumTD num={levelEp} />
                 <NumTD
                   num={

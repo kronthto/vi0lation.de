@@ -43,9 +43,7 @@ class About extends Component {
 
         <section className="section">
           <h2 className="title">TeamSpeak</h2>
-          <p>
-            {TS3Ref()}
-          </p>
+          <p>{TS3Ref()}</p>
         </section>
 
         <section className="section">
