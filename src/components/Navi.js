@@ -4,6 +4,14 @@ import NavLink from './NavLink'
 
 import classNames from 'classnames'
 
+const NavTab = props => {
+  return (
+    <div className={classNames('navbar-item has-dropdown', props.addClass)}>
+      {props.children}
+    </div>
+  )
+}
+
 class Navi extends Component {
   //shouldComponentUpdate() { // TODO
   //  return false
@@ -53,19 +61,19 @@ class Navi extends Component {
             style={{ paddingBottom: 0 }}
           >
             <div className="navbar-start">
-              <div className="navbar-item has-dropdown is-hoverable">
+              <NavTab addClass="is-hoverable">
                 <NavLink to="/ranking" className="is-tab">
                   AR Ranking
                 </NavLink>
                 <div className="navbar-dropdown">
                   <NavLink to="/ranking/eplist">EP List</NavLink>
                 </div>
-              </div>
-              <div className="navbar-item has-dropdown">
+              </NavTab>
+              <NavTab>
                 <NavLink to="/ts3" className="is-tab">
                   TeamSpeak 3
                 </NavLink>
-              </div>
+              </NavTab>
             </div>
             <div className="navbar-end" />
           </div>
