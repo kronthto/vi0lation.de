@@ -1,9 +1,9 @@
 // Import the initial variables
-@import "../../node_modules/bulma/sass/utilities/initial-variables";
+@import '../../node_modules/bulma/sass/utilities/initial-variables';
 
 // Modifications
 
-$family-sans-serif: "Roboto", sans-serif;
+$family-sans-serif: 'Roboto', sans-serif;
 
 $family-primary: $family-sans-serif;
 
@@ -11,5 +11,22 @@ $background-color: #2b3e50;
 
 $primary: #df691a;
 
+$viowhite: #ebebeb;
+
+$navbar-tab-active-border-bottom-color: $background-color;
+$navbar-tab-hover-border-bottom-color: $background-color;
+
 // Import the rest of Bulma
-@import "../../node_modules/bulma/bulma.sass";
+@import '../../node_modules/bulma/bulma.sass';
+
+@include desktop {
+  .navbar.is-primary {
+    .navbar-item,
+    .navbar-link {
+      &.is-tab {
+        // Hacky way to only affect parent nav elements as we give is-tab to every parent for styling purposes
+        color: $viowhite;
+      }
+    }
+  }
+}

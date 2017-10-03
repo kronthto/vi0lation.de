@@ -45,7 +45,7 @@
     "serve-favicon": "^2.4.5"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,json,css}": [
+    "src/**/*.{js,jsx,json,css,scss}": [
       "prettier --single-quote --write --no-semi",
       "git add"
     ],
@@ -59,7 +59,7 @@
   },
   "scripts": {
     "precommit": "lint-staged",
-    "test": "eslint src/**/*.{js,jsx} && prettier --single-quote --no-semi -l src/**/*.{js,jsx,json,css} && prettier --single-quote --no-semi -l server/**/*.js",
+    "test": "eslint src/**/*.{js,jsx} && prettier --single-quote --no-semi -l src/**/*.{js,jsx,json,css,scss} && prettier --single-quote --no-semi -l server/**/*.js",
     "start": "react-scripts start",
     "start:server": "cross-env NODE_ENV=development node server/index.js",
     "now-start": "cross-env NODE_ENV=production node server/index.js",
