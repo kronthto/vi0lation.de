@@ -48,6 +48,13 @@
     "src/**/*.{js,jsx,json,css}": [
       "prettier --single-quote --write --no-semi",
       "git add"
+    ],
+    "server/**/*.js": [
+      "prettier --single-quote --write --no-semi",
+      "git add"
+    ],
+    "src/**/*.{js,jsx}": [
+      "eslint"
     ]
   },
   "scripts": {
