@@ -4,23 +4,19 @@ import PropTypes from 'prop-types'
 import { persistStore } from 'redux-persist'
 
 class HydratedAppProvider extends Component {
-  constructor() {
-    super()
-    this.state = { rehydrated: false }
+  getChildContext() {
+    return { rehydrated: this.rehydrated }
   }
 
   componentWillMount() {
-    persistStore(this.props.store, {}, () => {
-      this.setState({ rehydrated: true })
+    this.rehydrated = new Promise(resolve => {
+      persistStore(this.props.store, {}, () => {
+        resolve()
+      })
     })
   }
 
   render() {
-    /*
-    if (!this.state.rehydrated) {
-      return <span>Loading, just a second ...</span>;
-    }
-    */
     return <Provider store={this.props.store}>{this.props.children}</Provider>
   }
 }
@@ -28,6 +24,10 @@ class HydratedAppProvider extends Component {
 HydratedAppProvider.propTypes = {
   store: PropTypes.object.isRequired,
   children: PropTypes.object.isRequired
+}
+
+HydratedAppProvider.childContextTypes = {
+  rehydrated: PropTypes.object.isRequired
 }
 
 export default HydratedAppProvider
