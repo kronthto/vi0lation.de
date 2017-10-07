@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 
 import configureStore from './store'
 import './style/bulma.css'
+import 'flatpickr/dist/themes/material_blue.css'
 import './index.css'
 import HydratedAppProvider from './containers/HydratedAppProvider'
 import ScrollToTop from './components/ScrollToTop'
