@@ -3,12 +3,14 @@ import reducers from './reducers'
 //import createLogger from 'redux-logger'
 import { autoRehydrate } from 'redux-persist'
 import thunkMiddleware from 'redux-thunk'
+import api from './middleware/api'
 
 //const logger = createLogger()
 
 export default function configureStore(initialState = {}) {
   const middlewares = [
-    thunkMiddleware
+    thunkMiddleware,
+    api
     //, logger
   ]
 
