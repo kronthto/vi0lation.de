@@ -13,6 +13,8 @@ const { default: App } = require('../src/containers/App')
 
 const { default: routes } = require('../src/routes')
 
+const HugeStores = []
+
 const { getStoreData, saveStoreData } = require('./PersistentStoreData')
 
 module.exports = function universalLoader(req, res) {
@@ -51,6 +53,10 @@ module.exports = function universalLoader(req, res) {
 
         let storeForClient = store.getState()
         let storeToPersist = Object.assign({}, storeForClient)
+
+        // Remove some really big blobs. The client should rather refetch that, so the document we deliver isn't that huge.
+        // But we want them persisted serverside.
+        HugeStores.forEach(key => delete storeForClient[key])
 
         // we're good, send the response
         const RenderedApp = htmlData
