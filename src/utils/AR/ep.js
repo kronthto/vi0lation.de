@@ -3,7 +3,7 @@ import level2ep from '../../data/level2ep'
 import number_format from 'locutus/php/strings/number_format'
 import _findkey from 'lodash.findkey'
 
-const highestLv = Object.keys(level2ep).pop()
+const highestLv = Number(Object.keys(level2ep).pop())
 const highestEp = level2ep[highestLv]
 
 function procByEp(ep, level) {
