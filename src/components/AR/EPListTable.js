@@ -37,7 +37,7 @@ class EPListTable extends Component {
                 <NumTD num={levelEp} />
                 <NumTD
                   num={
-                    Number.isInteger(previousEp) ? levelEp - previousEp : '-'
+                    Number.isInteger(previousEp) ? levelEp - previousEp : null
                   }
                 />
               </tr>
