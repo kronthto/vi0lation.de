@@ -13,7 +13,7 @@ const { default: App } = require('../src/containers/App')
 
 const { default: routes } = require('../src/routes')
 
-const HugeStores = []
+// const HugeStores = []
 
 const { getStoreData, saveStoreData } = require('./PersistentStoreData')
 
@@ -51,24 +51,24 @@ module.exports = function universalLoader(req, res) {
       } else {
         const helmet = Helmet.renderStatic()
 
-        let storeForClient = store.getState()
-        let storeToPersist = Object.assign({}, storeForClient)
+        // let storeForClient = store.getState()
+        // let storeToPersist = Object.assign({}, storeForClient)
 
         // Remove some really big blobs. The client should rather refetch that, so the document we deliver isn't that huge.
         // But we want them persisted serverside.
-        HugeStores.forEach(key => delete storeForClient[key])
+        // HugeStores.forEach(key => delete storeForClient[key])
 
         // we're good, send the response
         const RenderedApp = htmlData
           .replace('{{SSR}}', markup)
-          .replace('{{WINDOW_DATA}}', JSON.stringify(storeForClient))
+          // .replace('{{WINDOW_DATA}}', JSON.stringify(storeForClient))
           .replace('{{HELMET_TITLE}}', helmet.title.toString())
           .replace('{{HELMET_META}}', helmet.meta.toString())
 
         res.status(context.statusCode || 200).send(RenderedApp)
 
         // Persist the store data (API Results) for the next request
-        saveStoreData(storeToPersist)
+        saveStoreData(store.getState())
       }
     })
   })

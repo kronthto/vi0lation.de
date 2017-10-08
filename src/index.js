@@ -12,8 +12,8 @@ import App from './containers/App'
 import registerServiceWorker from './registerServiceWorker'
 
 // If provided by server, use it, else let the reducers handle initial state
-const initialState = window.DATA ? window.DATA : {}
-const store = configureStore(initialState)
+// const initialState = window.DATA || {}
+const store = configureStore()
 
 ReactDOM.hydrate(
   <HydratedAppProvider store={store}>
