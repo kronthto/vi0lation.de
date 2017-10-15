@@ -12,30 +12,32 @@ const NavTab = props => {
   )
 }
 
+const responsiveExpandedClass = 'is-active'
+const mainNav = 'mainNav'
+const navToggle = 'navToggle'
+
 class Navi extends Component {
   //shouldComponentUpdate() { // TODO
   //  return false
   //}
 
-  constructor(props) {
-    super(props)
-    this.state = { toggled: false }
+  toggleMenu() {
+    this.toggleMenuState()
   }
 
-  toggleMenu() {
-    this.setState({ toggled: !this.state.toggled })
+  toggleMenuState(state) {
+    this.refs[mainNav].classList.toggle(responsiveExpandedClass)
+    this.refs[navToggle].classList.toggle(responsiveExpandedClass)
   }
 
   componentDidUpdate(prevProps) {
     // Hide the responsive (burger) menu again after switching pages
     if (this.props.location !== prevProps.location) {
-      this.setState({ toggled: false })
+      this.toggleMenuState(false)
     }
   }
 
   render() {
-    let { toggled } = this.state
-
     return (
       <nav className="navbar has-shadow is-primary" id="top">
         <div className="container">
@@ -44,11 +46,10 @@ class Navi extends Component {
               Vi0
             </NavLink>
             <div
-              className={classNames('navbar-burger', 'burger', {
-                'is-active': toggled
-              })}
+              className="navbar-burger burger"
               onClick={this.toggleMenu.bind(this)}
-              data-target="mainNav"
+              ref={navToggle}
+              data-target={mainNav}
             >
               <span />
               <span />
@@ -56,8 +57,9 @@ class Navi extends Component {
             </div>
           </div>
           <div
-            id="mainNav"
-            className={classNames('navbar-menu', { 'is-active': toggled })}
+            ref={mainNav}
+            id={mainNav}
+            className="navbar-menu"
             style={{ paddingBottom: 0 }}
           >
             <div className="navbar-start">
