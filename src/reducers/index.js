@@ -1,9 +1,7 @@
 import { combineReducers } from 'redux'
 
-import posts from './posts'
-import comments from './comments'
+import highscores from './highscores'
 
 export default combineReducers({
-  posts,
-  comments
+  highscores
 })
