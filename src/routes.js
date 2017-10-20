@@ -6,9 +6,6 @@ import Contact from './components/Contact'
 
 import EPList from './components/AR/EPList'
 
-import PostsApiPage from './containers/PostsApiPage'
-import PostComments from './containers/PostComments'
-
 import NoMatch from './components/NoMatch'
 
 const routes = [
@@ -36,16 +33,6 @@ const routes = [
   {
     path: '/ranking/eplist',
     component: EPList
-  },
-  {
-    path: '/posts',
-    component: PostsApiPage,
-    routes: [
-      {
-        path: '/posts/withcommentsfor/:id',
-        component: PostComments
-      }
-    ]
   },
   {
     component: NoMatch
