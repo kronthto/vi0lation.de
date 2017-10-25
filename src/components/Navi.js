@@ -28,8 +28,8 @@ class Navi extends Component {
   }
 
   toggleMenuState(state) {
-    this.refs[mainNav].classList.toggle(responsiveExpandedClass)
-    this.refs[navToggle].classList.toggle(responsiveExpandedClass)
+    this.refs[mainNav].classList.toggle(responsiveExpandedClass, state)
+    this.refs[navToggle].classList.toggle(responsiveExpandedClass, state)
   }
 
   componentDidUpdate(prevProps) {
