@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Provider } from 'react-redux'
 import PropTypes from 'prop-types'
 import { persistStore } from 'redux-persist'
+import localForage from 'localforage'
 
 class HydratedAppProvider extends Component {
   getChildContext() {
@@ -10,7 +11,7 @@ class HydratedAppProvider extends Component {
 
   componentWillMount() {
     this.rehydrated = new Promise(resolve => {
-      persistStore(this.props.store, {}, () => {
+      persistStore(this.props.store, { storage: localForage }, () => {
         resolve()
       })
     })
