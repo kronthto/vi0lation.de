@@ -16,8 +16,12 @@ $viowhite: #ebebeb;
 $navbar-tab-active-border-bottom-color: $background-color;
 $navbar-tab-hover-border-bottom-color: $background-color;
 
+$link: $primary;
+
 // Import the rest of Bulma
 @import '../../node_modules/bulma/bulma.sass';
+
+$link-invert: $primary-invert;
 
 @include desktop {
   .navbar.is-primary {

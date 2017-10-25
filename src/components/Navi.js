@@ -4,6 +4,8 @@ import NavLink from './NavLink'
 
 import classNames from 'classnames'
 
+import { highscoresUrl } from '../routes'
+
 const NavTab = props => {
   return (
     <div className={classNames('navbar-item has-dropdown', props.addClass)}>
@@ -68,6 +70,7 @@ class Navi extends Component {
                   AR Ranking
                 </NavLink>
                 <div className="navbar-dropdown">
+                  <NavLink to={highscoresUrl}>Highscores</NavLink>
                   <NavLink to="/ranking/eplist">EP List</NavLink>
                 </div>
               </NavTab>
