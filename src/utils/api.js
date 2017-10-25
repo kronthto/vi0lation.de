@@ -6,3 +6,7 @@ export async function handleErrors(response) {
   }
   return response
 }
+
+export function getCurrentTS() {
+  return new Date().getTime()
+}
