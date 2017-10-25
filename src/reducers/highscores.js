@@ -6,7 +6,7 @@ const initialState = {
 
 export default function reducer(state = initialState, action) {
   let { region, date } = action
-  let regionData = state[region]
+  let regionData = Object.assign({}, state[region])
   switch (action.type) {
     case REQUEST:
       return Object.assign({}, state, {
