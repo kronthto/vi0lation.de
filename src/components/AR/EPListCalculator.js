@@ -41,6 +41,7 @@ class EPListCalculator extends Component {
             min="0"
             max="44219722864"
             placeholder="EP"
+            aria-label="EP"
             ref="ep"
             onChange={this.calculate.bind(this)}
           />
