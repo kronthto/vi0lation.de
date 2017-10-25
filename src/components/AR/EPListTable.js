@@ -22,7 +22,7 @@ class EPListTable extends Component {
 
   render() {
     return (
-      <table className="table is-striped">
+      <table className="table is-striped is-hoverable">
         <thead>
           <TableLegend />
         </thead>
