@@ -1,5 +1,6 @@
 import config from '../config.js'
 import { handleErrors } from '../utils/api'
+import toast from '../utils/toast'
 
 function callApi(url, options = {}) {
   let headers = {
@@ -16,6 +17,22 @@ function callApi(url, options = {}) {
   return fetch(url, fetchOpts)
     .then(handleErrors)
     .then(response => response.json())
+}
+
+function warnAboutError(error) {
+  if (typeof toast === 'undefined') {
+    return
+  }
+
+  const errorResponse = error.response
+
+  if (!errorResponse) {
+    toast.error({
+      title: 'Fetch Error',
+      message: 'A network request failed. Check your internet connection.'
+    })
+    return
+  }
 }
 
 export const CALL_API = 'CALL_API'
@@ -50,6 +67,7 @@ export default store => next => action => {
         })
       ),
     error => {
+      warnAboutError(error)
       next(
         actionWith({
           type: failureType,
