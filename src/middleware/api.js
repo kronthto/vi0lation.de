@@ -74,6 +74,7 @@ export default store => next => action => {
           error
         })
       )
+      throw error
     }
   )
 }
