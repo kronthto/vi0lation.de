@@ -3,6 +3,7 @@
 
 /* TEAM */
 	Creator:Tobias Kronthaler
+	GitHub:@kronthto
 	From:Bavaria, Germany
 
 /* SITE */
