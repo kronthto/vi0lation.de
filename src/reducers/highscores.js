@@ -1,4 +1,5 @@
 import { REQUEST, RECEIVE, REQFAIL } from '../types/highscores'
+import { getCurrentTS } from '../utils/api'
 
 const initialState = {
   de: {}
@@ -12,7 +13,7 @@ export default function reducer(state = initialState, action) {
       return Object.assign({}, state, {
         [region]: Object.assign(regionData, {
           [date]: {
-            isFetching: true
+            isFetching: getCurrentTS()
           }
         })
       })

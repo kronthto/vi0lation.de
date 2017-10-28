@@ -1,5 +1,6 @@
 import { REQUEST, RECEIVE, REQFAIL } from '../types/highscores'
 import { CALL_API } from '../middleware/api'
+import { isCurrentlyFetching } from '../utils/api'
 
 function fetchHighscore(region, date) {
   return {
@@ -26,7 +27,11 @@ function shouldFetchHighscore(region, date, state) {
   }
 
   const highscoreData = highscore.data
-  if (highscoreData || highscoreData === false || highscore.isFetching) {
+  if (
+    highscoreData ||
+    highscoreData === false ||
+    isCurrentlyFetching(highscore)
+  ) {
     return false
   }
 
