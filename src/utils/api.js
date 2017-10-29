@@ -14,6 +14,13 @@ export async function handleErrors(response) {
   return response
 }
 
+export function throwIfErrorIsNot(error, codes) {
+  const errorResponse = error.response
+  if (!errorResponse || codes.indexOf(errorResponse.status) === -1) {
+    throw error
+  }
+}
+
 export function getCurrentTS() {
   return new Date().getTime()
 }
