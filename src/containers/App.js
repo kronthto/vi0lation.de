@@ -14,7 +14,6 @@ const defaultMeta = () => {
         name="description"
         content="Vi0lation brigade website and AirRivals ranking"
       />
-      <link rel="dns-prefetch" href="https://api.vi0lation.de" />
     </Helmet>
   )
 }

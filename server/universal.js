@@ -61,9 +61,13 @@ module.exports = function universalLoader(req, res) {
         // we're good, send the response
         const RenderedApp = htmlData
           .replace('{{SSR}}', markup)
-          // .replace('{{WINDOW_DATA}}', JSON.stringify(storeForClient))
-          .replace('{{HELMET_TITLE}}', helmet.title.toString())
-          .replace('{{HELMET_META}}', helmet.meta.toString())
+          // .replace('{{WINDOW_DATA}}', JSON.stringify(storeForClient)) // TODO: Pass data, but only highscores for current page to prevent deleting and rebuilding the table
+          .replace(
+            '{{HELMET_HEAD}}',
+            helmet.title.toString() +
+              helmet.meta.toString() +
+              helmet.link.toString()
+          )
 
         res.status(context.statusCode || 200).send(RenderedApp)
 
