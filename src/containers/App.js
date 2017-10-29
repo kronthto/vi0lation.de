@@ -29,7 +29,15 @@ class App extends Component {
         </header>
 
         <main className="section">
-          <div className="container content">{renderRoutes(routes)}</div>
+          <div className="container content">
+            <noscript>
+              <div className="notification is-warning">
+                Please enable JavaScript in your browser to be able to use all
+                features of the site.
+              </div>
+            </noscript>
+            {renderRoutes(routes)}
+          </div>
         </main>
 
         <Footer />
