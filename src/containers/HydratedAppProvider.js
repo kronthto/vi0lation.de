@@ -3,6 +3,7 @@ import { Provider } from 'react-redux'
 import PropTypes from 'prop-types'
 import { persistStore } from 'redux-persist'
 import localForage from 'localforage'
+import toast from '../utils/toast'
 
 class HydratedAppProvider extends Component {
   getChildContext() {
@@ -12,6 +13,14 @@ class HydratedAppProvider extends Component {
   componentWillMount() {
     this.rehydrated = new Promise(resolve => {
       persistStore(this.props.store, { storage: localForage }, () => {
+        resolve()
+      })
+      localForage.ready().catch(() => {
+        toast.warning({
+          timeout: false,
+          message:
+            "Could not connect to your device's storage to store data for offline-usage of this site. Please check the storage permissions and cookie settings."
+        })
         resolve()
       })
     })
