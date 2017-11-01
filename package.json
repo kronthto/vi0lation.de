@@ -31,7 +31,6 @@
     "izitoast": "^1.1.5",
     "localforage": "^1.5.3",
     "locutus": "^2.0.9",
-    "lodash.findkey": "^4.6.0",
     "lodash.merge": "^4.6.0",
     "morgan": "^1.9.0",
     "prop-types": "^15.6.0",
