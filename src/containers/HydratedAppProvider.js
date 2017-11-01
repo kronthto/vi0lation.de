@@ -11,18 +11,27 @@ class HydratedAppProvider extends Component {
   }
 
   componentWillMount() {
+    let resolved = false
     this.rehydrated = new Promise(resolve => {
+      let success = () => {
+        resolve()
+        resolved = true
+      }
       persistStore(this.props.store, { storage: localForage }, () => {
-        resolve()
+        success()
       })
-      localForage.ready().catch(() => {
-        toast.warning({
-          timeout: false,
-          message:
-            "Could not connect to your device's storage to store data for offline-usage of this site. Please check the storage permissions and cookie settings."
-        })
-        resolve()
-      })
+      let errorHandler = () => {
+        if (!resolved) {
+          toast.warning({
+            timeout: false,
+            message:
+              "Could not connect to your device's storage to store data for offline-usage of this site. Please check the storage permissions and cookie settings or disable incognito-mode."
+          })
+          success()
+        }
+      }
+      localForage.ready().catch(errorHandler)
+      setTimeout(errorHandler, 9000)
     })
   }
 
