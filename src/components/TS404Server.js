@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Helmet } from 'react-helmet'
-import { Link } from 'react-router-dom'
+import Link from 'react-router-dom/Link'
 
 class TS404Server extends Component {
   shouldComponentUpdate() {

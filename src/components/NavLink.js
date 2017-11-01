@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { NavLink as ReactRouterNavLink } from 'react-router-dom'
+import ReactRouterNavLink from 'react-router-dom/NavLink'
 
 import classNames from 'classnames'
 

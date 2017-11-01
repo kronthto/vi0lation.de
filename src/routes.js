@@ -1,5 +1,5 @@
 import React from 'react'
-import { Redirect } from 'react-router'
+import Redirect from 'react-router/Redirect'
 
 import Home from './components/Home'
 import TS3List from './components/TS3List'
@@ -8,6 +8,7 @@ import About from './components/About'
 import Contact from './components/Contact'
 
 import EPList from './components/AR/EPList'
+import Highscores from './containers/AR/Highscores'
 
 import NoMatch from './components/NoMatch'
 
@@ -38,6 +39,7 @@ const routes = [
     component: Contact
   },
   // TODO: Ranking Info page: Methodik, Datenbestand, Motivation, etc.
+  // Download: CDN, or use API (CORS enabled)
   {
     path: '/ranking/eplist',
     component: EPList
@@ -46,6 +48,10 @@ const routes = [
     path: highscoresUrl,
     exact: true,
     component: () => <Redirect to={highscoresUrl + '/' + maxDate} />
+  },
+  {
+    path: highscoresUrl + '/:date(\\d{4}-\\d{2}-\\d{2})',
+    component: Highscores
   },
   {
     component: NoMatch
