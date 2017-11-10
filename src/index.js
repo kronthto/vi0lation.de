@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import BrowserRouter from 'react-router-dom/BrowserRouter'
+import Router from 'react-router/Router'
+import createBrowserHistory from 'history/es/createBrowserHistory'
 
 import configureStore from './store'
 import './style/bulma.css'
@@ -18,11 +19,11 @@ const store = configureStore()
 
 ReactDOM.hydrate(
   <HydratedAppProvider store={store}>
-    <BrowserRouter>
+    <Router history={createBrowserHistory()}>
       <ScrollToTop>
         <App />
       </ScrollToTop>
-    </BrowserRouter>
+    </Router>
   </HydratedAppProvider>,
   document.getElementById('root')
 )
