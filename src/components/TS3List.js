@@ -6,7 +6,7 @@ const TSRef = props => {
 
   return (
     <li>
-      <a href={`ts3server://${url}`} title={`${url} TS3`}>
+      <a href={`ts3server://${url}`} title={`${url} TS3`} rel="noopener">
         {url}
       </a>{' '}
       (Port: {port})

@@ -8,7 +8,12 @@ import ytIcon from '../img/youtube.svg'
 const YtVideoRef = props => {
   let { url, title } = props
   return (
-    <a href={url} title={`YouTube: AirRivals - ${title}`} target="_blank">
+    <a
+      href={url}
+      title={`YouTube: AirRivals - ${title}`}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       <img src={ytIcon} width="48" height="48" alt="YouTube" />
     </a>
   )
@@ -35,8 +40,8 @@ class About extends Component {
         <section className="section">
           <h2 className="title">Vi0</h2>
           <p>
-            Vi0(-lation) is a German multigaming clan/guild/brigade that formed
-            on AirRivals DE (Prokyon, BCU), and since then continued playing
+            Vi0lation is a German multigaming clan/guild/brigade that formed on
+            AirRivals DE (Prokyon, BCU), and since then continued playing
             various other MMOs & MOBAs together.
           </p>
         </section>
