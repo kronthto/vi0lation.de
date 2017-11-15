@@ -1,6 +1,3 @@
-const path = require('path')
-const fs = require('fs')
-
 const React = require('react')
 const { Helmet } = require('react-helmet')
 const { Provider } = require('react-redux')
@@ -16,15 +13,10 @@ const { default: routes } = require('../src/routes')
 // const HugeStores = []
 
 const { getStoreData, saveStoreData } = require('./PersistentStoreData')
+const { indexhtmlPromise } = require('./indexhtml')
 
 module.exports = function universalLoader(req, res) {
-  const filePath = path.resolve(__dirname, '..', 'build', 'index.html')
-
-  fs.readFile(filePath, 'utf8', (err, htmlData) => {
-    if (err) {
-      console.error('read err', err)
-      return res.status(404).end()
-    }
+  indexhtmlPromise.then(htmlData => {
     const context = {}
     const store = configureStore(getStoreData())
 

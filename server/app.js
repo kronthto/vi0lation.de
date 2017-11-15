@@ -4,7 +4,6 @@ const compression = require('compression')
 const express = require('express')
 const morgan = require('morgan')
 const path = require('path')
-const fs = require('fs')
 const favicon = require('serve-favicon')
 
 require('babel-register')({
@@ -14,6 +13,7 @@ require('babel-register')({
 
 // routes
 const universalLoader = require('./universal')
+const { indexhtmlDirect } = require('./indexhtml')
 
 const app = express()
 
@@ -32,15 +32,9 @@ app.use(morgan('combined'))
 
 // Send a version of index.html that is stripped of placeholders. The service-worker requests this file directly.
 app.use('/index.html', (req, res) => {
-  fs.readFile(
-    path.resolve(__dirname, '..', 'build', 'index.html'),
-    'utf8',
-    (err, htmlData) => {
-      res.send(
-        htmlData.replace(/DATA\s*=\s*{{.*?}}/g, '').replace(/{{.*?}}/g, '')
-      )
-    }
-  )
+  indexhtmlDirect.then(htmlData => {
+    res.send(htmlData)
+  })
 })
 
 // Server JS/CSS Bundle with Cache-Control
