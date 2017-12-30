@@ -13,6 +13,10 @@ body {
   margin-top: 1em;
 }
 
+.margin-bot {
+  margin-bottom: 1em;
+}
+
 img.profile {
   border-radius: 10%;
 }

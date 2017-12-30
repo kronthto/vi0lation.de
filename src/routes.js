@@ -8,7 +8,7 @@ import About from './components/About'
 import Contact from './components/Contact'
 
 import EPList from './components/AR/EPList'
-// import Highscores from './containers/AR/Highscores'
+import Highscores from './containers/AR/Highscores'
 
 import NoMatch from './components/NoMatch'
 
@@ -49,12 +49,10 @@ const routes = [
     exact: true,
     component: () => <Redirect to={highscoresUrl + '/' + maxDate} />
   },
-  /*
   {
     path: highscoresUrl + '/:date(\\d{4}-\\d{2}-\\d{2})',
     component: Highscores
   },
-  */
   {
     component: NoMatch
   }
