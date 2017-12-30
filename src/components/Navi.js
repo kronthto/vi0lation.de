@@ -79,6 +79,11 @@ class Navi extends Component {
                   TeamSpeak 3
                 </NavLink>
               </NavTab>
+              <NavTab>
+                <NavLink to="/tera" className="is-tab">
+                  TERA
+                </NavLink>
+              </NavTab>
             </div>
             <div className="navbar-end" />
           </div>

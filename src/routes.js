@@ -3,6 +3,7 @@ import Redirect from 'react-router/Redirect'
 
 import Home from './components/Home'
 import TS3List from './components/TS3List'
+import TERA from './components/TERA'
 import TS404Server from './components/TS404Server'
 import About from './components/About'
 import Contact from './components/Contact'
@@ -25,6 +26,10 @@ const routes = [
   {
     path: '/ts3',
     component: TS3List
+  },
+  {
+    path: '/tera',
+    component: TERA
   },
   {
     path: '/404server',
