@@ -15,57 +15,63 @@ const { default: routes } = require('../src/routes')
 const { getStoreData, saveStoreData } = require('./PersistentStoreData')
 const { indexhtmlPromise } = require('./indexhtml')
 
-module.exports = function universalLoader(req, res) {
-  indexhtmlPromise.then(htmlData => {
-    const context = {}
-    const store = configureStore(getStoreData())
+module.exports = function universalLoader(req, res, next) {
+  const errorCB = e => next(e)
 
-    const requiredData = []
-    const branch = matchRoutes(routes, req.url)
-    branch.forEach(({ route, match }) => {
-      if (route.component && route.component.fetchData) {
-        requiredData.push(route.component.fetchData(store, match))
-      }
-    })
+  indexhtmlPromise
+    .then(htmlData => {
+      const context = {}
+      const store = configureStore(getStoreData())
 
-    Promise.all(requiredData).then(() => {
-      const markup = renderToString(
-        <Provider store={store}>
-          <StaticRouter location={req.url} context={context}>
-            <App />
-          </StaticRouter>
-        </Provider>
-      )
+      const requiredData = []
+      const branch = matchRoutes(routes, req.url)
+      branch.forEach(({ route, match }) => {
+        if (route.component && route.component.fetchData) {
+          requiredData.push(route.component.fetchData(store, match))
+        }
+      })
 
-      if (context.url) {
-        // Somewhere a `<Redirect>` was rendered
-        res.redirect(context.statusCode || 302, context.url)
-      } else {
-        const helmet = Helmet.renderStatic()
-
-        // let storeForClient = store.getState()
-        // let storeToPersist = Object.assign({}, storeForClient)
-
-        // Remove some really big blobs. The client should rather refetch that, so the document we deliver isn't that huge.
-        // But we want them persisted serverside.
-        // HugeStores.forEach(key => delete storeForClient[key])
-
-        // we're good, send the response
-        const RenderedApp = htmlData
-          .replace('{{SSR}}', markup)
-          // .replace('{{WINDOW_DATA}}', JSON.stringify(storeForClient)) // TODO: Pass data, but only highscores for current page to prevent deleting and rebuilding the table
-          .replace(
-            '{{HELMET_HEAD}}',
-            helmet.title.toString() +
-              helmet.meta.toString() +
-              helmet.link.toString()
+      Promise.all(requiredData)
+        .then(() => {
+          const markup = renderToString(
+            <Provider store={store}>
+              <StaticRouter location={req.url} context={context}>
+                <App />
+              </StaticRouter>
+            </Provider>
           )
 
-        res.status(context.statusCode || 200).send(RenderedApp)
+          if (context.url) {
+            // Somewhere a `<Redirect>` was rendered
+            res.redirect(context.statusCode || 302, context.url)
+          } else {
+            const helmet = Helmet.renderStatic()
 
-        // Persist the store data (API Results) for the next request
-        saveStoreData(store.getState())
-      }
+            // let storeForClient = store.getState()
+            // let storeToPersist = Object.assign({}, storeForClient)
+
+            // Remove some really big blobs. The client should rather refetch that, so the document we deliver isn't that huge.
+            // But we want them persisted serverside.
+            // HugeStores.forEach(key => delete storeForClient[key])
+
+            // we're good, send the response
+            const RenderedApp = htmlData
+              .replace('{{SSR}}', markup)
+              // .replace('{{WINDOW_DATA}}', JSON.stringify(storeForClient)) // TODO: Pass data, but only highscores for current page to prevent deleting and rebuilding the table
+              .replace(
+                '{{HELMET_HEAD}}',
+                helmet.title.toString() +
+                  helmet.meta.toString() +
+                  helmet.link.toString()
+              )
+
+            res.status(context.statusCode || 200).send(RenderedApp)
+
+            // Persist the store data (API Results) for the next request
+            saveStoreData(store.getState())
+          }
+        })
+        .catch(errorCB)
     })
-  })
+    .catch(errorCB)
 }
