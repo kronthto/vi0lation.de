@@ -10,7 +10,6 @@ import { calcProgessBarByEp } from '../../utils/AR/ep'
 import { fetchHighscoreIfNeeded } from '../../actions/highscores'
 import { highscoresUrl } from '../../routes'
 import withRouter from 'react-router/withRouter'
-import { throwIfErrorIsNot } from '../../utils/api'
 
 const region = 'de'
 
@@ -40,10 +39,6 @@ class Ranking extends Component {
 
   static queryForDate(dispatch, date) {
     let hsPromise = dispatch(fetchHighscoreIfNeeded(region, date))
-
-    if (hsPromise) {
-      hsPromise.catch(error => throwIfErrorIsNot(error, [404]))
-    }
 
     return hsPromise
   }

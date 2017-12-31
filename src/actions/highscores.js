@@ -6,7 +6,8 @@ function fetchHighscore(region, date) {
   return {
     [CALL_API]: {
       endpoint: 'ranking/highscore?date=' + date,
-      types: [REQUEST, RECEIVE, REQFAIL]
+      types: [REQUEST, RECEIVE, REQFAIL],
+      acceptableErrorCodes: [404]
     },
     date,
     region

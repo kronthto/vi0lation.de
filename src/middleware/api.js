@@ -1,8 +1,7 @@
 import config from '../config.js'
-import { handleErrors } from '../utils/api'
 import toast from '../utils/toast'
 
-function callApi(url, options = {}) {
+function callApi(url, options = {}, acceptableErrorCodes = []) {
   let headers = {
     Accept: 'application/json'
   }
@@ -15,11 +14,21 @@ function callApi(url, options = {}) {
   )
 
   return fetch(url, fetchOpts)
-    .then(handleErrors)
+    .then(response => {
+      if (
+        !response.ok &&
+        acceptableErrorCodes.indexOf(response.status) === -1
+      ) {
+        let err = new Error(response.statusText)
+        err.response = response
+        throw err
+      }
+      return response
+    })
     .then(response => response.json())
 }
 
-function warnAboutError(error) {
+function warnAboutError(error, options = {}, url) {
   if (typeof toast === 'undefined') {
     return
   }
@@ -33,6 +42,13 @@ function warnAboutError(error) {
     })
     return
   }
+
+  let method = options.method || 'GET'
+
+  toast.error({
+    title: 'Error ' + errorResponse.status,
+    message: `${method} ${url}`
+  })
 }
 
 export const CALL_API = 'CALL_API'
@@ -43,7 +59,7 @@ export default store => next => action => {
     return next(action)
   }
 
-  let { endpoint, types, additionalOpts } = callAPI
+  let { endpoint, types, additionalOpts, acceptableErrorCodes } = callAPI
 
   const actionWith = data => {
     const finalAction = Object.assign({}, action, data)
@@ -57,7 +73,7 @@ export default store => next => action => {
 
   next(actionWith({ type: requestType }))
 
-  return callApi(endpoint, additionalOpts || {}).then(
+  return callApi(endpoint, additionalOpts || {}, acceptableErrorCodes).then(
     response =>
       next(
         actionWith({
@@ -67,7 +83,7 @@ export default store => next => action => {
         })
       ),
     error => {
-      warnAboutError(error)
+      warnAboutError(error, additionalOpts, endpoint)
       next(
         actionWith({
           type: failureType,

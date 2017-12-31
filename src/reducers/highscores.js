@@ -1,4 +1,4 @@
-import { REQUEST, RECEIVE, REQFAIL } from '../types/highscores'
+import { REQUEST, RECEIVE } from '../types/highscores'
 import { getCurrentTS } from '../utils/api'
 
 const initialState = {
@@ -18,28 +18,15 @@ export default function reducer(state = initialState, action) {
         })
       })
     case RECEIVE:
+      const { response } = action
       return Object.assign({}, state, {
         [region]: Object.assign(regionData, {
           [date]: {
             isFetching: false,
-            data: action.response
+            data: response.date ? false : response // object with date key -> an error occured
           }
         })
       })
-    case REQFAIL:
-      const { error } = action
-      const errorResponse = error.response
-      if (errorResponse && errorResponse.status === 404) {
-        return Object.assign({}, state, {
-          [region]: Object.assign(regionData, {
-            [date]: {
-              isFetching: false,
-              data: false
-            }
-          })
-        })
-      }
-      return state
     default:
       return state
   }
