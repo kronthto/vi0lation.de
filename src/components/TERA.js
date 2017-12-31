@@ -18,9 +18,9 @@ class TERA extends Component {
         </Helmet>
 
         <h1 className="title">TERA</h1>
-        <h2 class="subtitle is-5">DPS Meter Server</h2>
 
-        <p>
+        <section className="section">
+          <h2 className="title">DPS Meter Server</h2>
           An instance of{' '}
           <a
             href="https://github.com/kronthto/tera-dpsmeter-server"
@@ -30,7 +30,7 @@ class TERA extends Component {
           </a>{' '}
           is deployed at{' '}
           <a href="https://tera-dps.vi0lation.de">tera-dps.vi0lation.de</a>.
-        </p>
+        </section>
       </div>
     )
   }
