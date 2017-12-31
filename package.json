@@ -13,7 +13,7 @@
     "husky": "^0.14.3",
     "lint-staged": "^6.0.0",
     "prettier": "^1.7.4",
-    "react-scripts": "1.0.14",
+    "react-scripts": "^1.0.17",
     "uglify-js": "^2.8.29"
   },
   "dependencies": {
