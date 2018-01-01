@@ -8,6 +8,7 @@ import TS404Server from './components/TS404Server'
 import About from './components/About'
 import Contact from './components/Contact'
 
+import RankingInfo from './components/AR/RankingInfo'
 import EPList from './components/AR/EPList'
 import Highscores from './containers/AR/Highscores'
 
@@ -43,8 +44,11 @@ const routes = [
     path: '/contact',
     component: Contact
   },
-  // TODO: Ranking Info page: Methodik, Datenbestand, Motivation, etc.
-  // Download: CDN, or use API (CORS enabled)
+  {
+    path: '/ranking',
+    exact: true,
+    component: RankingInfo
+  },
   {
     path: '/ranking/eplist',
     component: EPList
