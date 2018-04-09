@@ -37,8 +37,6 @@ class App extends Component {
     })
   }
 
-  query
-
   render() {
     return (
       <div>
@@ -70,4 +68,4 @@ App.contextTypes = {
   rehydrated: PropTypes.object.isRequired
 }
 
-export default connect()(App)
+export default connect(null, null, null, { pure: false })(App)
