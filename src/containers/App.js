@@ -22,7 +22,7 @@ const defaultMeta = () => {
   )
 }
 
-const queryData = dispatch => {
+export const queryData = dispatch => {
   dispatch(fetchCmsIfNeeded('all'))
 }
 
