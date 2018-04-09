@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 
 import { Helmet } from 'react-helmet'
 import renderRoutes from 'react-router-config/renderRoutes'
@@ -6,6 +8,8 @@ import routes from '../routes'
 
 import Navi from '../components/Navi'
 import Footer from '../components/Footer'
+
+import { fetchCmsIfNeeded } from '../actions/cms'
 
 const defaultMeta = () => {
   return (
@@ -18,7 +22,23 @@ const defaultMeta = () => {
   )
 }
 
+const queryData = dispatch => {
+  dispatch(fetchCmsIfNeeded('all'))
+}
+
 class App extends Component {
+  static fetchData(store) {
+    return queryData(store.dispatch)
+  }
+
+  componentDidMount() {
+    this.context.rehydrated.then(() => {
+      queryData(this.props.dispatch)
+    })
+  }
+
+  query
+
   render() {
     return (
       <div>
@@ -46,4 +66,8 @@ class App extends Component {
   }
 }
 
-export default App
+App.contextTypes = {
+  rehydrated: PropTypes.object.isRequired
+}
+
+export default connect()(App)

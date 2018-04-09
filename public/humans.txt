@@ -7,7 +7,7 @@
 	From:Bavaria, Germany
 
 /* SITE */
-	Last update:2017-12-31
+	Last update:2018-04-09
 	Language:English
 	Doctype:HTML5
 
@@ -15,4 +15,3 @@
 	React
 	https://github.com/kronthto/api.vi0lation.de
 	https://github.com/kronthto/vi0lation.de
-	https://github.com/edent/SuperTinySocialIcons
