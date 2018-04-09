@@ -23,7 +23,7 @@ const defaultMeta = () => {
 }
 
 export const queryData = dispatch => {
-  dispatch(fetchCmsIfNeeded('all'))
+  return dispatch(fetchCmsIfNeeded('all'))
 }
 
 class App extends Component {
