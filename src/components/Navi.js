@@ -72,6 +72,7 @@ class Navi extends Component {
                 <div className="navbar-dropdown">
                   <NavLink to={highscoresUrl}>Highscores</NavLink>
                   <NavLink to="/ranking/eplist">EP List</NavLink>
+                  <NavLink to="/ranking/fbtool">FrameBreak Tool</NavLink>
                 </div>
               </NavTab>
               <NavTab>

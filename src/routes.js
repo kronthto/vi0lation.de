@@ -10,6 +10,7 @@ import Contact from './components/Contact'
 
 import RankingInfo from './components/AR/RankingInfo'
 import EPList from './components/AR/EPList'
+import FBTool from './components/AR/FBTool'
 import Highscores from './containers/AR/Highscores'
 
 import NoMatch from './components/NoMatch'
@@ -52,6 +53,10 @@ const routes = [
   {
     path: '/ranking/eplist',
     component: EPList
+  },
+  {
+    path: '/ranking/fbtool',
+    component: FBTool
   },
   {
     path: highscoresUrl,
