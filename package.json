@@ -17,6 +17,8 @@
     "uglify-js": "^2.8.29"
   },
   "dependencies": {
+    "aceonline-framebreak": "^1.0.0",
+    "aceonline-stats": "^1.0.0",
     "babel-cli": "^6.26.0",
     "body-parser": "^1.18.3",
     "bulma": "^0.6.0",
