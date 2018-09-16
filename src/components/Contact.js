@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Helmet } from 'react-helmet'
 
-import tobiasImg from '../img/techguy_t.png'
+import tobiasImg from '../img/techguy_t.jpg'
 
 const SrcLinkFE = () => {
   return (
