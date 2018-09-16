@@ -7,6 +7,7 @@ import toast from '../utils/toast'
 
 class HydratedAppProvider extends Component {
   getChildContext() {
+    // TODO: Use new context API
     return { rehydrated: this.rehydrated }
   }
 
