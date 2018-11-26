@@ -4,7 +4,7 @@ import NavLink from './NavLink'
 
 import classNames from 'classnames'
 
-import { highscoresUrl } from '../routes'
+import { highscoresUrl, crTopKillsIntervalUrl } from '../routes'
 
 const NavTab = props => {
   return (
@@ -70,9 +70,12 @@ class Navi extends Component {
                   AR Ranking
                 </NavLink>
                 <div className="navbar-dropdown">
-                  <NavLink to={highscoresUrl}>Highscores</NavLink>
+                  <NavLink to={highscoresUrl}>Prokyon/DE Highscores</NavLink>
                   <NavLink to="/ranking/eplist">EP List</NavLink>
                   <NavLink to="/ranking/fbtool">FrameBreak Tool</NavLink>
+                  <NavLink to={crTopKillsIntervalUrl}>
+                    ChromeRivals FFA kills
+                  </NavLink>
                 </div>
               </NavTab>
               <NavTab>

@@ -12,12 +12,14 @@ import RankingInfo from './components/AR/RankingInfo'
 import EPList from './components/AR/EPList'
 import FBTool from './components/AR/FBTool'
 import Highscores from './containers/AR/Highscores'
+import CrTopKillsInterval from './containers/ChromeRivals/KillsInInterval'
 
 import NoMatch from './components/NoMatch'
 
 import { maxDate } from './data/dataset'
 
 export const highscoresUrl = '/ranking/de/highscores'
+export const crTopKillsIntervalUrl = '/ranking/chromerivals/topkillsinterval'
 
 const routes = [
   {
@@ -66,6 +68,10 @@ const routes = [
   {
     path: highscoresUrl + '/:date(\\d{4}-\\d{2}-\\d{2})',
     component: Highscores
+  },
+  {
+    path: crTopKillsIntervalUrl,
+    component: CrTopKillsInterval
   },
   {
     component: NoMatch

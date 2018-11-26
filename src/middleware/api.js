@@ -1,7 +1,7 @@
 import config from '../config.js'
 import toast from '../utils/toast'
 
-function callApi(url, options = {}, acceptableErrorCodes = []) {
+export function callApi(url, options = {}, acceptableErrorCodes = []) {
   let headers = {
     Accept: 'application/json'
   }
