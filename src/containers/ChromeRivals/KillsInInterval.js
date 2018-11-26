@@ -11,6 +11,20 @@ import { parse, stringify } from 'querystring'
 import { callApi } from '../../middleware/api'
 import config from '../../config'
 
+const CRDisclaimer = () => (
+  <small>
+    Server:{' '}
+    <a
+      href="https://chromerivals.net"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      ChromeRivals
+    </a>. Stats displayed here are based on leaderboard data kindly provided by
+    their staff / API.
+  </small>
+)
+
 class KillsInInterval extends Component {
   // TODO: shouldUpdate
 
@@ -187,6 +201,8 @@ class KillsInInterval extends Component {
         ) : (
           this.renderTable(result)
         )}
+
+        <CRDisclaimer />
       </div>
     )
   }
