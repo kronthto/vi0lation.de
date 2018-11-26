@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import { Helmet } from 'react-helmet'
-import renderRoutes from 'react-router-config/renderRoutes'
+import { renderRoutes } from 'react-router-config'
 import routes from '../routes'
 
 import Navi from '../components/Navi'
