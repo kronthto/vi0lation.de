@@ -208,29 +208,49 @@ class KillsInInterval extends Component {
     )
   }
 
+  renderResultStats(result) {
+    if (!(result && result.stats)) {
+      return null
+    }
+
+    return (
+      <ul style={{ fontWeight: 'bold' }}>
+        <li>ANI: {result.stats.byNation.ANI.toLocaleString()}</li>
+        <li>BCU: {result.stats.byNation.BCU.toLocaleString()}</li>
+        <li>I: {result.stats.byGear.I.toLocaleString()}</li>
+        <li>M: {result.stats.byGear.M.toLocaleString()}</li>
+        <li>B: {result.stats.byGear.B.toLocaleString()}</li>
+        <li>A: {result.stats.byGear.A.toLocaleString()}</li>
+      </ul>
+    )
+  }
+
   renderTable(result) {
     return (
-      <div className="scrollX">
-        <table className="table is-striped is-hoverable">
-          <thead>{this.tableInfo()}</thead>
-          <tbody>
-            {result &&
-              result.data &&
-              result.data.map(function(row, idx) {
-                return (
-                  <tr key={row.name}>
-                    <th>{idx + 1}</th>
-                    <td>{colorName(row.name)}</td>
-                    <NumTD num={row.diff} />
-                    <td>{row.gear}</td>
-                    <td>{row.brigade}</td>
-                    <td>{row.nation}</td>
-                  </tr>
-                )
-              })}
-          </tbody>
-          <tfoot>{this.tableInfo()}</tfoot>
-        </table>
+      <div>
+        <div>{this.renderResultStats(result)}</div>
+        <div className="scrollX">
+          <table className="table is-striped is-hoverable">
+            <thead>{this.tableInfo()}</thead>
+            <tbody>
+              {result &&
+                result.data &&
+                result.data.map(function(row, idx) {
+                  return (
+                    <tr key={row.name}>
+                      <th>{idx + 1}</th>
+                      <td>{colorName(row.name)}</td>
+                      <NumTD num={row.diff} />
+                      <td>{row.gear}</td>
+                      <td>{row.brigade}</td>
+                      <td>{row.nation}</td>
+                    </tr>
+                  )
+                })}
+            </tbody>
+            <tfoot>{this.tableInfo()}</tfoot>
+          </table>
+        </div>
       </div>
     )
   }
