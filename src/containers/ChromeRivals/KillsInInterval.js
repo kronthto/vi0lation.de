@@ -10,6 +10,7 @@ import withRouter from 'react-router/withRouter'
 import { parse, stringify } from 'querystring'
 import { callApi } from '../../middleware/api'
 import config from '../../config'
+import { colorName } from '../../utils/AR/names'
 
 const CRDisclaimer = () => (
   <small>
@@ -219,7 +220,7 @@ class KillsInInterval extends Component {
                 return (
                   <tr key={row.name}>
                     <th>{idx + 1}</th>
-                    <td>{row.name}</td>
+                    <td>{colorName(row.name)}</td>
                     <NumTD num={row.diff} />
                     <td>{row.gear}</td>
                     <td>{row.brigade}</td>
