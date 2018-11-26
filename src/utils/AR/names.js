@@ -6,7 +6,7 @@ const colorMap = {
 }
 
 export function colorName(name) {
-  let regex = name.match('^\\\\([a-z])(.*)\\\\[a-z]$')
+  let regex = name.match(/^\\([a-z])(.*)\\[a-z]$/)
   if (!regex) {
     return name
   }
