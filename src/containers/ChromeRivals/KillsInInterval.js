@@ -27,7 +27,7 @@ const CRDisclaimer = () => (
 )
 
 class KillsInInterval extends Component {
-  // TODO: shouldUpdate
+  // TODO: shouldUpdate/Perf
 
   constructor(props) {
     super(props)
@@ -112,7 +112,7 @@ class KillsInInterval extends Component {
       from,
       to
     }
-    history.push(crTopKillsIntervalUrl + '?' + stringify(qs))
+    history.replace(crTopKillsIntervalUrl + '?' + stringify(qs))
     this.queryData(qs)
   }
 
@@ -132,7 +132,7 @@ class KillsInInterval extends Component {
   }
 
   renderForm() {
-    if (!this.props.rankingDates) {
+    if (this.props.rankingDates === null || this.props.isFetchingDates) {
       return (
         <span className="button is-info is-loading" disabled>
           ...
@@ -158,15 +158,16 @@ class KillsInInterval extends Component {
   renderDateField(fromto) {
     let current = this.getQueryParams()[fromto]
     return (
-      <div className="field is-narrow">
+      <div className="field">
         <div className="control">
-          <div className="select">
+          <div className="select is-fullwidth">
             <select
               value={current}
+              name={fromto}
               id={fromto}
               onChange={e => this.dateSelected(e.target.value, fromto)}
             >
-              <option />
+              <option value="">Select {fromto} date ...</option>
               {this.props.rankingDates.map(date => (
                 <option key={date}>{date}</option>
               ))}
@@ -226,6 +227,8 @@ class KillsInInterval extends Component {
   }
 
   renderTable(result) {
+    // Loading: Result === null? Besser iwie mit dem Promise arbeiten. Result ist auch null, wenn noch keine Date-Kombi
+
     return (
       <div>
         <div>{this.renderResultStats(result)}</div>
@@ -264,6 +267,10 @@ const mapStateToProps = state => {
   const rankingDatesStore = state.cr.dates
 
   let rankingDates = null
+  let isFetchingDates = false
+  if (rankingDatesStore) {
+    isFetchingDates = rankingDatesStore.isFetching
+  }
   if (rankingDatesStore && 'data' in rankingDatesStore) {
     rankingDates = rankingDatesStore.data.map(date =>
       dateformat(date.replace(/\+.*$/, ''), 'YYYY-MM-DD HH:mm')
@@ -271,7 +278,8 @@ const mapStateToProps = state => {
   }
 
   return {
-    rankingDates
+    rankingDates,
+    isFetchingDates
   }
 }
 
