@@ -52,14 +52,14 @@ class KillsInInterval extends Component {
       qs = this.getQueryParams()
     }
 
-    this.setState({ result: null })
     let dataPromise = this.constructor.queryForDate(dispatch, qs.from, qs.to)
+    this.setState({ result: null, loadingData: dataPromise })
     if (dataPromise) {
       dataPromise.then(result => {
         if (!('stats' in result)) {
           result = false
         }
-        this.setState({ result })
+        this.setState({ result, loadingData: false })
       })
     }
   }
@@ -226,11 +226,25 @@ class KillsInInterval extends Component {
     )
   }
 
-  renderTable(result) {
-    // Loading: Result === null? Besser iwie mit dem Promise arbeiten. Result ist auch null, wenn noch keine Date-Kombi
+  renderDataLoading() {
+    if (this.state.loadingData) {
+      return (
+        <span
+          className="button is-info is-loading"
+          disabled
+          style={{ width: '80px' }}
+        >
+          ...
+        </span>
+      )
+    }
+    return null
+  }
 
+  renderTable(result) {
     return (
       <div>
+        {this.renderDataLoading()}
         <div>{this.renderResultStats(result)}</div>
         <div className="scrollX">
           <table className="table is-striped is-hoverable">
