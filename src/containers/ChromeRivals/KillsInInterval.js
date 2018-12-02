@@ -182,17 +182,23 @@ class KillsInInterval extends Component {
     const { result } = this.state
     const is404 = result === false
 
+    const { from, to } = this.getQueryParams()
+
+    let desc = 'Kill-Comparison / Ranking of CR players '
+    if (from && to) {
+      desc += `from ${from} to ${to}`
+    } else {
+      desc += 'during any timeframe'
+    }
+
     return (
       <div className="content">
         <Helmet>
-          <meta
-            name="description"
-            content={'Top kills by ChromeRivals player in any timeframe'}
-          />
-          <title>{`ChromeRivals Top fame by time`}</title>
+          <meta name="description" content={desc} />
+          <title>{`ChromeRivals: Fame between`}</title>
         </Helmet>
 
-        <h1 className="title">ChromeRivals Top fame by time</h1>
+        <h1 className="title">ChromeRivals: Fame between</h1>
 
         {this.renderForm()}
 
