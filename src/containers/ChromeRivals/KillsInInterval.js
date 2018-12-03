@@ -26,6 +26,17 @@ const CRDisclaimer = () => (
   </small>
 )
 
+const StatTag = props => (
+  <div className="tags has-addons" style={{ marginBottom: 0 }}>
+    <span className="tag" style={{ minWidth: '75px' }}>
+      {props.label}
+    </span>
+    <span className="tag is-primary" style={{ minWidth: '50px' }}>
+      {props.val.toLocaleString()}
+    </span>
+  </div>
+)
+
 class KillsInInterval extends Component {
   // TODO: shouldUpdate/Perf
 
@@ -220,15 +231,32 @@ class KillsInInterval extends Component {
       return null
     }
 
+    const { stats } = result
+    const countStats = stats.counts
+
     return (
-      <ul style={{ fontWeight: 'bold' }}>
-        <li>ANI: {result.stats.byNation.ANI.toLocaleString()}</li>
-        <li>BCU: {result.stats.byNation.BCU.toLocaleString()}</li>
-        <li>I: {result.stats.byGear.I.toLocaleString()}</li>
-        <li>M: {result.stats.byGear.M.toLocaleString()}</li>
-        <li>B: {result.stats.byGear.B.toLocaleString()}</li>
-        <li>A: {result.stats.byGear.A.toLocaleString()}</li>
-      </ul>
+      <div className="columns">
+        <div className="column">
+          <h3 className="subtitle">Kills</h3>
+          <StatTag label="ANI" val={stats.byNation.ANI} />
+          <StatTag label="BCU" val={stats.byNation.BCU} />
+          <StatTag label="I" val={stats.byGear.I} />
+          <StatTag label="M" val={stats.byGear.M} />
+          <StatTag label="B" val={stats.byGear.B} />
+          <StatTag label="A" val={stats.byGear.A} />
+        </div>
+        <div className="column">
+          <h3 className="subtitle">Player-Count (Fame-Diff ≠ 0)</h3>
+          {['I', 'M', 'B', 'A'].map(gear =>
+            ['ANI', 'BCU'].map(nation => {
+              let lbl = `${gear} ${nation}`
+              return (
+                <StatTag key={lbl} label={lbl} val={countStats[nation][gear]} />
+              )
+            })
+          )}
+        </div>
+      </div>
     )
   }
 
@@ -251,7 +279,8 @@ class KillsInInterval extends Component {
     return (
       <div>
         {this.renderDataLoading()}
-        <div>{this.renderResultStats(result)}</div>
+        <h2 className="subtitle">Stats</h2>
+        {this.renderResultStats(result)}
         <div className="scrollX">
           <table className="table is-striped is-hoverable">
             <thead>{this.tableInfo()}</thead>
