@@ -13,6 +13,7 @@ import EPList from './components/AR/EPList'
 import FBTool from './components/AR/FBTool'
 import Highscores from './containers/AR/Highscores'
 import CrTopKillsInterval from './containers/ChromeRivals/KillsInInterval'
+import CrPlayerFame from './containers/ChromeRivals/PlayerFameChart'
 
 import NoMatch from './components/NoMatch'
 
@@ -72,6 +73,10 @@ const routes = [
   {
     path: crTopKillsIntervalUrl,
     component: CrTopKillsInterval
+  },
+  {
+    path: '/ranking/chromerivals/playerFame',
+    component: CrPlayerFame
   },
   {
     component: NoMatch

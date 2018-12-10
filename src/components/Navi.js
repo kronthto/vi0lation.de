@@ -76,6 +76,9 @@ class Navi extends Component {
                   <NavLink to={crTopKillsIntervalUrl}>
                     ChromeRivals FFA kills
                   </NavLink>
+                  <NavLink to="/ranking/chromerivals/playerFame">
+                    ChromeRivals Player fame
+                  </NavLink>
                 </div>
               </NavTab>
               <NavTab>

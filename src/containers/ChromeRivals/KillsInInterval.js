@@ -12,7 +12,7 @@ import { callApi } from '../../middleware/api'
 import config from '../../config'
 import { colorName } from '../../utils/AR/names'
 
-const CRDisclaimer = () => (
+export const CRDisclaimer = () => (
   <small>
     Server:{' '}
     <a
