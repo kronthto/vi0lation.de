@@ -276,6 +276,8 @@ class KillsInInterval extends Component {
   }
 
   renderTable(result) {
+    let lastKillNum = null
+
     return (
       <div>
         {this.renderDataLoading()}
@@ -288,9 +290,12 @@ class KillsInInterval extends Component {
               {result &&
                 result.data &&
                 result.data.map(function(row, idx) {
+                  let showLadder = lastKillNum !== row.diff
+                  lastKillNum = row.diff
+
                   return (
                     <tr key={row.name}>
-                      <th>{idx + 1}</th>
+                      <th>{showLadder ? idx + 1 : null}</th>
                       <td>{colorName(row.name)}</td>
                       <NumTD num={row.diff} />
                       <td>{row.gear}</td>
