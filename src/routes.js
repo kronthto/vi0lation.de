@@ -16,20 +16,30 @@ import { maxDate } from './data/dataset'
 
 import lazyImport from './utils/lazyImportHack'
 import { asyncComponent } from 'react-async-component'
+import LoadSpinner from './components/LoadSpinner'
 
 export const highscoresUrl = '/ranking/de/highscores'
 export const crTopKillsIntervalUrl = '/ranking/chromerivals/topkillsinterval'
 
-// TODO: Loading/Error comps, auch Chart
-const AsyncARHighscores = asyncComponent({
-  resolve: () => lazyImport(import('./containers/AR/Highscores'))
-})
-const AsyncCrTopKillsInterval = asyncComponent({
-  resolve: () => lazyImport(import('./containers/ChromeRivals/KillsInInterval'))
-})
-const AsyncCrPlayerFame = asyncComponent({
-  resolve: () => lazyImport(import('./containers/ChromeRivals/PlayerFameChart'))
-})
+const LoadingComponent = () => (
+  <div
+    style={{
+      width: '100%',
+      display: 'flex',
+      height: '220px',
+      justifyContent: 'center'
+    }}
+  >
+    <LoadSpinner style={{ alignSelf: 'center' }} />
+  </div>
+)
+
+const makeAsync = resolve => {
+  return asyncComponent({
+    resolve,
+    LoadingComponent
+  })
+}
 
 const routes = [
   {
@@ -64,15 +74,11 @@ const routes = [
   },
   {
     path: '/ranking/eplist',
-    component: asyncComponent({
-      resolve: () => lazyImport(import('./components/AR/EPList'))
-    })
+    component: makeAsync(() => lazyImport(import('./components/AR/EPList')))
   },
   {
     path: '/ranking/fbtool',
-    component: asyncComponent({
-      resolve: () => lazyImport(import('./components/AR/FBTool'))
-    })
+    component: makeAsync(() => lazyImport(import('./components/AR/FBTool')))
   },
   {
     path: highscoresUrl,
@@ -81,15 +87,19 @@ const routes = [
   },
   {
     path: highscoresUrl + '/:date(\\d{4}-\\d{2}-\\d{2})',
-    component: AsyncARHighscores
+    component: makeAsync(() => lazyImport(import('./containers/AR/Highscores')))
   },
   {
     path: crTopKillsIntervalUrl,
-    component: AsyncCrTopKillsInterval
+    component: makeAsync(() =>
+      lazyImport(import('./containers/ChromeRivals/KillsInInterval'))
+    )
   },
   {
     path: '/ranking/chromerivals/playerFame',
-    component: AsyncCrPlayerFame
+    component: makeAsync(() =>
+      lazyImport(import('./containers/ChromeRivals/PlayerFameChart'))
+    )
   },
   {
     component: NoMatch
