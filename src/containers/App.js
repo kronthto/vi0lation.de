@@ -26,8 +26,8 @@ export const queryData = dispatch => {
 }
 
 class App extends Component {
-  static fetchData(store) {
-    return queryData(store.dispatch)
+  bootstrap() {
+    return queryData(this.props.dispatch)
   }
 
   componentDidMount() {

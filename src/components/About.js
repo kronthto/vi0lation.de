@@ -3,13 +3,7 @@ import { connect } from 'react-redux'
 import { Helmet } from 'react-helmet'
 import MarkdownViewer from './MarkdownViewer'
 
-import { queryData as queryCmsData } from '../containers/App'
-
 class About extends PureComponent {
-  static fetchData(store) {
-    return queryCmsData(store.dispatch)
-  }
-
   render() {
     const { content } = this.props
 

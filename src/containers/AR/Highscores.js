@@ -11,14 +11,17 @@ import { calcProgessBarByEp } from '../../utils/AR/ep'
 import { fetchHighscoreIfNeeded } from '../../actions/highscores'
 import { highscoresUrl } from '../../routes'
 import withRouter from 'react-router/withRouter'
+import { isNode } from '../../utils/env'
 
 const region = 'de'
 
 class Ranking extends Component {
   // TODO: shouldUpdate
 
-  static fetchData(store, match) {
-    return this.queryForDate(store.dispatch, match.params.date)
+  bootstrap() {
+    if (isNode) {
+      return this.queryCurrentDate()
+    }
   }
 
   componentDidMount() {
@@ -33,7 +36,7 @@ class Ranking extends Component {
 
   queryCurrentDate() {
     const { dispatch, date } = this.props
-    this.constructor.queryForDate(dispatch, date)
+    return this.constructor.queryForDate(dispatch, date)
   }
 
   static queryForDate(dispatch, date) {

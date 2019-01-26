@@ -1,8 +1,9 @@
 import 'izitoast/dist/css/iziToast.min.css'
+import { isBrowser } from './env'
 
 let toast
 
-if (typeof window !== 'undefined') {
+if (isBrowser) {
   toast = require('izitoast')
 }
 

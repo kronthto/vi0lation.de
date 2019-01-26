@@ -1,5 +1,7 @@
+import { isBrowser } from './env'
+
 export default function lazyImport(promise) {
-  if (typeof window !== 'undefined') {
+  if (isBrowser) {
     // Browser
     return promise
   }
