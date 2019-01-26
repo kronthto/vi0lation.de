@@ -9,13 +9,12 @@ import About from './components/About'
 import Contact from './components/Contact'
 
 import RankingInfo from './components/AR/RankingInfo'
-import EPList from './components/AR/EPList'
-import FBTool from './components/AR/FBTool'
 
 import NoMatch from './components/NoMatch'
 
 import { maxDate } from './data/dataset'
 
+import lazyImport from './utils/lazyImportHack'
 import { asyncComponent } from 'react-async-component'
 
 export const highscoresUrl = '/ranking/de/highscores'
@@ -23,13 +22,13 @@ export const crTopKillsIntervalUrl = '/ranking/chromerivals/topkillsinterval'
 
 // TODO: Loading/Error comps, auch Chart
 const AsyncARHighscores = asyncComponent({
-  resolve: () => import('./containers/AR/Highscores')
+  resolve: () => lazyImport(import('./containers/AR/Highscores'))
 })
 const AsyncCrTopKillsInterval = asyncComponent({
-  resolve: () => import('./containers/ChromeRivals/KillsInInterval')
+  resolve: () => lazyImport(import('./containers/ChromeRivals/KillsInInterval'))
 })
 const AsyncCrPlayerFame = asyncComponent({
-  resolve: () => import('./containers/ChromeRivals/PlayerFameChart')
+  resolve: () => lazyImport(import('./containers/ChromeRivals/PlayerFameChart'))
 })
 
 const routes = [
@@ -65,11 +64,15 @@ const routes = [
   },
   {
     path: '/ranking/eplist',
-    component: EPList
+    component: asyncComponent({
+      resolve: () => lazyImport(import('./components/AR/EPList'))
+    })
   },
   {
     path: '/ranking/fbtool',
-    component: FBTool
+    component: asyncComponent({
+      resolve: () => lazyImport(import('./components/AR/FBTool'))
+    })
   },
   {
     path: highscoresUrl,

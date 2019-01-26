@@ -10,6 +10,13 @@ const { default: App } = require('../src/containers/App')
 
 const { default: routes } = require('../src/routes')
 
+import {
+  AsyncComponentProvider,
+  createAsyncContext
+} from 'react-async-component'
+import asyncBootstrapper from 'react-async-bootstrapper'
+import serialize from 'serialize-javascript'
+
 // const HugeStores = []
 
 const { getStoreData, saveStoreData } = require('./PersistentStoreData')
@@ -23,53 +30,68 @@ module.exports = function universalLoader(req, res, next) {
       const context = {}
       const store = configureStore(getStoreData())
 
-      const requiredData = []
-      const branch = matchRoutes(routes, req.url)
-      branch.forEach(({ route, match }) => {
-        if (route.component && route.component.fetchData) {
-          requiredData.push(route.component.fetchData(store, match))
-        }
-      })
+      const asyncContext = createAsyncContext()
 
-      Promise.all(requiredData)
+      const app = (
+        <AsyncComponentProvider asyncContext={asyncContext}>
+          <Provider store={store}>
+            <StaticRouter location={req.url} context={context}>
+              <App />
+            </StaticRouter>
+          </Provider>
+        </AsyncComponentProvider>
+      )
+
+      asyncBootstrapper(app)
         .then(() => {
-          const markup = renderToString(
-            <Provider store={store}>
-              <StaticRouter location={req.url} context={context}>
-                <App />
-              </StaticRouter>
-            </Provider>
-          )
+          // TODO: possibly remove this old approach / use asynbootstrapping
+          const requiredData = []
+          const branch = matchRoutes(routes, req.url)
+          branch.forEach(({ route, match }) => {
+            if (route.component && route.component.fetchData) {
+              requiredData.push(route.component.fetchData(store, match))
+            }
+          })
 
-          if (context.url) {
-            // Somewhere a `<Redirect>` was rendered
-            res.redirect(context.statusCode || 302, context.url)
-          } else {
-            const helmet = Helmet.renderStatic()
+          Promise.all(requiredData)
+            .then(() => {
+              const markup = renderToString(app)
 
-            // let storeForClient = store.getState()
-            // let storeToPersist = Object.assign({}, storeForClient)
+              if (context.url) {
+                // Somewhere a `<Redirect>` was rendered
+                res.redirect(context.statusCode || 302, context.url)
+              } else {
+                const helmet = Helmet.renderStatic()
 
-            // Remove some really big blobs. The client should rather refetch that, so the document we deliver isn't that huge.
-            // But we want them persisted serverside.
-            // HugeStores.forEach(key => delete storeForClient[key])
+                // let storeForClient = store.getState()
+                // let storeToPersist = Object.assign({}, storeForClient)
 
-            // we're good, send the response
-            const RenderedApp = htmlData
-              .replace('{{SSR}}', markup)
-              // .replace('{{WINDOW_DATA}}', JSON.stringify(storeForClient)) // TODO: Pass data, but only highscores for current page to prevent deleting and rebuilding the table
-              .replace(
-                '{{HELMET_HEAD}}',
-                helmet.title.toString() +
-                  helmet.meta.toString() +
-                  helmet.link.toString()
-              )
+                // Remove some really big blobs. The client should rather refetch that, so the document we deliver isn't that huge.
+                // But we want them persisted serverside.
+                // HugeStores.forEach(key => delete storeForClient[key])
 
-            res.status(context.statusCode || 200).send(RenderedApp)
+                // we're good, send the response
+                const RenderedApp = htmlData
+                  .replace('{{SSR}}', markup)
+                  // .replace('{{WINDOW_DATA}}', serialize(storeForClient)) // TODO: Pass data, but only highscores for current page to prevent deleting and rebuilding the table
+                  .replace(
+                    '{{HELMET_HEAD}}',
+                    helmet.title.toString() +
+                      helmet.meta.toString() +
+                      helmet.link.toString()
+                  )
+                  .replace(
+                    '{{ASYNC_COMPONENTS_STATE}}',
+                    serialize(asyncContext.getState())
+                  )
 
-            // Persist the store data (API Results) for the next request
-            saveStoreData(store.getState())
-          }
+                res.status(context.statusCode || 200).send(RenderedApp)
+
+                // Persist the store data (API Results) for the next request
+                saveStoreData(store.getState())
+              }
+            })
+            .catch(errorCB)
         })
         .catch(errorCB)
     })

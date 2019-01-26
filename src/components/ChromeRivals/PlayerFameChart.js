@@ -6,7 +6,8 @@ import isEqual from 'lodash.isequal'
 import { asyncComponent } from 'react-async-component'
 
 const AsyncLineChart = asyncComponent({
-  resolve: () => import('react-chartjs-2') // TODO: Try named again
+  resolve: () => import('react-chartjs-2'), // TODO: Try named again
+  serverMode: 'defer'
 })
 
 const options = {

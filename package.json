@@ -37,6 +37,7 @@
     "morgan": "^1.9.1",
     "prop-types": "^15.6.2",
     "react": "^16.7.0",
+    "react-async-bootstrapper": "^2.1.1",
     "react-async-component": "^2.0.0",
     "react-chartjs-2": "^2.7.4",
     "react-dom": "^16.7.0",
@@ -48,6 +49,7 @@
     "redux": "^3.7.2",
     "redux-persist": "^4.10.2",
     "redux-thunk": "^2.3.0",
+    "serialize-javascript": "^1.6.1",
     "serve-favicon": "^2.5.0"
   },
   "lint-staged": {
@@ -76,8 +78,8 @@
     "precommit": "lint-staged",
     "test": "eslint src/**/*.{js,jsx} && prettier --single-quote --no-semi -l src/**/*.{js,jsx,json,css,scss} && prettier --single-quote --no-semi -l server/**/*.js",
     "start": "react-scripts start",
-    "start:server": "cross-env NODE_ENV=development node server/index.js",
-    "now-start": "cross-env NODE_ENV=production node server/index.js",
+    "start:server": "cross-env NODE_ENV=development node --experimental-modules server/index.js",
+    "now-start": "cross-env NODE_ENV=production node --experimental-modules server/index.js",
     "build": "react-scripts build"
   }
 }

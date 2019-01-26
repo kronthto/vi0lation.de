@@ -20,5 +20,6 @@ export const indexhtmlDirect = indexhtmlPromise.then(htmlData => {
       '<img style="margin-left:50%" src="//cdn.vi0lation.de/img/viologo.png" alt="Vi0"/><noscript><div class="notification is-danger">JavaScript is required to run this App.</div></noscript>'
     )
     .replace(/DATA\s*=\s*{{.*?}}/g, '')
+    .replace(/ASYNC_COMPONENTS_STATE\s*=\s*{{.*?}}/g, '')
     .replace(/{{.*?}}/g, '')
 })
