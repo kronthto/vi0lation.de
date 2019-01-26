@@ -21,9 +21,7 @@ class Ranking extends Component {
   }
 
   componentDidMount() {
-    this.context.rehydrated.then(() => {
-      this.queryCurrentDate()
-    })
+    this.queryCurrentDate()
   }
 
   componentDidUpdate(prevProps) {
@@ -199,7 +197,6 @@ Ranking.propTypes = {
 }
 
 Ranking.contextTypes = {
-  rehydrated: PropTypes.object.isRequired,
   router: PropTypes.shape({
     staticContext: PropTypes.object
   }).isRequired

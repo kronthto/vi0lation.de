@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Helmet } from 'react-helmet'
 import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
 import dateformat from 'date-fns/format'
 import NumTD from '../../components/AR/NumTD'
 import { fetchDatesIfNeeded } from '../../actions/cr'
@@ -46,10 +45,8 @@ class KillsInInterval extends Component {
   }
 
   componentDidMount() {
-    this.context.rehydrated.then(() => {
-      this.queryAvailableDates()
-      this.queryData()
-    })
+    this.queryAvailableDates()
+    this.queryData()
   }
 
   queryAvailableDates() {
@@ -311,10 +308,6 @@ class KillsInInterval extends Component {
       </div>
     )
   }
-}
-
-KillsInInterval.contextTypes = {
-  rehydrated: PropTypes.object.isRequired
 }
 
 const mapStateToProps = state => {

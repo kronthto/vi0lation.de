@@ -2,8 +2,12 @@ import React, { Component } from 'react'
 import { callApi } from '../../middleware/api'
 import config from '../../config'
 import colors from '../../utils/colors'
-import { Line } from 'react-chartjs-2'
 import isEqual from 'lodash.isequal'
+import { asyncComponent } from 'react-async-component'
+
+const AsyncLineChart = asyncComponent({
+  resolve: () => import('react-chartjs-2') // TODO: Try named again
+})
 
 const options = {
   elements: {
@@ -141,7 +145,7 @@ class PlayerFameChart extends Component {
       })
     })
 
-    return <Line options={options} data={{ datasets }} />
+    return <AsyncLineChart options={options} data={{ datasets }} type="line" />
   }
 }
 

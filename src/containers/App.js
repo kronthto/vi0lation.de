@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import { Helmet } from 'react-helmet'
@@ -32,9 +31,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.context.rehydrated.then(() => {
-      queryData(this.props.dispatch)
-    })
+    queryData(this.props.dispatch)
   }
 
   render() {
@@ -62,10 +59,6 @@ class App extends Component {
       </div>
     )
   }
-}
-
-App.contextTypes = {
-  rehydrated: PropTypes.object.isRequired
 }
 
 export default connect(null, null, null, { pure: false })(App)

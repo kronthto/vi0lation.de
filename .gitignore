@@ -19,3 +19,5 @@ debug.log
 # styles
 .sass-cache
 /src/style/bulma.css
+
+.idea

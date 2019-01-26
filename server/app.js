@@ -1,14 +1,16 @@
 require('ignore-styles')
-const bodyParser = require('body-parser')
-const compression = require('compression')
 const express = require('express')
 const morgan = require('morgan')
 const path = require('path')
 const favicon = require('serve-favicon')
 
-require('babel-register')({
-  ignore: /\/(build|node_modules)\//,
-  presets: ['env', 'react-app']
+require('@babel/register')({
+  ignore: [/\/(build|node_modules)\//],
+  presets: ['@babel/preset-env', '@babel/preset-react'],
+  plugins: [
+    '@babel/plugin-syntax-dynamic-import',
+    '@babel/plugin-proposal-class-properties'
+  ]
 })
 
 // routes
@@ -16,13 +18,6 @@ const universalLoader = require('./universal')
 const { indexhtmlDirect } = require('./indexhtml')
 
 const app = express()
-
-// Support Gzip
-app.use(compression())
-
-// Support post requests with body data (doesn't support multipart, use multer)
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: false }))
 
 // Server favicon before to not show up in logs
 app.use(favicon(path.join(__dirname, '../build', 'favicon.ico')))

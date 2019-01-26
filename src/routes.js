@@ -11,16 +11,26 @@ import Contact from './components/Contact'
 import RankingInfo from './components/AR/RankingInfo'
 import EPList from './components/AR/EPList'
 import FBTool from './components/AR/FBTool'
-import Highscores from './containers/AR/Highscores'
-import CrTopKillsInterval from './containers/ChromeRivals/KillsInInterval'
-import CrPlayerFame from './containers/ChromeRivals/PlayerFameChart'
 
 import NoMatch from './components/NoMatch'
 
 import { maxDate } from './data/dataset'
 
+import { asyncComponent } from 'react-async-component'
+
 export const highscoresUrl = '/ranking/de/highscores'
 export const crTopKillsIntervalUrl = '/ranking/chromerivals/topkillsinterval'
+
+// TODO: Loading/Error comps, auch Chart
+const AsyncARHighscores = asyncComponent({
+  resolve: () => import('./containers/AR/Highscores')
+})
+const AsyncCrTopKillsInterval = asyncComponent({
+  resolve: () => import('./containers/ChromeRivals/KillsInInterval')
+})
+const AsyncCrPlayerFame = asyncComponent({
+  resolve: () => import('./containers/ChromeRivals/PlayerFameChart')
+})
 
 const routes = [
   {
@@ -68,15 +78,15 @@ const routes = [
   },
   {
     path: highscoresUrl + '/:date(\\d{4}-\\d{2}-\\d{2})',
-    component: Highscores
+    component: AsyncARHighscores
   },
   {
     path: crTopKillsIntervalUrl,
-    component: CrTopKillsInterval
+    component: AsyncCrTopKillsInterval
   },
   {
     path: '/ranking/chromerivals/playerFame',
-    component: CrPlayerFame
+    component: AsyncCrPlayerFame
   },
   {
     component: NoMatch
