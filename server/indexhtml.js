@@ -17,7 +17,7 @@ export const indexhtmlDirect = indexhtmlPromise.then(htmlData => {
   return htmlData
     .replace(
       /{{SSR}}/,
-      '<img style="margin-left:50%" src="//cdn.vi0lation.de/img/viologo.png" alt="Vi0"/><noscript><div class="notification is-danger">JavaScript is required to run this App.</div></noscript>'
+      '<noscript><div class="notification is-danger">JavaScript is required to run this App.</div></noscript><div id="preloader" style="width:100%;display:flex;height:100vh;justify-content:center"><div class="lds-dual-ring" style="align-self:center"></div></div>'
     )
     .replace(/DATA\s*=\s*{{.*?}}/g, '')
     .replace(/ASYNC_COMPONENTS_STATE\s*=\s*{{.*?}}/g, '')

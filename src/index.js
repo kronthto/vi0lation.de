@@ -42,13 +42,18 @@ let rehydratePromise = new Promise(resolve => {
 })
 
 const root = document.getElementById('root')
+const preloader = document.getElementById('preloader')
 
 Promise.all([asyncBsPromise, rehydratePromise]).then(() => {
   renderApp()
 })
 
 function renderApp() {
-  ReactDOM.hydrate(app, root)
+  if (preloader) {
+    ReactDOM.render(app, root)
+  } else {
+    ReactDOM.hydrate(app, root)
+  }
 }
 
 serviceWorker.register()
