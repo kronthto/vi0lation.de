@@ -8,6 +8,8 @@ import routes from '../routes'
 import Navi from '../components/Navi'
 import Footer from '../components/Footer'
 
+import { isNode } from '../utils/env'
+
 import { fetchCmsIfNeeded } from '../actions/cms'
 
 const defaultMeta = () => {
@@ -27,7 +29,9 @@ export const queryData = dispatch => {
 
 class App extends Component {
   bootstrap() {
-    return queryData(this.props.dispatch)
+    if (isNode) {
+      return queryData(this.props.dispatch)
+    }
   }
 
   componentDidMount() {
