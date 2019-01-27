@@ -4,10 +4,12 @@ import config from '../../config'
 import colors from '../../utils/colors'
 import isEqual from 'lodash.isequal'
 import { asyncComponent } from 'react-async-component'
+import LoadBlock from '../LoadBlock'
 
 const AsyncLineChart = asyncComponent({
   resolve: () => import('react-chartjs-2'),
-  serverMode: 'defer'
+  serverMode: 'defer',
+  LoadingComponent: () => <LoadBlock height="250px" />
 })
 
 const options = {
@@ -86,7 +88,10 @@ class PlayerFameChart extends Component {
     let dataPromise = this.constructor.queryPlayers(this.props.names)
     this.setState({ data: null, loadingData: dataPromise })
     dataPromise.then(data => {
-      this.setState({ data, loadingData: false })
+      this.setState({
+        data: data.filter(player => typeof player === 'object'),
+        loadingData: false
+      })
     })
   }
 
@@ -110,11 +115,7 @@ class PlayerFameChart extends Component {
     if (this.state.loadingData) {
       return (
         <div>
-          <span
-            className="button is-info is-loading"
-            disabled
-            style={{ width: '80px' }}
-          >
+          <span className="button is-info is-loading" style={{ width: '80px' }}>
             ...
           </span>
         </div>
@@ -124,14 +125,17 @@ class PlayerFameChart extends Component {
     if (!allData) {
       return null
     }
+    if (allData.length === 0) {
+      return (
+        <div className="notification is-info">
+          No data available or player not found
+        </div>
+      )
+    }
 
     let datasets = []
 
     allData.forEach((player, i) => {
-      if (typeof player !== 'object') {
-        return
-      }
-
       datasets.push({
         label: player.name,
         fill: false,
@@ -146,7 +150,11 @@ class PlayerFameChart extends Component {
       })
     })
 
-    return <AsyncLineChart options={options} data={{ datasets }} type="line" />
+    return (
+      <div>
+        <AsyncLineChart options={options} data={{ datasets }} type="line" />
+      </div>
+    ) // Additional div for the chartJS size monitor that would otherwise interfere with h1 "not first child" margin
   }
 }
 
