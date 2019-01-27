@@ -16,23 +16,12 @@ import { maxDate } from './data/dataset'
 
 import lazyImport from './utils/lazyImportHack'
 import { asyncComponent } from 'react-async-component'
-import LoadSpinner from './components/LoadSpinner'
+import LoadBlock from './components/LoadBlock'
 
 export const highscoresUrl = '/ranking/de/highscores'
 export const crTopKillsIntervalUrl = '/ranking/chromerivals/topkillsinterval'
 
-const LoadingComponent = () => (
-  <div
-    style={{
-      width: '100%',
-      display: 'flex',
-      height: '220px',
-      justifyContent: 'center'
-    }}
-  >
-    <LoadSpinner style={{ alignSelf: 'center' }} />
-  </div>
-)
+const LoadingComponent = () => <LoadBlock height="220px" />
 
 const makeAsync = resolve => {
   return asyncComponent({
