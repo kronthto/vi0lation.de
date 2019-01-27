@@ -86,11 +86,7 @@ class Ranking extends Component {
     if (data || data === false) {
       return null
     }
-    return (
-      <span className="button is-info is-loading" disabled>
-        ...
-      </span>
-    )
+    return <span className="button is-info is-loading">...</span>
   }
 
   renderForm() {

@@ -141,11 +141,7 @@ class KillsInInterval extends Component {
 
   renderForm() {
     if (this.props.rankingDates === null || this.props.isFetchingDates) {
-      return (
-        <span className="button is-info is-loading" disabled>
-          ...
-        </span>
-      )
+      return <span className="button is-info is-loading">...</span>
     }
 
     return (
@@ -260,11 +256,7 @@ class KillsInInterval extends Component {
   renderDataLoading() {
     if (this.state.loadingData) {
       return (
-        <span
-          className="button is-info is-loading"
-          disabled
-          style={{ width: '80px' }}
-        >
+        <span className="button is-info is-loading" style={{ width: '80px' }}>
           ...
         </span>
       )
