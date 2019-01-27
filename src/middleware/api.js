@@ -84,12 +84,16 @@ export default store => next => action => {
       ),
     error => {
       warnAboutError(error, additionalOpts, endpoint)
-      next(
-        actionWith({
-          type: failureType,
-          error
-        })
-      )
+
+      if (failureType) {
+        next(
+          actionWith({
+            type: failureType,
+            error
+          })
+        )
+      }
+
       throw error
     }
   )
