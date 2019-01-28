@@ -26,6 +26,9 @@ class FrameBreakCalculator extends Component {
     if (this.state.firingMode !== prevState.firingMode) {
       return true
     }
+    if (this.state.fps !== prevState.fps) {
+      return true
+    }
 
     return false
   }
@@ -34,16 +37,17 @@ class FrameBreakCalculator extends Component {
     e.preventDefault()
     this.setState({
       baseRea: Number(this.refs.rea.value),
-      firingMode: Number(this.refs.mode.value)
+      firingMode: Number(this.refs.mode.value),
+      fps: Number(this.refs.fps.value)
     })
   }
 
   render() {
-    const { baseRea, firingMode } = this.state
+    const { baseRea, firingMode, fps } = this.state
     const legend = <TableLegend />
     let data
     if (baseRea && firingMode) {
-      data = calcFbs(baseRea, firingMode)
+      data = calcFbs(baseRea, firingMode, fps || undefined)
     }
 
     // TODO: Auslagern von generischen Form Stuff
@@ -94,6 +98,32 @@ class FrameBreakCalculator extends Component {
                     placeholder="3"
                     aria-label="Firing Mode"
                     ref="mode"
+                    onChange={this.calculate.bind(this)}
+                  />
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="field is-horizontal">
+            <div className="field-label is-normal">
+              <label className="label" htmlFor="fpsinput">
+                FPS
+              </label>
+            </div>
+            <div className="field-body">
+              <div className="field is-narrow">
+                <p className="control">
+                  <input
+                    className="input"
+                    type="number"
+                    id="fpsinput"
+                    min="1"
+                    max="999"
+                    step="1"
+                    placeholder={60}
+                    defaultValue={60}
+                    aria-label="FPS"
+                    ref="fps"
                     onChange={this.calculate.bind(this)}
                   />
                 </p>
