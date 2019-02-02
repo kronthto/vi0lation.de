@@ -288,7 +288,17 @@ class KillsInInterval extends Component {
                       <td>{colorName(row.name)}</td>
                       <NumTD num={row.diff} />
                       <td>{row.gear}</td>
-                      <td>{row.brigade}</td>
+                      <td>
+                        {row.brigade && (
+                          <img
+                            src={`https://api.vi0lation.de/api/chromerivals/brigmark?name=${encodeURIComponent(
+                              row.brigade
+                            )}`}
+                            alt={row.brigade}
+                          />
+                        )}{' '}
+                        {row.brigade}
+                      </td>
                       <td>{row.nation}</td>
                     </tr>
                   )
