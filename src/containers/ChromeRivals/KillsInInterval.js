@@ -289,7 +289,7 @@ class KillsInInterval extends Component {
                       <td style={{ whiteSpace: 'nowrap' }}>
                         {row.brigade && (
                           <img
-                            src={`https://api.vi0lation.de/api/chromerivals/brigmark?name=${encodeURIComponent(
+                            src={`${config.apibase}chromerivals/brigmark?name=${encodeURIComponent(
                               row.brigade
                             )}`}
                             alt={row.brigade}
