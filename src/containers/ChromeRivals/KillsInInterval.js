@@ -42,6 +42,18 @@ class KillsInInterval extends Component {
   constructor(props) {
     super(props)
     this.state = { result: null }
+    this.TableInfo = (
+      <tr>
+        <th>
+          <abbr title="Ladder position">#</abbr>
+        </th>
+        <th>Name</th>
+        <th>Fame-Diff</th>
+        <th>Gear</th>
+        <th>Brigade</th>
+        <th>Nation</th>
+      </tr>
+    )
   }
 
   componentDidMount() {
@@ -122,21 +134,6 @@ class KillsInInterval extends Component {
     }
     history.replace(crTopKillsIntervalUrl + '?' + stringify(qs))
     this.queryData(qs)
-  }
-
-  tableInfo() {
-    return (
-      <tr>
-        <th>
-          <abbr title="Ladder position">#</abbr>
-        </th>
-        <th>Name</th>
-        <th>Fame-Diff</th>
-        <th>Gear</th>
-        <th>Brigade</th>
-        <th>Nation</th>
-      </tr>
-    )
   }
 
   renderForm() {
@@ -274,7 +271,7 @@ class KillsInInterval extends Component {
         {this.renderResultStats(result)}
         <div className="scrollX">
           <table className="table is-striped is-hoverable">
-            <thead>{this.tableInfo()}</thead>
+            <thead>{this.TableInfo}</thead>
             <tbody>
               {result &&
                 result.data &&
@@ -288,7 +285,7 @@ class KillsInInterval extends Component {
                       <td>{colorName(row.name)}</td>
                       <NumTD num={row.diff} />
                       <td>{row.gear}</td>
-                      <td>
+                      <td style={{ whiteSpace: 'nowrap' }}>
                         {row.brigade && (
                           <img
                             src={`https://api.vi0lation.de/api/chromerivals/brigmark?name=${encodeURIComponent(
@@ -304,7 +301,7 @@ class KillsInInterval extends Component {
                   )
                 })}
             </tbody>
-            <tfoot>{this.tableInfo()}</tfoot>
+            <tfoot>{this.TableInfo}</tfoot>
           </table>
         </div>
       </div>
