@@ -10,6 +10,7 @@ import { parse, stringify } from 'querystring'
 import { callApi } from '../../middleware/api'
 import config from '../../config'
 import { colorName } from '../../utils/AR/names'
+import blankImg from '../../img/000000-0.png'
 
 export const CRDisclaimer = () => (
   <small>
@@ -292,6 +293,13 @@ class KillsInInterval extends Component {
                               row.brigade
                             )}`}
                             alt={row.brigade}
+                            width="24"
+                            height="12"
+                            style={{ height: '12px' }}
+                            onError={e => {
+                              e.target.onerror = null
+                              e.target.src = blankImg
+                            }}
                           />
                         )}{' '}
                         {row.brigade}
