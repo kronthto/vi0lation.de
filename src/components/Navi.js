@@ -73,6 +73,7 @@ class Navi extends Component {
                   <NavLink to={highscoresUrl}>Prokyon/DE Highscores</NavLink>
                   <NavLink to="/ranking/eplist">EP List</NavLink>
                   <NavLink to="/ranking/fbtool">FrameBreak Tool</NavLink>
+                  <NavLink to="/ranking/statcalc">StatCalc</NavLink>
                   <NavLink to={crTopKillsIntervalUrl}>
                     ChromeRivals FFA kills
                   </NavLink>

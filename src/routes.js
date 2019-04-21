@@ -70,6 +70,10 @@ const routes = [
     component: makeAsync(() => lazyImport(import('./components/AR/FBTool')))
   },
   {
+    path: '/ranking/statcalc',
+    component: makeAsync(() => lazyImport(import('./components/AR/StatCalc')))
+  },
+  {
     path: highscoresUrl,
     exact: true,
     component: () => <Redirect to={highscoresUrl + '/' + maxDate} />
