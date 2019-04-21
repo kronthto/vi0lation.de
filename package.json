@@ -15,7 +15,7 @@
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/preset-env": "^7.4.3",
     "aceonline-framebreak": "^1.1.0",
-    "aceonline-stats": "^1.0.0",
+    "aceonline-stats": "^1.1.0",
     "body-parser": "^1.18.3",
     "bulma": "0.6.0",
     "chart.js": "^2.8.0",
