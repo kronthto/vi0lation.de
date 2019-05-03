@@ -5,14 +5,24 @@ import { formatNum } from '../../utils/num'
 const stats = ['atk', 'def', 'eva', 'fuel', 'spirit', 'shield']
 const cardStyle = { height: '100%' }
 
+const { gearStatChange } = aostats
+
 class StatCalcTool extends Component {
   constructor(props) {
     super(props)
 
-    let initState = {}
+    let initState = { gear: 'B', cpus: {} }
     stats.forEach(statName => (initState[statName] = 0))
     this.state = initState
   }
+
+  /*
+  componentDidMount() {
+    fetch('http://localhost:8000/api/chromerivals/omi?category=item&where=kind:26,ReqMinLevel:>=:105') // TODO: USe callApi, save in redux / action creator? // Select CR as server
+      .then(res => res.json())
+      .then(cpus => this.setState({cpus}))
+  }
+  */
 
   calculate(e) {
     e.preventDefault()
@@ -25,10 +35,12 @@ class StatCalcTool extends Component {
   }
 
   statInput(id, label) {
+    const { gear } = this.state
+    const statByGear = gearStatChange[gear]
     return (
       <div className="column is-half">
         <label className="label" htmlFor={id}>
-          {label}
+          {label} ({statByGear[id]})
         </label>
         <input
           className="input"
@@ -47,8 +59,27 @@ class StatCalcTool extends Component {
   }
 
   render() {
+    const { gear, cpus } = this.state
+
     return (
       <div>
+        <div className="tabs is-toggle is-fullwidth">
+          <ul style={{ margin: 0 }}>
+            {Object.keys(gearStatChange).map(gearEach => (
+              <li
+                className={gear === gearEach ? 'is-active' : undefined}
+                key={gearEach}
+                style={{ marginTop: 0 }}
+              >
+                {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                <a onClick={() => this.setState({ gear: gearEach })}>
+                  <span>{`${gearEach}-Gear`}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
         <div className="columns is-multiline">
           {this.statInput('atk', 'Attack')}
           {this.statInput('fuel', 'Fuel')}
@@ -66,7 +97,7 @@ class StatCalcTool extends Component {
   }
 
   result() {
-    const { atk, def, eva, fuel, spirit, shield } = this.state
+    const { atk, def, eva, fuel, spirit, shield, gear } = this.state
 
     return (
       <div className="columns">
@@ -80,7 +111,7 @@ class StatCalcTool extends Component {
                 <dt>Accuracy</dt>
                 <dd>{formatNum(aostats.prob(atk))}</dd>
                 <dt>Pierce</dt>
-                <dd>{formatNum(aostats.pierce(atk))}</dd>
+                <dd>{Math.floor(aostats.pierce(atk))}</dd>
                 <dt>Power Increase</dt>
                 <dd>{formatNum(100 * aostats.dmgInc(atk))}%</dd>
               </dl>
