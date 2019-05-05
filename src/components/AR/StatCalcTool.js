@@ -1,65 +1,119 @@
 import React, { Component } from 'react'
 import aostats from 'aceonline-stats'
 import { formatNum } from '../../utils/num'
+import { callApi } from '../../middleware/api'
+import config from '../../config'
 
 const stats = ['atk', 'def', 'eva', 'fuel', 'spirit', 'shield']
+
 const cardStyle = { height: '100%' }
+const btnStyle = { width: '30px', borderRadius: '10%' }
 
 const { gearStatChange } = aostats
+const cap = 340
+
+// TODO: Shareable URL
+
+const cappedDisplay = num => {
+  if (num <= cap) {
+    return num
+  }
+  return `${cap} (+${num - cap})`
+}
 
 class StatCalcTool extends Component {
+  currentStatVals
+  currentStatValsCalc
+  pointsSet
+
   constructor(props) {
     super(props)
 
-    let initState = { gear: 'B', cpus: {} }
+    let initState = { gear: 'B', cpus: {}, cpu: null, bonusstats: 144 }
     stats.forEach(statName => (initState[statName] = 0))
     this.state = initState
   }
 
   /*
   componentDidMount() {
-    fetch('http://localhost:8000/api/chromerivals/omi?category=item&where=kind:26,ReqMinLevel:>=:105') // TODO: USe callApi, save in redux / action creator? // Select CR as server
-      .then(res => res.json())
+    // TODO: Store these in Redux?
+    callApi(
+      config.apibase +
+      'chromerivals/omi?category=item&where=kind:26,ReqMinLevel:>=:105'
+    )
       .then(cpus => this.setState({cpus}))
   }
   */
 
-  calculate(e) {
-    e.preventDefault()
-
-    let stateUpdate = {}
-    stats.forEach(
-      statName => (stateUpdate[statName] = Number(this.refs[statName].value))
-    )
-    this.setState(stateUpdate)
-  }
-
   statInput(id, label) {
-    const { gear } = this.state
+    const { gear, bonusstats } = this.state
     const statByGear = gearStatChange[gear]
+    let canIncrease = bonusstats - this.pointsSet > 0
+    let canDecrease = this.state[id] > 0
     return (
       <div className="column is-half">
         <label className="label" htmlFor={id}>
           {label} ({statByGear[id]})
         </label>
-        <input
-          className="input"
-          type="number"
-          id={id}
-          min="0"
-          max="340"
-          step="1"
-          defaultValue={this.state[id]}
-          aria-label={label}
-          ref={id}
-          onChange={this.calculate.bind(this)}
-        />
+        <span id={id}>{cappedDisplay(this.currentStatVals[id])}</span>
+        <div
+          className="buttons has-addons is-pulled-right"
+          style={{ display: 'inline' }}
+        >
+          <button
+            style={btnStyle}
+            disabled={!canIncrease}
+            type="button"
+            className="button is-primary is-small"
+            onClick={() => this.setState({ [id]: this.state[id] + 1 })}
+            onContextMenu={e => {
+              e.preventDefault()
+              this.setState({
+                [id]:
+                  this.state[id] +
+                  Math.min(
+                    bonusstats - this.pointsSet,
+                    Math.ceil((cap - this.currentStatVals[id]) / statByGear[id])
+                  )
+              })
+            }}
+          >
+            +
+          </button>
+          <button
+            style={btnStyle}
+            disabled={!canDecrease}
+            type="button"
+            className="button is-primary is-small"
+            onClick={() => this.setState({ [id]: this.state[id] - 1 })}
+            onContextMenu={e => {
+              e.preventDefault()
+              this.setState({ [id]: 0 })
+            }}
+          >
+            -
+          </button>
+        </div>
       </div>
     )
   }
 
   render() {
-    const { gear, cpus } = this.state
+    const { gear, cpus, cpu, bonusstats } = this.state
+    const cpuData = cpus[cpu]
+
+    this.currentStatVals = {}
+    this.currentStatValsCalc = {}
+    this.pointsSet = 0
+    stats.forEach(statName => {
+      this.pointsSet += this.state[statName]
+      let statVal = (this.state[statName] + 1) * gearStatChange[gear][statName] // TODO: Add CPU here
+      if (cpuData && statName in cpuData.CPUStats) {
+        statVal += cpuData.CPUStats[statName]
+      }
+      this.currentStatVals[statName] = statVal
+      this.currentStatValsCalc[statName] = Math.min(statVal, cap)
+    })
 
     return (
       <div>
@@ -80,6 +134,50 @@ class StatCalcTool extends Component {
           </ul>
         </div>
 
+        <div className="columns">
+          {/* todo: game selector? */}
+          <div className="column">
+            <label className="label" htmlFor="bonusstats">
+              Total Statpoints available
+            </label>
+            <input
+              type="number"
+              className="input"
+              step="1"
+              value={bonusstats}
+              ref="bonusstats"
+              onChange={() =>
+                this.setState({ bonusstats: this.refs.bonusstats.value })}
+            />
+          </div>
+
+          <div className="column">
+            <label className="label" htmlFor="cpusel">
+              CPU
+            </label>
+            <div className="select is-fullwidth">
+              <select
+                id="cpusel"
+                ref="cpusel"
+                onChange={() => this.setState({ cpu: this.refs.cpusel.value })}
+                value={cpu || ''}
+              >
+                <option value="">-</option>
+                {Object.keys(cpus).map(cpuId => {
+                  const cpu = cpus[cpuId]
+                  return (
+                    <option key={cpuId} value={cpuId}>
+                      {cpu.name}
+                    </option>
+                  )
+                })}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <p>Remaining stats: {bonusstats - this.pointsSet}</p>
+
         <div className="columns is-multiline">
           {this.statInput('atk', 'Attack')}
           {this.statInput('fuel', 'Fuel')}
@@ -97,7 +195,7 @@ class StatCalcTool extends Component {
   }
 
   result() {
-    const { atk, def, eva, fuel, spirit, shield, gear } = this.state
+    const { atk, def, eva, fuel, spirit, shield } = this.currentStatValsCalc
 
     return (
       <div className="columns">
