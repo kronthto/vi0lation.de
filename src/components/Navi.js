@@ -67,15 +67,15 @@ class Navi extends Component {
             <div className="navbar-start">
               <NavTab addClass="is-hoverable">
                 <NavLink to="/ranking" className="is-tab">
-                  AR Ranking
+                  AR/AO
                 </NavLink>
                 <div className="navbar-dropdown">
-                  <NavLink to={highscoresUrl}>Prokyon/DE Highscores</NavLink>
-                  <NavLink to="/ranking/eplist">EP List</NavLink>
                   <NavLink to="/ranking/fbtool">FrameBreak Tool</NavLink>
                   <NavLink to="/ranking/statcalc">StatCalc</NavLink>
+                  <NavLink to="/ranking/eplist">EP List</NavLink>
+                  <NavLink to={highscoresUrl}>Prokyon/DE Highscores</NavLink>
                   <NavLink to={crTopKillsIntervalUrl}>
-                    ChromeRivals FFA kills
+                    ChromeRivals Ranking
                   </NavLink>
                   <NavLink to="/ranking/chromerivals/playerFame">
                     ChromeRivals Player fame

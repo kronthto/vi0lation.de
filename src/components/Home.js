@@ -16,10 +16,8 @@ class Home extends Component {
             <Link to="/ranking">
               <div className="hero is-primary is-bold">
                 <div className="hero-body">
-                  <h1 className="title">AR Ranking</h1>
-                  <h2 className="subtitle">
-                    Recorded player Ranking-progress information
-                  </h2>
+                  <h1 className="title">AirRivals/AceOnline</h1>
+                  <h2 className="subtitle">Tools & Stats</h2>
                 </div>
               </div>
             </Link>
