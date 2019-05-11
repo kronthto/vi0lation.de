@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import aostats from 'aceonline-stats'
 import { formatNum } from '../../utils/num'
 import defaultCpus from '../../data/cpus'
+import withRouter from 'react-router/withRouter'
 
 const stats = ['atk', 'def', 'eva', 'fuel', 'spirit', 'shield']
 
@@ -11,7 +12,7 @@ const btnStyle = { width: '30px', borderRadius: '10%' }
 const { gearStatChange } = aostats
 const cap = 340
 
-// TODO: Shareable URL
+const defaultBonusStats = 144
 
 const cappedDisplay = num => {
   if (num <= cap) {
@@ -28,9 +29,43 @@ class StatCalcTool extends Component {
   constructor(props) {
     super(props)
 
-    let initState = { gear: 'B', cpus: defaultCpus, cpu: null, bonusstats: 144 }
+    let initState = {
+      gear: 'B',
+      cpus: defaultCpus,
+      cpu: null,
+      bonusstats: defaultBonusStats
+    }
     stats.forEach(statName => (initState[statName] = 0))
+
+    let hash = this.props.location.hash.substr(1)
+    if (hash) {
+      Object.assign(initState, JSON.parse(atob(hash)))
+    }
+
     this.state = initState
+  }
+
+  componentDidUpdate() {
+    this.props.history.replace({
+      hash: btoa(JSON.stringify(this.serializeState()))
+    })
+  }
+
+  serializeState() {
+    let obj = Object.assign({}, this.state)
+    delete obj.cpus
+    if (!obj.cpu) {
+      delete obj.cpu
+    }
+    stats.forEach(statName => {
+      if (!obj[statName]) {
+        delete obj[statName]
+      }
+    })
+    if (obj.bonusstats === defaultBonusStats) {
+      delete obj.bonusstats
+    }
+    return obj
   }
 
   statInput(id, label) {
@@ -134,7 +169,9 @@ class StatCalcTool extends Component {
               value={bonusstats}
               ref="bonusstats"
               onChange={() =>
-                this.setState({ bonusstats: this.refs.bonusstats.value })}
+                this.setState({
+                  bonusstats: Number(this.refs.bonusstats.value)
+                })}
             />
           </div>
 
@@ -242,4 +279,4 @@ class StatCalcTool extends Component {
   }
 }
 
-export default StatCalcTool
+export default withRouter(StatCalcTool)
