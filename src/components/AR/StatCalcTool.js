@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import aostats from 'aceonline-stats'
 import { formatNum } from '../../utils/num'
-import { callApi } from '../../middleware/api'
-import config from '../../config'
+import defaultCpus from '../../data/cpus'
 
 const stats = ['atk', 'def', 'eva', 'fuel', 'spirit', 'shield']
 
@@ -29,21 +28,10 @@ class StatCalcTool extends Component {
   constructor(props) {
     super(props)
 
-    let initState = { gear: 'B', cpus: {}, cpu: null, bonusstats: 144 }
+    let initState = { gear: 'B', cpus: defaultCpus, cpu: null, bonusstats: 144 }
     stats.forEach(statName => (initState[statName] = 0))
     this.state = initState
   }
-
-  /*
-  componentDidMount() {
-    // TODO: Store these in Redux?
-    callApi(
-      config.apibase +
-      'chromerivals/omi?category=item&where=kind:26,ReqMinLevel:>=:105'
-    )
-      .then(cpus => this.setState({cpus}))
-  }
-  */
 
   statInput(id, label) {
     const { gear, bonusstats } = this.state
@@ -107,7 +95,7 @@ class StatCalcTool extends Component {
     this.pointsSet = 0
     stats.forEach(statName => {
       this.pointsSet += this.state[statName]
-      let statVal = (this.state[statName] + 1) * gearStatChange[gear][statName] // TODO: Add CPU here
+      let statVal = (this.state[statName] + 1) * gearStatChange[gear][statName]
       if (cpuData && statName in cpuData.CPUStats) {
         statVal += cpuData.CPUStats[statName]
       }
@@ -135,7 +123,6 @@ class StatCalcTool extends Component {
         </div>
 
         <div className="columns">
-          {/* todo: game selector? */}
           <div className="column">
             <label className="label" htmlFor="bonusstats">
               Total Statpoints available
