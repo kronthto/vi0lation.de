@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 import dateformat from 'date-fns/format'
 import NumTD from '../../components/AR/NumTD'
 import { fetchDatesIfNeeded } from '../../actions/cr'
-import { crTopKillsIntervalUrl } from '../../routes'
 import withRouter from 'react-router/withRouter'
 import { parse, stringify } from 'querystring'
 import { callApi } from '../../middleware/api'
@@ -133,7 +132,9 @@ class KillsInInterval extends Component {
       from,
       to
     }
-    history.replace(crTopKillsIntervalUrl + '?' + stringify(qs))
+    history.replace({
+      search: stringify(qs)
+    })
     this.queryData(qs)
   }
 
