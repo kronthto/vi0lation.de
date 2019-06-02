@@ -6,20 +6,20 @@ const colorMap = {
 }
 
 function specialNames(name) {
-  switch (name) {
-    case 'LUD4K':
-      return (
-        <span>
-          LUD<i style={{ color: 'red' }}>4K</i>
-        </span>
-      )
-    default:
-      return name
+  let regex = name.match(/^(.+)4K$/)
+  if (!regex) {
+    return name
   }
+  return (
+    <span>
+      {regex[1]}
+      <i style={{ color: 'red' }}>4K</i>
+    </span>
+  )
 }
 
 export function colorName(name) {
-  let regex = name.match(/^\\([a-z])(.*)\\[a-z]$/)
+  let regex = name.match(/^\\([a-z])(.+)\\[a-z]$/)
   if (!regex) {
     return specialNames(name)
   }
