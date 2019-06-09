@@ -21,6 +21,8 @@ export default function reducer(state = initialState, action) {
       let now = new Date()
       let days = []
 
+      const midNightRegex = /^00:0[0-5]$/
+
       return Object.assign({}, state, {
         dates: Object.assign({}, state.dates, {
           isFetching: false,
@@ -34,7 +36,11 @@ export default function reducer(state = initialState, action) {
             }
             let dayFrmt = format(dt, 'YYYY-MM-DD')
             if (days.indexOf(dayFrmt) !== -1) {
-              return false
+              let dateHm = format(dt, 'HH:mm')
+              if (midNightRegex.test(dateHm)) {
+              } else {
+                return false
+              }
             }
             days.push(dayFrmt)
             return true
