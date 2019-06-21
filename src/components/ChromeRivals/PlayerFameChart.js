@@ -3,56 +3,87 @@ import { callApi } from '../../middleware/api'
 import config from '../../config'
 import colors from '../../utils/colors'
 import isEqual from 'lodash.isequal'
-import { asyncComponent } from 'react-async-component'
-import LoadBlock from '../LoadBlock'
+import AsyncLineChart from '../AsyncLineChart'
 
-const AsyncLineChart = asyncComponent({
-  resolve: () => import('react-chartjs-2'),
-  serverMode: 'defer',
-  LoadingComponent: () => <LoadBlock height="250px" />
-})
+export const queryPlayers = (players, qs) => {
+  return Promise.all(
+    players.map(plName =>
+      callApi(
+        config.apibase +
+          'chromerivals/playerfame?name=' +
+          encodeURIComponent(plName) +
+          (qs ? '&' + qs : ''),
+        {},
+        [404]
+      )
+    )
+  )
+}
 
-const options = {
-  elements: {
-    point: { radius: 0 }
-  },
-  responsive: true,
-  title: {
-    display: false
-  },
-  scales: {
-    xAxes: [
-      {
-        gridLines: {
-          display: false
-        },
-        type: 'time',
-        time: {
-          unit: 'day'
-        },
-        display: true,
-        scaleLabel: {
+export const buildPlayerFameDatasets = allData => {
+  let datasets = []
+
+  allData.forEach((player, i) => {
+    datasets.push({
+      label: player.name,
+      fill: false,
+      data: player.data.map(row => {
+        return {
+          x: new Date(row.timestamp),
+          y: row.fame
+        }
+      }),
+      borderColor: colors[i],
+      cubicInterpolationMode: 'monotone'
+    })
+  })
+
+  return datasets
+}
+
+export const options = (scale = 'day') => {
+  return {
+    elements: {
+      point: { radius: 0 }
+    },
+    responsive: true,
+    title: {
+      display: false
+    },
+    scales: {
+      xAxes: [
+        {
+          gridLines: {
+            display: false
+          },
+          type: 'time',
+          time: {
+            unit: scale
+          },
           display: true,
-          labelString: 'Date'
-        },
-        ticks: {
-          major: {
-            fontStyle: 'bold',
-            fontColor: '#FF0000'
+          scaleLabel: {
+            display: true,
+            labelString: 'Date'
+          },
+          ticks: {
+            major: {
+              fontStyle: 'bold',
+              fontColor: '#FF0000'
+            }
           }
         }
-      }
-    ],
-    yAxes: [
-      {
-        display: true,
-
-        scaleLabel: {
+      ],
+      yAxes: [
+        {
           display: true,
-          labelString: 'Fame'
+
+          scaleLabel: {
+            display: true,
+            labelString: 'Fame'
+          }
         }
-      }
-    ]
+      ]
+    }
   }
 }
 
@@ -85,7 +116,7 @@ class PlayerFameChart extends Component {
   }
 
   queryData() {
-    let dataPromise = this.constructor.queryPlayers(this.props.names)
+    let dataPromise = queryPlayers(this.props.names)
     this.setState({ data: null, loadingData: dataPromise })
     dataPromise.then(data => {
       this.setState({
@@ -93,20 +124,6 @@ class PlayerFameChart extends Component {
         loadingData: false
       })
     })
-  }
-
-  static queryPlayers(players) {
-    return Promise.all(
-      players.map(plName =>
-        callApi(
-          config.apibase +
-            'chromerivals/playerfame?name=' +
-            encodeURIComponent(plName),
-          {},
-          [404]
-        )
-      )
-    )
   }
 
   render() {
@@ -133,26 +150,13 @@ class PlayerFameChart extends Component {
       )
     }
 
-    let datasets = []
-
-    allData.forEach((player, i) => {
-      datasets.push({
-        label: player.name,
-        fill: false,
-        data: player.data.map(row => {
-          return {
-            x: new Date(row.timestamp),
-            y: row.fame
-          }
-        }),
-        borderColor: colors[i],
-        cubicInterpolationMode: 'monotone'
-      })
-    })
-
     return (
       <div>
-        <AsyncLineChart options={options} data={{ datasets }} type="line" />
+        <AsyncLineChart
+          options={options('day')}
+          data={{ datasets: buildPlayerFameDatasets(allData) }}
+          type="line"
+        />
       </div>
     ) // Additional div for the chartJS size monitor that would otherwise interfere with h1 "not first child" margin
   }

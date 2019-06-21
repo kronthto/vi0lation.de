@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Helmet } from 'react-helmet'
 import { connect } from 'react-redux'
 import dateformat from 'date-fns/format'
+import diffMins from 'date-fns/difference_in_minutes'
 import NumTD from '../../components/AR/NumTD'
 import { fetchDatesIfNeeded } from '../../actions/cr'
 import withRouter from 'react-router/withRouter'
@@ -10,6 +11,12 @@ import { callApi } from '../../middleware/api'
 import config from '../../config'
 import { colorName } from '../../utils/AR/names'
 import blankImg from '../../img/000000-0.png'
+import {
+  buildPlayerFameDatasets,
+  options as playerFameChartOpts,
+  queryPlayers
+} from '../../components/ChromeRivals/PlayerFameChart'
+import AsyncLineChart from '../../components/AsyncLineChart'
 
 export const CRDisclaimer = () => (
   <small>
@@ -73,13 +80,48 @@ class KillsInInterval extends Component {
     }
 
     let dataPromise = this.constructor.queryForDate(dispatch, qs.from, qs.to)
-    this.setState({ result: null, loadingData: dataPromise })
+    this.setState({
+      result: null,
+      loadingData: dataPromise,
+      topchartdata: null
+    })
     if (dataPromise) {
       dataPromise.then(result => {
         if (!('stats' in result)) {
           result = false
         }
         this.setState({ result, loadingData: false })
+        if (
+          result &&
+          result.data.length > 4 &&
+          diffMins(qs.to, qs.from) > 59 &&
+          diffMins(qs.to, qs.from) < 600
+        ) {
+          let topnames = result.data
+            .slice(0, Math.min(8, result.data.length))
+            .map(row => row.name)
+          let topChartPromises = queryPlayers(
+            topnames,
+            stringify({
+              from: qs.from,
+              to: qs.to
+            })
+          )
+          this.setState({ loadingTopChartData: topChartPromises })
+          topChartPromises.then(data => {
+            this.setState({
+              topchartdata: data.map(player => {
+                let playerStartFame = player.data[0].fame
+                player.data = player.data.map(playerdataRow => {
+                  playerdataRow.fame = playerdataRow.fame - playerStartFame
+                  return playerdataRow
+                })
+                return player
+              }),
+              loadingTopChartData: false
+            })
+          })
+        }
       })
     }
   }
@@ -253,7 +295,7 @@ class KillsInInterval extends Component {
   }
 
   renderDataLoading() {
-    if (this.state.loadingData) {
+    if (this.state.loadingData || this.state.loadingTopChartData) {
       return (
         <span className="button is-info is-loading" style={{ width: '80px' }}>
           ...
@@ -313,6 +355,15 @@ class KillsInInterval extends Component {
             <tfoot>{this.TableInfo}</tfoot>
           </table>
         </div>
+        {this.state.topchartdata && (
+          <AsyncLineChart
+            options={playerFameChartOpts('minute')}
+            data={{
+              datasets: buildPlayerFameDatasets(this.state.topchartdata)
+            }}
+            type="line"
+          />
+        )}
       </div>
     )
   }
