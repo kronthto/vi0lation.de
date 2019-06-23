@@ -2,12 +2,16 @@ import React from 'react'
 import { colorName } from '../../../utils/AR/names'
 
 const WeaponPreview = props => {
-  const { item } = props
+  const { item, prefix, suffix } = props
   let stats = visualizeStats(item)
   return (
     <div className="card">
       <header className="card-header">
-        <p className="card-header-title">{colorName(item.name)}</p>
+        <p className="card-header-title is-centered">
+          {prefix && colorName(prefix.name)}
+          &nbsp;{colorName(item.name)}&nbsp;
+          {suffix && colorName(suffix.name)}
+        </p>
       </header>
       <div className="card-content">
         <div className="content">

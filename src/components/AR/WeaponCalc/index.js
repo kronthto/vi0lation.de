@@ -15,6 +15,8 @@ class WeaponCalcTool extends Component {
   gearItemDb = []
   gearSkillDb = []
   selectedItem
+  prefix
+  suffix
 
   constructor(props) {
     super(props)
@@ -65,6 +67,14 @@ class WeaponCalcTool extends Component {
       this.filterItemDbs(reducedItemDb, this.state.gear)
       this.setState({ itemdb: reducedItemDb })
     })
+    callApi(
+      config.apibase + 'chromerivals/omi?category=rareitems'
+    ).then(allFixes => {
+      let fixDb = Object.values(allFixes)
+        .filter(fix => fix.probability !== 0)
+        .sort((a, b) => a.probability - b.probability)
+      this.setState({ fixDb })
+    })
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -76,17 +86,49 @@ class WeaponCalcTool extends Component {
   serializeState() {
     let obj = Object.assign({}, this.state)
     delete obj.itemdb
+    delete obj.fixDb
     return obj
   }
 
+  renderFixSelect(saveAs, prefix) {
+    const def = this.state[saveAs]
+    return (
+      <select
+        id={saveAs}
+        ref={saveAs}
+        onChange={() => this.setState({ [saveAs]: this.refs[saveAs].value })}
+        value={def || ''}
+      >
+        <option value="">-</option>
+        {this.state.fixDb
+          .filter(fix => {
+            if (prefix) {
+              return fix.id < 5000
+            } else {
+              return fix.id >= 5000
+            }
+          })
+          .map(item => {
+            return (
+              <option key={item.id} value={item.id}>
+                {item.name}
+              </option>
+            )
+          })}
+      </select>
+    )
+  }
+
   render() {
-    if (!this.state.itemdb) {
+    if (!this.state.itemdb || !this.state.fixDb) {
       return <LoadBlock height="100px" />
     }
 
-    const { gear, selWeap } = this.state
+    const { gear, selWeap, itemprefix, itemsuffix, fixDb } = this.state
     // eslint-disable-next-line
     this.selectedItem = this.gearItemDb.find(item => item.id == selWeap)
+    this.prefix = fixDb.find(fix => fix.id == itemprefix)
+    this.suffix = fixDb.find(fix => fix.id == itemsuffix)
 
     return (
       <div>
@@ -138,7 +180,33 @@ class WeaponCalcTool extends Component {
           </div>
         </div>
 
-        {selWeap && <WeaponPreview item={this.selectedItem} />}
+        <div className="columns">
+          <div className="column">
+            <label className="label" htmlFor="itemprefix">
+              Prefix
+            </label>
+            <div className="select is-fullwidth">
+              {this.renderFixSelect('itemprefix', true)}
+            </div>
+          </div>
+
+          <div className="column">
+            <label className="label" htmlFor="itemsuffix">
+              Suffix
+            </label>
+            <div className="select is-fullwidth">
+              {this.renderFixSelect('itemsuffix', false)}
+            </div>
+          </div>
+        </div>
+
+        {this.selectedItem && (
+          <WeaponPreview
+            item={this.selectedItem}
+            prefix={this.prefix}
+            suffix={this.suffix}
+          />
+        )}
       </div>
     )
   }
