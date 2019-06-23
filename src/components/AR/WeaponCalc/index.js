@@ -9,10 +9,12 @@ import {
   ITEMKIND_SKILL_ATTACK
 } from '../../../data/ao'
 import LoadBlock from '../../LoadBlock'
+import WeaponPreview from './WeaponPreview'
 
 class WeaponCalcTool extends Component {
   gearItemDb = []
   gearSkillDb = []
+  selectedItem
 
   constructor(props) {
     super(props)
@@ -57,6 +59,7 @@ class WeaponCalcTool extends Component {
           ) {
             return true
           }
+          return false
         })
         .sort((a, b) => b.ReqMinLevel - a.ReqMinLevel)
       this.filterItemDbs(reducedItemDb, this.state.gear)
@@ -82,6 +85,8 @@ class WeaponCalcTool extends Component {
     }
 
     const { gear, selWeap } = this.state
+    // eslint-disable-next-line
+    this.selectedItem = this.gearItemDb.find(item => item.id == selWeap)
 
     return (
       <div>
@@ -132,6 +137,8 @@ class WeaponCalcTool extends Component {
             </div>
           </div>
         </div>
+
+        {selWeap && <WeaponPreview item={this.selectedItem} />}
       </div>
     )
   }
