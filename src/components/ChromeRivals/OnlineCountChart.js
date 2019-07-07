@@ -12,6 +12,7 @@ const options = (scale = 'day') => {
       point: { radius: 0 }
     },
     responsive: true,
+    maintainAspectRatio: false,
     title: {
       display: false
     },
@@ -62,12 +63,22 @@ class PlayerFameChart extends Component {
     this.queryData()
   }
 
+  /*
+  componentDidUpdate(prevProps, prevState)
+  {
+    // Also need something to do it after initial render :/
+    if (this.props.backdays !== prevProps.backdays) {
+      this.refs.onlinescroll.scrollLeft = this.refs.onlinescroll.scrollWidth;
+    }
+  }
+  */
   // TODO: Implement didUpdate when refetch is necessary based on backdays
 
   queryData() {
     let dataPromise = callApi(config.apibase + 'chromerivals/onlinecount')
     this.setState({ data: null, loadingData: dataPromise })
     dataPromise.then(data => {
+      // TODO: Build averaged datasets
       this.setState({ data, loadingData: false })
     })
   }
@@ -135,12 +146,24 @@ class PlayerFameChart extends Component {
       }
     })
 
+    let width = 45 * backdays
+
     return (
-      <AsyncLineChart
-        options={options(backdays < 4 ? 'hour' : 'day')}
-        data={{ datasets }}
-        type="line"
-      />
+      <div ref="onlinescroll" style={{ overflowX: 'scroll' }}>
+        <div
+          style={{
+            width: Math.max(width, 1344) + 'px',
+            height: '350px',
+            position: 'relative'
+          }}
+        >
+          <AsyncLineChart
+            options={options(backdays < 4 ? 'hour' : 'day')}
+            data={{ datasets }}
+            type="line"
+          />
+        </div>
+      </div>
     )
   }
 }
