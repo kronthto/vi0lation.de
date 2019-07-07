@@ -73,6 +73,12 @@ const routes = [
     path: '/ranking/statcalc',
     component: makeAsync(() => lazyImport(import('./components/AR/StatCalc')))
   },
+  /*
+  {
+    path: '/ranking/weaponcalc',
+    component: makeAsync(() => lazyImport(import('./components/AR/WeaponCalc')))
+  },
+  */
   {
     path: highscoresUrl,
     exact: true,
@@ -92,6 +98,12 @@ const routes = [
     path: '/ranking/chromerivals/playerFame',
     component: makeAsync(() =>
       lazyImport(import('./containers/ChromeRivals/PlayerFameChart'))
+    )
+  },
+  {
+    path: '/ranking/chromerivals/usercount',
+    component: makeAsync(() =>
+      lazyImport(import('./containers/ChromeRivals/OnlineCount'))
     )
   },
   {

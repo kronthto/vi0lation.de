@@ -80,6 +80,9 @@ class Navi extends Component {
                   <NavLink to="/ranking/chromerivals/playerFame">
                     ChromeRivals Player fame
                   </NavLink>
+                  <NavLink to="/ranking/chromerivals/usercount">
+                    ChromeRivals Online-players
+                  </NavLink>
                 </div>
               </NavTab>
               <NavTab>

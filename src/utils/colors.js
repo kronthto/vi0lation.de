@@ -10,3 +10,14 @@ const colors = [
   '#c6e21e'
 ]
 export default colors
+
+const seriesColorCoding = {
+  BCU: '#F5B930',
+  ANI: '#00FFFF',
+  I: '#0078ff',
+  M: '#ff0000',
+  B: '#ffb400',
+  A: '#17ef00'
+}
+
+export { seriesColorCoding }
