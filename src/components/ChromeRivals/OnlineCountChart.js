@@ -152,7 +152,7 @@ class PlayerFameChart extends Component {
       <div ref="onlinescroll" style={{ overflowX: 'scroll' }}>
         <div
           style={{
-            width: Math.max(width, 1344) + 'px',
+            width: width > window.innerWidth ? width + 'px' : '100%',
             height: '350px',
             position: 'relative'
           }}
