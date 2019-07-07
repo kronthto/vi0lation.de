@@ -124,10 +124,14 @@ class WeaponCalcTool extends Component {
       return <LoadBlock height="100px" />
     }
 
+    // TODO: Filter fixlist by itemkind
+
     const { gear, selWeap, itemprefix, itemsuffix, fixDb } = this.state
     // eslint-disable-next-line
     this.selectedItem = this.gearItemDb.find(item => item.id == selWeap)
+    // eslint-disable-next-line
     this.prefix = fixDb.find(fix => fix.id == itemprefix)
+    // eslint-disable-next-line
     this.suffix = fixDb.find(fix => fix.id == itemsuffix)
 
     return (
