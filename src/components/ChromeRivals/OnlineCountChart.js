@@ -135,8 +135,6 @@ class PlayerFameChart extends Component {
       }
     })
 
-    console.log(datasets)
-
     return (
       <AsyncLineChart
         options={options(backdays < 4 ? 'hour' : 'day')}
