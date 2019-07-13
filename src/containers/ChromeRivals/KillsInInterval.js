@@ -6,6 +6,7 @@ import diffMins from 'date-fns/difference_in_minutes'
 import NumTD from '../../components/AR/NumTD'
 import { fetchDatesIfNeeded } from '../../actions/cr'
 import withRouter from 'react-router/withRouter'
+import Link from 'react-router-dom/Link'
 import { parse, stringify } from 'querystring'
 import { callApi } from '../../middleware/api'
 import config from '../../config'
@@ -326,7 +327,17 @@ class KillsInInterval extends Component {
                   return (
                     <tr key={row.name}>
                       <th>{showLadder ? idx + 1 : null}</th>
-                      <td>{colorName(row.name)}</td>
+                      <td>
+                        <Link
+                          to={
+                            '/ranking/chromerivals/playerFame?name=' +
+                            encodeURIComponent(row.name)
+                          }
+                          style={{ color: 'inherit' }}
+                        >
+                          {colorName(row.name)}
+                        </Link>
+                      </td>
                       <NumTD num={row.diff} />
                       <td>{row.gear}</td>
                       <td style={{ whiteSpace: 'nowrap' }}>
