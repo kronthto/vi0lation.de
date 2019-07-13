@@ -1,17 +1,30 @@
 import React, { Component } from 'react'
 import { Helmet } from 'react-helmet'
 import debounce from 'lodash.debounce'
+import withRouter from 'react-router/withRouter'
 import PlayerFameChartChart from '../../components/ChromeRivals/PlayerFameChart'
 import { CRDisclaimer } from './KillsInInterval'
+import { parse, stringify } from 'querystring'
 
 class PlayerFameChart extends Component {
   constructor(props) {
     super(props)
-    this.state = { name: '' }
+
+    let qs = parse(this.props.location.search.substring(1))
+    let initialName = ''
+    if (qs.name) {
+      initialName = qs.name
+    }
+
+    this.state = { name: initialName }
   }
 
   nameInputChanged() {
-    this.setState({ name: this.refs.nameInput.value })
+    let name = this.refs.nameInput.value
+    this.setState({ name })
+    this.props.history.replace({
+      search: name ? stringify({ name }) : ''
+    })
   }
 
   renderForm() {
@@ -30,6 +43,7 @@ class PlayerFameChart extends Component {
                 type="text"
                 ref="nameInput"
                 id="name"
+                defaultValue={this.state.name}
                 onChange={debounce(() => this.nameInputChanged(), 480)}
               />
             </div>
@@ -46,7 +60,10 @@ class PlayerFameChart extends Component {
     return (
       <div className="content">
         <Helmet>
-          <meta name="description" content={'Fame history of CR players'} />
+          <meta
+            name="description"
+            content={'Fame history of ' + (name ? name : 'CR players')}
+          />
           <title>{title}</title>
         </Helmet>
 
@@ -62,4 +79,4 @@ class PlayerFameChart extends Component {
   }
 }
 
-export default PlayerFameChart
+export default withRouter(PlayerFameChart)
