@@ -5,6 +5,8 @@ import { seriesColorCoding } from '../../utils/colors'
 import AsyncLineChart from '../AsyncLineChart'
 import isBefore from 'date-fns/is_before'
 import subDays from 'date-fns/sub_days'
+import startOfHour from 'date-fns/start_of_hour'
+import startOfday from 'date-fns/start_of_day'
 
 const options = (scale = 'day') => {
   return {
@@ -53,6 +55,23 @@ const options = (scale = 'day') => {
   }
 }
 
+const aggregateToGrouped = aggregate =>
+  Object.keys(aggregate).map(time => {
+    let sumAni = 0
+    let sumBcu = 0
+    const rows = aggregate[time]
+    const numRows = rows.length
+    rows.forEach(row => {
+      sumAni += row.ani
+      sumBcu += row.bcu
+    })
+    return {
+      timestamp: new Date(time),
+      bcu: sumBcu / numRows,
+      ani: sumAni / numRows
+    }
+  })
+
 class PlayerFameChart extends Component {
   constructor(props) {
     super(props)
@@ -78,8 +97,38 @@ class PlayerFameChart extends Component {
     let dataPromise = callApi(config.apibase + 'chromerivals/onlinecount')
     this.setState({ data: null, loadingData: dataPromise })
     dataPromise.then(data => {
-      // TODO: Build averaged datasets
-      this.setState({ data, loadingData: false })
+      let dataEvery = []
+      let groupHourly = {}
+      let groupDaily = {}
+      data.forEach(row => {
+        if (row.total === 0) {
+          return
+        }
+        let dt = new Date(row.timestamp)
+        row.timestamp = dt
+        dataEvery.push(row)
+
+        let hour = startOfHour(dt)
+        let day = startOfday(dt)
+        day.setHours(Math.floor(dt.getHours() / 8) * 8)
+        if (!(hour in groupHourly)) {
+          groupHourly[hour] = []
+        }
+        if (!(day in groupDaily)) {
+          groupDaily[day] = []
+        }
+        groupHourly[hour].push(row)
+        groupDaily[day].push(row)
+      })
+
+      data = null
+
+      this.setState({
+        data: dataEvery,
+        loadingData: false,
+        dataHourly: aggregateToGrouped(groupHourly),
+        dataDaily: aggregateToGrouped(groupDaily)
+      })
     })
   }
 
@@ -95,8 +144,11 @@ class PlayerFameChart extends Component {
       )
     }
 
-    const { data } = this.state
     const { backdays } = this.props
+    const data =
+      backdays > 40
+        ? this.state.dataDaily
+        : backdays > 14 ? this.state.dataHourly : this.state.data
 
     if (!data) {
       return null
@@ -107,17 +159,9 @@ class PlayerFameChart extends Component {
     let serieses = { BCU: [], ANI: [] }
 
     data.forEach(row => {
-      let dt = new Date(row.timestamp)
+      const dt = row.timestamp
 
       if (isBefore(dt, startDate)) {
-        return
-      }
-
-      if (row.total === 0) {
-        return
-      }
-
-      if (backdays > 14 && dt.getMinutes() > 9) {
         return
       }
 

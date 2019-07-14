@@ -32,7 +32,7 @@ class OnlineCount extends Component {
                 id="backdays"
                 step="1"
                 min="1"
-                max="100"
+                max="180"
                 defaultValue={this.state.backdays}
                 onChange={debounce(() => this.daysInputChanged(), 100)}
               />
