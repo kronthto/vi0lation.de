@@ -4,6 +4,7 @@ import config from '../../config'
 import colors from '../../utils/colors'
 import isEqual from 'lodash.isequal'
 import AsyncLineChart from '../AsyncLineChart'
+import { stringify } from 'querystring'
 
 export const queryPlayers = (players, qs) => {
   return Promise.all(
@@ -109,6 +110,8 @@ class PlayerFameChart extends Component {
     return false
   }
 
+  // TODO: should/did auch from/to Änderung beachten
+
   componentDidUpdate(prevProps) {
     if (!isEqual(this.props.names, prevProps.names)) {
       this.queryData()
@@ -116,7 +119,14 @@ class PlayerFameChart extends Component {
   }
 
   queryData() {
-    let dataPromise = queryPlayers(this.props.names)
+    let extraQ = {}
+    if (this.props.from) {
+      extraQ.from = this.props.from
+    }
+    if (this.props.to) {
+      extraQ.to = this.props.to
+    }
+    let dataPromise = queryPlayers(this.props.names, stringify(extraQ))
     this.setState({ data: null, loadingData: dataPromise })
     dataPromise.then(data => {
       this.setState({

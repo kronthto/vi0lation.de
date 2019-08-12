@@ -16,7 +16,9 @@ class PlayerFameChart extends Component {
       initialName = qs.name
     }
 
-    this.state = { name: initialName }
+    let { from, to } = qs
+
+    this.state = { name: initialName, from, to }
   }
 
   nameInputChanged() {
@@ -54,7 +56,7 @@ class PlayerFameChart extends Component {
   }
 
   render() {
-    const name = this.state.name
+    const { name, from, to } = this.state
     const title = 'ChromeRivals: Player fame growth'
 
     return (
@@ -71,7 +73,9 @@ class PlayerFameChart extends Component {
 
         {this.renderForm()}
 
-        {name.length > 1 && <PlayerFameChartChart names={[name]} />}
+        {name.length > 1 && (
+          <PlayerFameChartChart names={[name]} from={from} to={to} />
+        )}
 
         <CRDisclaimer />
       </div>
