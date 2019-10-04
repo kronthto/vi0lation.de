@@ -59,6 +59,15 @@ class PlayerFameChart extends Component {
     const { name, from, to } = this.state
     const title = 'ChromeRivals: Player fame growth'
 
+    let splitNames = name
+      .split(',')
+      .map(function(e) {
+        return e.trim()
+      })
+      .filter(function(e) {
+        return e.length > 1
+      })
+
     return (
       <div className="content">
         <Helmet>
@@ -73,8 +82,8 @@ class PlayerFameChart extends Component {
 
         {this.renderForm()}
 
-        {name.length > 1 && (
-          <PlayerFameChartChart names={[name]} from={from} to={to} />
+        {splitNames.length >= 1 && (
+          <PlayerFameChartChart names={splitNames} from={from} to={to} />
         )}
 
         <CRDisclaimer />
