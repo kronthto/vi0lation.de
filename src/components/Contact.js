@@ -92,6 +92,9 @@ class Contact extends Component {
               </div>
               <div className="content">
                 <p>
+                  <span>Discord</span>: DrDelay#1337
+                </p>
+                <p>
                   <span role="img" aria-label="Email" title="Email">
                     📧
                   </span>{' '}
