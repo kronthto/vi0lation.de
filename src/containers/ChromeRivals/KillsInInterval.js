@@ -171,14 +171,20 @@ class KillsInInterval extends Component {
 
     const { history } = this.props
 
-    let qs = {
-      from,
-      to
+    let qs = {}
+    if (from) {
+      qs.from = from
+    }
+    if (to) {
+      qs.to = to
     }
     history.replace({
       search: stringify(qs)
     })
-    this.queryData(qs)
+    this.queryData({
+      from,
+      to
+    })
   }
 
   renderForm() {
