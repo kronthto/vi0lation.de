@@ -17,6 +17,8 @@ import * as serviceWorker from './serviceWorker'
 import { AsyncComponentProvider } from 'react-async-component'
 import asyncBootstrapper from 'react-async-bootstrapper'
 
+import toast from './utils/toast'
+
 // If provided by server, use it, else let the reducers handle initial state
 // const initialState = window.DATA || {}
 const store = configureStore()
@@ -56,4 +58,15 @@ function renderApp() {
   }
 }
 
-serviceWorker.register()
+serviceWorker.register({
+  onUpdate: () =>
+    toast.info({
+      title: 'Update ready!',
+      close: false,
+      timeout: false,
+      drag: false,
+      message:
+        'Close all open tabs with this site and reload to apply the latest version.',
+      position: 'bottomLeft'
+    })
+})
