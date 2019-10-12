@@ -78,7 +78,7 @@ class Navi extends Component {
                     ChromeRivals Ranking
                   </NavLink>
                   <NavLink to="/ranking/chromerivals/playerFame">
-                    ChromeRivals Player fame
+                    ChromeRivals Fame chart
                   </NavLink>
                   <NavLink to="/ranking/chromerivals/usercount">
                     ChromeRivals Online-players

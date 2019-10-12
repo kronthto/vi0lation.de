@@ -12,13 +12,22 @@ class PlayerFameChart extends Component {
 
     let qs = parse(this.props.location.search.substring(1))
     let initialName = ''
+    let initialBrigSwitchSetting = 0
     if (qs.name) {
       initialName = qs.name
+    }
+    if (qs.brigade) {
+      initialBrigSwitchSetting = qs.brigade
     }
 
     let { from, to } = qs
 
-    this.state = { name: initialName, from, to }
+    this.state = {
+      name: initialName,
+      from,
+      to,
+      brigade: initialBrigSwitchSetting
+    }
   }
 
   nameInputChanged() {
@@ -29,13 +38,19 @@ class PlayerFameChart extends Component {
     })
   }
 
+  brigswitchChanged() {
+    let mode = Number(this.refs.brigswitch.checked)
+    this.setState({ brigade: mode })
+    // todo: to uri, defaultValue
+  }
+
   renderForm() {
     return (
       <form onSubmit={e => e.preventDefault()} className="margin-bot">
         <div className="field is-horizontal">
           <div className="field-label is-normal">
             <label className="label" htmlFor="name">
-              Player name
+              Names (split by <code>,</code>)
             </label>
           </div>
           <div className="field-body">
@@ -51,13 +66,27 @@ class PlayerFameChart extends Component {
             </div>
           </div>
         </div>
+        <div className="field is-horizontal">
+          <div className="field-label">
+            <label className="checkbox label" htmlFor="brigswitch">
+              <input
+                type="checkbox"
+                id="brigswitch"
+                ref="brigswitch"
+                onChange={() => this.brigswitchChanged()}
+              />{' '}
+              Brigades
+            </label>
+          </div>
+          <div className="field-body" />
+        </div>
       </form>
     )
   }
 
   render() {
-    const { name, from, to } = this.state
-    const title = 'ChromeRivals: Player fame growth'
+    const { name, from, to, brigade } = this.state
+    const title = 'ChromeRivals: Fame growth chart'
 
     let splitNames = name
       .split(',')
@@ -83,7 +112,12 @@ class PlayerFameChart extends Component {
         {this.renderForm()}
 
         {splitNames.length >= 1 && (
-          <PlayerFameChartChart names={splitNames} from={from} to={to} />
+          <PlayerFameChartChart
+            names={splitNames}
+            from={from}
+            to={to}
+            brigade={brigade}
+          />
         )}
 
         <CRDisclaimer />

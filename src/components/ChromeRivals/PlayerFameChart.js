@@ -6,12 +6,13 @@ import isEqual from 'lodash.isequal'
 import AsyncLineChart from '../AsyncLineChart'
 import { stringify } from 'querystring'
 
-export const queryPlayers = (players, qs) => {
+export const queryPlayers = (players, qs, brigade = false) => {
+  let endpoint = brigade ? 'brigfame' : 'playerfame'
   return Promise.all(
     players.map(plName =>
       callApi(
         config.apibase +
-          'chromerivals/playerfame?name=' +
+          `chromerivals/${endpoint}?name=` +
           encodeURIComponent(plName) +
           (qs ? '&' + qs : ''),
         {},
@@ -103,6 +104,10 @@ class PlayerFameChart extends Component {
       return true
     }
 
+    if (this.props.brigade !== nextProps.brigade) {
+      return true
+    }
+
     if (!isEqual(this.state, nextState)) {
       return true
     }
@@ -113,7 +118,10 @@ class PlayerFameChart extends Component {
   // TODO: should/did auch from/to Änderung beachten
 
   componentDidUpdate(prevProps) {
-    if (!isEqual(this.props.names, prevProps.names)) {
+    if (
+      !isEqual(this.props.names, prevProps.names) ||
+      this.props.brigade !== prevProps.brigade
+    ) {
       this.queryData()
     }
   }
@@ -126,7 +134,11 @@ class PlayerFameChart extends Component {
     if (this.props.to) {
       extraQ.to = this.props.to
     }
-    let dataPromise = queryPlayers(this.props.names, stringify(extraQ))
+    let dataPromise = queryPlayers(
+      this.props.names,
+      stringify(extraQ),
+      this.props.brigade
+    )
     this.setState({ data: null, loadingData: dataPromise })
     dataPromise.then(data => {
       this.setState({
@@ -155,7 +167,7 @@ class PlayerFameChart extends Component {
     if (allData.length === 0) {
       return (
         <div className="notification is-info">
-          No data available or player not found
+          No data available or unknown name
         </div>
       )
     }
