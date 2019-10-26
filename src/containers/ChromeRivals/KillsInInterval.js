@@ -396,7 +396,7 @@ const mapStateToProps = state => {
   }
   if (rankingDatesStore && 'data' in rankingDatesStore) {
     rankingDates = rankingDatesStore.data.map(date =>
-      dateformat(date.replace(/\+.*$/, ''), 'YYYY-MM-DD HH:mm')
+      dateformat(new Date(date.replace(/\+.*$/, '')), 'YYYY-MM-DD HH:mm')
     )
   }
 
