@@ -220,9 +220,15 @@ class KillsInInterval extends Component {
               onChange={e => this.dateSelected(e.target.value, fromto)}
             >
               <option value="">Select {fromto} date ...</option>
-              {this.props.rankingDates.map(date => (
-                <option key={date}>{date}</option>
-              ))}
+              {this.props.rankingDates.map(date => {
+                let display = date[0]
+                let fullDate = date[0] + date[1]
+                return (
+                  <option key={fullDate} value={fullDate}>
+                    {display}
+                  </option>
+                )
+              })}
             </select>
           </div>
         </div>
@@ -395,9 +401,14 @@ const mapStateToProps = state => {
     isFetchingDates = rankingDatesStore.isFetching
   }
   if (rankingDatesStore && 'data' in rankingDatesStore) {
-    rankingDates = rankingDatesStore.data.map(date =>
-      dateformat(new Date(date.replace(/\+.*$/, '')), 'YYYY-MM-DD HH:mm')
-    )
+    const tzRegex = /(\+.*)$/
+    rankingDates = rankingDatesStore.data.map(date => {
+      let tz = date.match(tzRegex)[1]
+      return [
+        dateformat(new Date(date.replace(/\+.*$/, '')), 'YYYY-MM-DD HH:mm'),
+        tz
+      ]
+    })
   }
 
   return {
