@@ -360,6 +360,7 @@ class KillsInInterval extends Component {
                             )}`}
                             alt={row.brigade}
                             width="24"
+                            loading="lazy"
                             height="12"
                             style={{ height: '12px' }}
                             onError={e => {
