@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { callApi } from '../../middleware/api'
+import { callApiChecked } from '../../middleware/api'
 import config from '../../config'
 import { seriesColorCoding } from '../../utils/colors'
 import AsyncLineChart from '../AsyncLineChart'
@@ -94,7 +94,9 @@ class PlayerFameChart extends Component {
   // TODO: Implement didUpdate when refetch is necessary based on backdays
 
   queryData() {
-    let dataPromise = callApi(config.apibase + 'chromerivals/onlinecount')
+    let dataPromise = callApiChecked(
+      config.apibase + 'chromerivals/onlinecount'
+    )
     this.setState({ data: null, loadingData: dataPromise })
     dataPromise.then(data => {
       let dataEvery = []

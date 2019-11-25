@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { callApi } from '../../middleware/api'
+import { callApiChecked } from '../../middleware/api'
 import config from '../../config'
 import colors from '../../utils/colors'
 import isEqual from 'lodash.isequal'
@@ -10,7 +10,7 @@ export const queryPlayers = (players, qs, brigade = false) => {
   let endpoint = brigade ? 'brigfame' : 'playerfame'
   return Promise.all(
     players.map(plName =>
-      callApi(
+      callApiChecked(
         config.apibase +
           `chromerivals/${endpoint}?name=` +
           encodeURIComponent(plName) +

@@ -8,7 +8,7 @@ import { fetchDatesIfNeeded } from '../../actions/cr'
 import withRouter from 'react-router/withRouter'
 import Link from 'react-router-dom/Link'
 import { parse, stringify } from 'querystring'
-import { callApi } from '../../middleware/api'
+import { callApiChecked } from '../../middleware/api'
 import config from '../../config'
 import { colorName } from '../../utils/AR/names'
 import blankImg from '../../img/000000-0.png'
@@ -138,7 +138,7 @@ class KillsInInterval extends Component {
         from,
         to
       })
-    let hsPromise = callApi(endpoint, {}, [400, 404])
+    let hsPromise = callApiChecked(endpoint, {}, [400, 404])
 
     return hsPromise
   }

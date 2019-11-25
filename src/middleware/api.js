@@ -28,6 +28,14 @@ export function callApi(url, options = {}, acceptableErrorCodes = []) {
     .then(response => response.json())
 }
 
+export function callApiChecked(url, options = {}, acceptableErrorCodes = []) {
+  return callApi(url, options, acceptableErrorCodes).catch(error => {
+    warnAboutError(error, options, url)
+
+    throw error
+  })
+}
+
 function warnAboutError(error, options = {}, url) {
   if (typeof toast === 'undefined') {
     return
@@ -44,6 +52,14 @@ function warnAboutError(error, options = {}, url) {
   }
 
   let method = options.method || 'GET'
+
+  if (errorResponse.status === 429) {
+    toast.error({
+      title: 'Too many requests',
+      message: `${method} ${url} failed due to rate limiting. Try again in a minute.`
+    })
+    return
+  }
 
   toast.error({
     title: 'Error ' + errorResponse.status,
