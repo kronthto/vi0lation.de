@@ -6,14 +6,20 @@ import {
   unitKinds,
   standardWeapons,
   advWeapons,
-  ITEMKIND_SKILL_ATTACK
+  ITEMKIND_SKILL_ATTACK,
+  ITEMKIND_DEFENSE,
+  COMPARE_ITEMKIND
 } from '../../../data/ao'
 import LoadBlock from '../../LoadBlock'
 import WeaponPreview from './WeaponPreview'
 
+const eqKinds = [ITEMKIND_DEFENSE].concat(standardWeapons, advWeapons)
+const isEquip = item => eqKinds.indexOf(item.kind) !== -1
+
 class WeaponCalcTool extends Component {
   gearItemDb = []
   gearSkillDb = []
+  itemFixDb = []
   selectedItem
   prefix
   suffix
@@ -35,9 +41,7 @@ class WeaponCalcTool extends Component {
 
   filterItemDbs(itemdb, gear) {
     let itemDbGear = itemdb.filter(item => item.ReqUnitKind & unitKinds[gear])
-    this.gearItemDb = itemDbGear.filter(
-      item => [].concat(standardWeapons, advWeapons).indexOf(item.kind) !== -1
-    )
+    this.gearItemDb = itemDbGear.filter(isEquip)
     this.gearSkillDb = itemDbGear.filter(
       item => item.kind === ITEMKIND_SKILL_ATTACK
     )
@@ -49,16 +53,15 @@ class WeaponCalcTool extends Component {
     ).then(allItems => {
       let reducedItemDb = Object.values(allItems)
         .filter(item => {
-          const { kind, ReqMinLevel } = item
+          const { kind, ReqMinLevel, name } = item
           if (kind === ITEMKIND_SKILL_ATTACK) {
             return true
           }
-          if (
-            ReqMinLevel > 103 &&
-            ReqMinLevel < 109 &&
-            (advWeapons.indexOf(kind) !== -1 ||
-              standardWeapons.indexOf(kind) !== -1)
-          ) {
+          if (name.charAt(0) !== '\\') {
+            return false
+          }
+          // noinspection RedundantIfStatementJS
+          if (ReqMinLevel > 103 && ReqMinLevel <= 115 && isEquip(item)) {
             return true
           }
           return false
@@ -71,7 +74,11 @@ class WeaponCalcTool extends Component {
       config.apibase + 'chromerivals/omi?category=rareitems'
     ).then(allFixes => {
       let fixDb = Object.values(allFixes)
-        .filter(fix => fix.probability !== 0)
+        .filter(
+          fix =>
+            fix.probability !== 0 &&
+            ['m', 'c', 'r', 'l', 'y'].indexOf(fix.name.charAt(1)) !== -1
+        )
         .sort((a, b) => a.probability - b.probability)
       this.setState({ fixDb })
     })
@@ -100,7 +107,7 @@ class WeaponCalcTool extends Component {
         value={def || ''}
       >
         <option value="">-</option>
-        {this.state.fixDb
+        {this.itemFixDb
           .filter(fix => {
             if (prefix) {
               return fix.id < 5000
@@ -124,15 +131,29 @@ class WeaponCalcTool extends Component {
       return <LoadBlock height="100px" />
     }
 
-    // TODO: Filter fixlist by itemkind
-
     const { gear, selWeap, itemprefix, itemsuffix, fixDb } = this.state
+
+    // When selected item changes, recalculate fix db to unset no longer matching selections
+    let prevItemKind
+    if (this.selectedItem) {
+      prevItemKind = this.selectedItem.kind
+    }
+
     // eslint-disable-next-line
     this.selectedItem = this.gearItemDb.find(item => item.id == selWeap)
+
+    if (!this.selectedItem) {
+      this.itemFixDb = []
+    } else if (this.selectedItem.kind !== prevItemKind) {
+      this.itemFixDb = fixDb.filter(fix => {
+        return COMPARE_ITEMKIND(fix.ReqItemKind, this.selectedItem.kind)
+      })
+    }
+
     // eslint-disable-next-line
-    this.prefix = fixDb.find(fix => fix.id == itemprefix)
+    this.prefix = this.itemFixDb.find(fix => fix.id == itemprefix)
     // eslint-disable-next-line
-    this.suffix = fixDb.find(fix => fix.id == itemsuffix)
+    this.suffix = this.itemFixDb.find(fix => fix.id == itemsuffix)
 
     return (
       <div>

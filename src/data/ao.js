@@ -8,4 +8,23 @@ export const unitKinds = {
 export const standardWeapons = [0, 1, 2, 3, 4, 5, 6, 7]
 export const advWeapons = [8, 9, 10, 11, 12, 13, 14, 15]
 
+const ITEMKIND_PRIMARY_WEAPON = 44
 export const ITEMKIND_SKILL_ATTACK = 50
+const ITEMKIND_SECONDARY_WEAPON = 48
+export const ITEMKIND_DEFENSE = 16
+
+export const IS_PRIMARY_WEAPON = kind => standardWeapons.indexOf(kind) !== -1
+export const IS_SECONDARY_WEAPON = kind => advWeapons.indexOf(kind) !== -1
+
+export const COMPARE_ITEMKIND = (_REQ_ITEM_KIND, _TARGET_KIND_VAR) => {
+  switch (_REQ_ITEM_KIND) {
+    case ITEMKIND_PRIMARY_WEAPON:
+      return IS_PRIMARY_WEAPON(_TARGET_KIND_VAR)
+    case ITEMKIND_SECONDARY_WEAPON:
+      return IS_SECONDARY_WEAPON(_TARGET_KIND_VAR)
+    case ITEMKIND_DEFENSE:
+      return _TARGET_KIND_VAR === ITEMKIND_DEFENSE
+    default:
+      throw new Error('Unexpected _REQ_ITEM_KIND')
+  }
+}

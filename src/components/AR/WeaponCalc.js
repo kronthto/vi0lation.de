@@ -14,12 +14,12 @@ class WeaponCalc extends Component {
         <Helmet>
           <meta
             name="description"
-            content="AirRivals/AceOnline weapon calculator"
+            content="Chromerivals equipment / weapon/armor calculator"
           />
-          <title>AirRivals/AceOnline WeaponCalc</title>
+          <title>ChromeRivals WeaponCalc</title>
         </Helmet>
 
-        <h1 className="title">Ace WeaponCalc</h1>
+        <h1 className="title">CR WeaponCalc</h1>
 
         <WeaponCalcTool />
       </div>

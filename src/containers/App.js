@@ -10,32 +10,26 @@ import Footer from '../components/Footer'
 
 import { isNode } from '../utils/env'
 
-import { fetchCmsIfNeeded } from '../actions/cms'
-
 const defaultMeta = () => {
   return (
-    <Helmet defaultTitle="Vi0" titleTemplate="%s - Vi0">
+    <Helmet defaultTitle="ChromeRivals-Tools" titleTemplate="%s - CR-Tools">
       <meta
         name="description"
-        content="Vi0lation brigade website and AirRivals ranking"
+        content="Tools, statistics and tracking of ChromeRivals"
       />
     </Helmet>
   )
 }
 
-export const queryData = dispatch => {
-  return dispatch(fetchCmsIfNeeded('all'))
-}
-
 class App extends Component {
   bootstrap() {
     if (isNode) {
-      return queryData(this.props.dispatch)
+      // return queryData(this.props.dispatch)
     }
   }
 
   componentDidMount() {
-    queryData(this.props.dispatch)
+    //    queryData(this.props.dispatch)
   }
 
   render() {

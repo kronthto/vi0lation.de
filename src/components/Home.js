@@ -9,37 +9,15 @@ class Home extends Component {
   render() {
     return (
       <div>
-        <h1 className="title">Vi0</h1>
+        <h1 className="title">ChromeRivals Tools</h1>
 
         <div className="columns is-multiline">
           <div className="column is-half">
-            <Link to="/ranking">
+            <Link to="/weaponcalc">
               <div className="hero is-primary is-bold">
                 <div className="hero-body">
-                  <h1 className="title">AirRivals/AceOnline</h1>
-                  <h2 className="subtitle">Tools & Stats</h2>
-                </div>
-              </div>
-            </Link>
-          </div>
-
-          <div className="column is-half">
-            <Link to="/ts3">
-              <div className="hero is-primary is-bold">
-                <div className="hero-body">
-                  <h1 className="title">TeamSpeak 3</h1>
-                  <h2 className="subtitle">Listing of the TS3 Servers</h2>
-                </div>
-              </div>
-            </Link>
-          </div>
-
-          <div className="column is-half">
-            <Link to="/tera">
-              <div className="hero is-primary is-bold">
-                <div className="hero-body">
-                  <h1 className="title">TERA</h1>
-                  <h2 className="subtitle">Gameplay / services / stats</h2>
+                  <h1 className="title">WeaponCalc</h1>
+                  <h2 className="subtitle">Item/gear stats</h2>
                 </div>
               </div>
             </Link>

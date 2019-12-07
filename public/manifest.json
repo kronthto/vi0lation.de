@@ -1,24 +1,12 @@
 {
-  "short_name": "Vi0",
-  "name": "Vi0lation",
+  "short_name": "CRT",
+  "name": "CR Tools",
   "icons": [
-    {
-      "src": "https://cdn.vi0lation.de/img/app_icon.png",
-      "sizes": "144x144",
-      "type": "image/png"
-    },
-    {
-      "src": "favicon.ico"
-    },
-    {
-      "src": "https://cdn.vi0lation.de/img/viologo.png",
-      "sizes": "72x36",
-      "type": "image/png"
-    }
+
   ],
   "start_url": "./",
   "display": "standalone",
-  "theme_color": "#4a4cff",
+  "theme_color": "#006488",
   "background_color": "#ffffff",
-  "description": "Vi0lation brigade website and AirRivals ranking"
+  "description": "ChromeRivals tools, statistics, tracking"
 }

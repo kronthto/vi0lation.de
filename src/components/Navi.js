@@ -2,17 +2,7 @@ import React, { Component } from 'react'
 import withRouter from 'react-router/withRouter'
 import NavLink from './NavLink'
 
-import classNames from 'classnames'
-
-import { highscoresUrl, crTopKillsIntervalUrl } from '../routes'
-
-const NavTab = props => {
-  return (
-    <div className={classNames('navbar-item has-dropdown', props.addClass)}>
-      {props.children}
-    </div>
-  )
-}
+import { crTopKillsIntervalUrl } from '../routes'
 
 const responsiveExpandedClass = 'is-active'
 const mainNav = 'mainNav'
@@ -45,7 +35,7 @@ class Navi extends Component {
         <div className="container">
           <div className="navbar-brand">
             <NavLink to="/" exact className="is-tab">
-              Vi0
+              CRT
             </NavLink>
             <div
               className="navbar-burger burger"
@@ -65,36 +55,9 @@ class Navi extends Component {
             style={{ paddingBottom: 0 }}
           >
             <div className="navbar-start">
-              <NavTab addClass="is-hoverable">
-                <NavLink to="/ranking" className="is-tab">
-                  AR/AO
-                </NavLink>
-                <div className="navbar-dropdown">
-                  <NavLink to="/ranking/fbtool">FrameBreak Tool</NavLink>
-                  <NavLink to="/ranking/statcalc">StatCalc</NavLink>
-                  <NavLink to="/ranking/eplist">EP List</NavLink>
-                  <NavLink to={highscoresUrl}>Prokyon/DE Highscores</NavLink>
-                  <NavLink to={crTopKillsIntervalUrl}>
-                    ChromeRivals Ranking
-                  </NavLink>
-                  <NavLink to="/ranking/chromerivals/playerFame">
-                    ChromeRivals Fame chart
-                  </NavLink>
-                  <NavLink to="/ranking/chromerivals/usercount">
-                    ChromeRivals Online-players
-                  </NavLink>
-                </div>
-              </NavTab>
-              <NavTab>
-                <NavLink to="/ts3" className="is-tab">
-                  TeamSpeak 3
-                </NavLink>
-              </NavTab>
-              <NavTab>
-                <NavLink to="/tera" className="is-tab">
-                  TERA
-                </NavLink>
-              </NavTab>
+              <NavLink to="/weaponcalc" className="is-tab">
+                WeaponCalc
+              </NavLink>
             </div>
             <div className="navbar-end" />
           </div>
