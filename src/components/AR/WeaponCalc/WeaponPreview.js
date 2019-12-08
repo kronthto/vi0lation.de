@@ -10,7 +10,7 @@ import {
 
 const WeaponPreview = props => {
   const { item, prefix, suffix } = props
-  let stats = mergeStats(collectStats(item))
+  let stats = mergeStats(collectStats(item, prefix, suffix))
   return (
     <div className="card">
       <header className="card-header">
@@ -46,7 +46,7 @@ const determinePrefix = item => {
   throw Error('Unexpected itemkind')
 }
 
-const collectStats = item => {
+const collectStats = (item, prefix, suffix) => {
   let values = {}
 
   let desKeyPrefix = determinePrefix(item)
@@ -82,9 +82,34 @@ const collectStats = item => {
 
   return {
     base: values,
-    fixes: {}, // TODO
+    fixes: getFixesStats([prefix, suffix].filter(Boolean)),
     enchants: {} // TODO
   }
+}
+
+const getFixesStats = fixes => {
+  let res = {}
+  console.log(fixes)
+  fixes.forEach(fix => {
+    for (let i = 1; i <= 9; i++) {
+      let desNum = fix[`DesParameter${i}`]
+      if (!desNum) {
+        continue
+      }
+
+      let desKey = desKeyByDesNum(desNum)
+      if (!desKey) {
+        continue
+      }
+
+      if (!(desKey in res)) {
+        res[desKey] = 0
+      }
+
+      res[desKey] += fix[`ParameterValue${i}`]
+    }
+  })
+  return res
 }
 
 const mergeStats = stats => {
