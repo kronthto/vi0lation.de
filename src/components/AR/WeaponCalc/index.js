@@ -8,7 +8,8 @@ import {
   advWeapons,
   ITEMKIND_SKILL_ATTACK,
   ITEMKIND_DEFENSE,
-  COMPARE_ITEMKIND
+  COMPARE_ITEMKIND,
+  ITEMKIND_SKILL_DEFENSE
 } from '../../../data/ao'
 import LoadBlock from '../../LoadBlock'
 import WeaponPreview from './WeaponPreview'
@@ -43,7 +44,9 @@ class WeaponCalcTool extends Component {
     let itemDbGear = itemdb.filter(item => item.ReqUnitKind & unitKinds[gear])
     this.gearItemDb = itemDbGear.filter(isEquip)
     this.gearSkillDb = itemDbGear.filter(
-      item => item.kind === ITEMKIND_SKILL_ATTACK
+      item =>
+        item.kind === ITEMKIND_SKILL_ATTACK ||
+        item.kind === ITEMKIND_SKILL_DEFENSE
     )
   }
 
@@ -54,7 +57,10 @@ class WeaponCalcTool extends Component {
       let reducedItemDb = Object.values(allItems)
         .filter(item => {
           const { kind, ReqMinLevel, name } = item
-          if (kind === ITEMKIND_SKILL_ATTACK) {
+          if (
+            kind === ITEMKIND_SKILL_ATTACK ||
+            kind === ITEMKIND_SKILL_DEFENSE
+          ) {
             return true
           }
           if (name.charAt(0) !== '\\') {

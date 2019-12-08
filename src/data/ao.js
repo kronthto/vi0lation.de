@@ -10,6 +10,7 @@ export const advWeapons = [8, 9, 10, 11, 12, 13, 14, 15]
 
 const ITEMKIND_PRIMARY_WEAPON = 44
 export const ITEMKIND_SKILL_ATTACK = 50
+export const ITEMKIND_SKILL_DEFENSE = 51
 const ITEMKIND_SECONDARY_WEAPON = 48
 export const ITEMKIND_DEFENSE = 16
 
@@ -27,4 +28,34 @@ export const COMPARE_ITEMKIND = (_REQ_ITEM_KIND, _TARGET_KIND_VAR) => {
     default:
       throw new Error('Unexpected _REQ_ITEM_KIND')
   }
+}
+
+export const DES_MAP = {
+  STD_MIN: 18,
+  STD_MAX: 71,
+  STD_PROB: 20,
+  ADV_MIN: 19,
+  ADV_MAX: 72,
+  ADV_PROB: 21,
+  STD_EVA: 24,
+  ADV_EVA: 25,
+  STD_DEF: 22,
+  ADV_DEF: 23,
+  HP: 13,
+  DP: 89,
+  STD_PIERCE: 184,
+  ADV_PIERCE: 185
+}
+
+export const desKeyByDesNum = desNum => {
+  let foundPair = Object.entries(DES_MAP).find(pair => pair[1] === desNum)
+  return foundPair ? foundPair[0] : false
+}
+
+export const baseValuesToDesKeyMap = {
+  AbilityMin: `_MIN`,
+  AbilityMax: `_MAX`,
+  HitRate: '_PROB',
+  FractionResistance: '_PIERCE',
+  ReAttacktime: '_RA'
 }
