@@ -299,7 +299,12 @@ class WeaponCalcTool extends Component {
                   <option value="">Choose card</option>
                   {this.enchantItemDb
                     .filter(card => {
-                      return true // TODO
+                      return (
+                        COMPARE_ITEMKIND(
+                          card.ReqItemKind,
+                          this.selectedItem.kind
+                        ) || console.log(card.name, card.ReqItemKind)
+                      )
                     })
                     .map(item => {
                       return (
