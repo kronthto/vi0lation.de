@@ -9,8 +9,8 @@ import {
 } from '../../../data/ao'
 
 const WeaponPreview = props => {
-  const { item, prefix, suffix } = props
-  let stats = mergeStats(collectStats(item, prefix, suffix))
+  const { item, prefix, suffix, enchants } = props
+  let stats = mergeStats(collectStats(item, prefix, suffix, enchants))
   return (
     <div className="card">
       <header className="card-header">
@@ -46,7 +46,7 @@ const determinePrefix = item => {
   throw Error('Unexpected itemkind')
 }
 
-const collectStats = (item, prefix, suffix) => {
+const collectStats = (item, prefix, suffix, enchants) => {
   let values = {}
 
   let desKeyPrefix = determinePrefix(item)
@@ -83,13 +83,12 @@ const collectStats = (item, prefix, suffix) => {
   return {
     base: values,
     fixes: getFixesStats([prefix, suffix].filter(Boolean)),
-    enchants: {} // TODO
+    enchants: getEnchantsStats(enchants)
   }
 }
 
 const getFixesStats = fixes => {
   let res = {}
-  console.log(fixes)
   fixes.forEach(fix => {
     for (let i = 1; i <= 9; i++) {
       let desNum = fix[`DesParameter${i}`]
@@ -99,6 +98,7 @@ const getFixesStats = fixes => {
 
       let desKey = desKeyByDesNum(desNum)
       if (!desKey) {
+        console.warn(`DesNum ${desNum} not mapped`)
         continue
       }
 
@@ -110,6 +110,27 @@ const getFixesStats = fixes => {
     }
   })
   return res
+}
+
+const getEnchantsStats = enchants => {
+  let values = {}
+  enchants.forEach(enchInfo => {
+    Object.keys(enchInfo.card.DesParameters).forEach(desNum => {
+      desNum = Number(desNum)
+      let desKey = desKeyByDesNum(desNum)
+      if (!desKey) {
+        console.warn(`DesNum ${desNum} not mapped`)
+        return
+      }
+
+      if (!(desKey in values)) {
+        values[desKey] = 0
+      }
+
+      values[desKey] += enchInfo.card.DesParameters[desNum] * enchInfo.count
+    })
+  })
+  return values
 }
 
 const mergeStats = stats => {

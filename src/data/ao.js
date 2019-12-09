@@ -8,11 +8,13 @@ export const unitKinds = {
 export const standardWeapons = [0, 1, 2, 3, 4, 5, 6, 7]
 export const advWeapons = [8, 9, 10, 11, 12, 13, 14, 15]
 
-const ITEMKIND_PRIMARY_WEAPON = 44
 export const ITEMKIND_SKILL_ATTACK = 50
 export const ITEMKIND_SKILL_DEFENSE = 51
-const ITEMKIND_SECONDARY_WEAPON = 48
 export const ITEMKIND_DEFENSE = 16
+export const ITEMKIND_ENCHANT = 21
+
+const ITEMKIND_PRIMARY_WEAPON = 44
+const ITEMKIND_SECONDARY_WEAPON = 48
 
 export const IS_PRIMARY_WEAPON = kind => standardWeapons.indexOf(kind) !== -1
 export const IS_SECONDARY_WEAPON = kind => advWeapons.indexOf(kind) !== -1

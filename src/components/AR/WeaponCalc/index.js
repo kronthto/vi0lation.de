@@ -9,7 +9,8 @@ import {
   ITEMKIND_SKILL_ATTACK,
   ITEMKIND_DEFENSE,
   COMPARE_ITEMKIND,
-  ITEMKIND_SKILL_DEFENSE
+  ITEMKIND_SKILL_DEFENSE,
+  ITEMKIND_ENCHANT
 } from '../../../data/ao'
 import LoadBlock from '../../LoadBlock'
 import WeaponPreview from './WeaponPreview'
@@ -17,19 +18,26 @@ import WeaponPreview from './WeaponPreview'
 const eqKinds = [ITEMKIND_DEFENSE].concat(standardWeapons, advWeapons)
 const isEquip = item => eqKinds.indexOf(item.kind) !== -1
 
+const bannedEnchantNames = ['Swift ', '%]', 'E10', 'FFA']
+const isBannedEnchant = item =>
+  bannedEnchantNames.some(bannedName => item.name.includes(bannedName))
+
 class WeaponCalcTool extends Component {
   gearItemDb = []
   gearSkillDb = []
   itemFixDb = []
+  enchantItemDb = []
   selectedItem
   prefix
   suffix
+  enchants
 
   constructor(props) {
     super(props)
 
     let initState = {
-      gear: 'B'
+      gear: 'B',
+      ench: {}
     }
 
     let hash = this.props.location.hash.substr(1)
@@ -59,7 +67,8 @@ class WeaponCalcTool extends Component {
           const { kind, ReqMinLevel, name } = item
           if (
             kind === ITEMKIND_SKILL_ATTACK ||
-            kind === ITEMKIND_SKILL_DEFENSE
+            kind === ITEMKIND_SKILL_DEFENSE ||
+            kind === ITEMKIND_ENCHANT
           ) {
             return true
           }
@@ -74,6 +83,9 @@ class WeaponCalcTool extends Component {
         })
         .sort((a, b) => b.ReqMinLevel - a.ReqMinLevel)
       this.filterItemDbs(reducedItemDb, this.state.gear)
+      this.enchantItemDb = reducedItemDb.filter(
+        item => item.kind === ITEMKIND_ENCHANT && !isBannedEnchant(item)
+      )
       this.setState({ itemdb: reducedItemDb })
     })
     callApi(
@@ -132,6 +144,36 @@ class WeaponCalcTool extends Component {
     )
   }
 
+  enchantAddCallback() {
+    let selected = this.refs.addench.value
+    if (selected in this.state.ench) {
+      return
+    }
+    let newEnches = Object.assign({}, this.state.ench)
+    newEnches[selected] = 0
+    this.setState({ ench: newEnches })
+  }
+
+  enchantSetNumCallback(e) {
+    let count = e.target.value
+    let countNum = Number(count)
+    let cardNum = e.target.name
+
+    let newEnches = Object.assign({}, this.state.ench)
+
+    if (countNum > 0) {
+      newEnches[cardNum] = countNum
+    } else {
+      if (count === '') {
+        newEnches[cardNum] = ''
+      } else {
+        delete newEnches[cardNum]
+      }
+    }
+
+    this.setState({ ench: newEnches })
+  }
+
   render() {
     if (!this.state.itemdb || !this.state.fixDb) {
       return <LoadBlock height="100px" />
@@ -160,6 +202,13 @@ class WeaponCalcTool extends Component {
     this.prefix = this.itemFixDb.find(fix => fix.id == itemprefix)
     // eslint-disable-next-line
     this.suffix = this.itemFixDb.find(fix => fix.id == itemsuffix)
+
+    this.enchants = Object.keys(this.state.ench).map(cardId => {
+      return {
+        card: this.enchantItemDb.find(item => item.id === Number(cardId)),
+        count: Number(this.state.ench[cardId])
+      }
+    })
 
     return (
       <div>
@@ -232,11 +281,71 @@ class WeaponCalcTool extends Component {
         </div>
 
         {this.selectedItem && (
-          <WeaponPreview
-            item={this.selectedItem}
-            prefix={this.prefix}
-            suffix={this.suffix}
-          />
+          <div className="columns">
+            <div className="column">
+              <label className="label" htmlFor="addench">
+                Add enchants
+              </label>
+              <div
+                className="select is-fullwidth"
+                style={{ marginBottom: '1em' }}
+              >
+                <select
+                  id="addench"
+                  ref="addench"
+                  onChange={this.enchantAddCallback.bind(this)}
+                  value={''}
+                >
+                  <option value="">Choose card</option>
+                  {this.enchantItemDb
+                    .filter(card => {
+                      return true // TODO
+                    })
+                    .map(item => {
+                      return (
+                        <option key={item.id} value={item.id}>
+                          {item.name}
+                        </option>
+                      )
+                    })}
+                </select>
+              </div>
+              <div>
+                {this.enchants.map(cardInfo => (
+                  <div key={cardInfo.card.id}>
+                    <input
+                      min="0"
+                      max="15"
+                      name={cardInfo.card.id}
+                      className="input is-small"
+                      type="number"
+                      value={cardInfo.count}
+                      style={{ display: 'inline', width: '50px' }}
+                      onChange={this.enchantSetNumCallback.bind(this)}
+                    />
+                    <label
+                      className="label"
+                      style={{
+                        display: 'inline',
+                        marginLeft: '0.5em',
+                        lineHeight: '1.8'
+                      }}
+                    >
+                      {cardInfo.card.name}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="column">
+              <WeaponPreview
+                item={this.selectedItem}
+                prefix={this.prefix}
+                suffix={this.suffix}
+                enchants={this.enchants}
+              />
+            </div>
+          </div>
         )}
       </div>
     )
