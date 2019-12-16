@@ -26,13 +26,76 @@ const WeaponPreview = props => {
         <div className="content">
           <ul>
             {Object.keys(stats).map(attr => (
-              <li key={attr}>{`${attr}: ${JSON.stringify(stats[attr])}`}</li>
+              <DisplayStat key={attr} attr={attr} value={stats[attr]} />
             ))}
           </ul>
         </div>
       </div>
     </div>
   )
+}
+
+const DisplayStat = props => {
+  const { attr, value } = props
+
+  if (!(value.base || value.enchants || value.fixes)) {
+    return null
+  }
+
+  let baseIsPercentPoints = true
+  let upgradesArePercentPoints = true
+  let factorBaseBy = 1
+  let calcTotal = true
+
+  if (attr.includes('_RA')) {
+    factorBaseBy = 1000
+    baseIsPercentPoints = false
+  }
+  if (attr.includes('_MIN') || attr.includes('_MAX')) {
+    calcTotal = false
+    baseIsPercentPoints = false
+  }
+  if (attr === 'HP' || attr === 'DP') {
+    baseIsPercentPoints = false
+    upgradesArePercentPoints = false
+  }
+  if (attr.includes('WEIGHT')) {
+    baseIsPercentPoints = false
+  }
+
+  let base = (Number(value.base) || 0) / factorBaseBy
+
+  let total = null
+  if (calcTotal) {
+    let bonuses = (value.enchants || 0) + (value.fixes || null)
+    if (!upgradesArePercentPoints || baseIsPercentPoints) {
+      total = base + bonuses
+    } else {
+      // Weight/MM/RA
+      total = base * (1 + bonuses)
+    }
+  }
+
+  return (
+    <li>
+      {attr}: {base || null}{' '}
+      {value.fixes
+        ? colorName(`\\g[${PlusMinusNumber(value.fixes)}]\\g`)
+        : null}{' '}
+      {value.enchants
+        ? colorName(`\\e[${PlusMinusNumber(value.enchants)}]\\e`)
+        : null}{' '}
+      {total !== null && ` = ${total}`}
+    </li>
+  )
+}
+
+const PlusMinusNumber = num => {
+  num = Number(num)
+  if (num <= 0) {
+    return num
+  }
+  return '+' + num
 }
 
 const determinePrefix = item => {

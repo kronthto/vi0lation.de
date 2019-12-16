@@ -264,7 +264,6 @@ class WeaponCalcTool extends Component {
             ))}
           </ul>
         </div>
-
         <div className="columns">
           <div className="column">
             <label className="label" htmlFor="weapsel">
@@ -298,7 +297,6 @@ class WeaponCalcTool extends Component {
             </div>
           </div>
         </div>
-
         <div className="columns">
           <div className="column">
             <label className="label" htmlFor="iPrf">
@@ -318,7 +316,6 @@ class WeaponCalcTool extends Component {
             </div>
           </div>
         </div>
-
         {this.selectedItem && (
           <div className="columns">
             <div className="column">
@@ -386,6 +383,8 @@ class WeaponCalcTool extends Component {
             </div>
           </div>
         )}
+        <hr />
+        TODO: Stats, Buffs/Items/Skills
       </div>
     )
   }
