@@ -179,7 +179,7 @@ class WeaponCalcTool extends Component {
       return <LoadBlock height="100px" />
     }
 
-    const { gear, selWeap, itemprefix, itemsuffix, fixDb } = this.state
+    const { gear, sWp, iPrf, iSuf, fixDb } = this.state
 
     // When selected item changes, recalculate fix db to unset no longer matching selections
     let prevItemKind
@@ -188,7 +188,7 @@ class WeaponCalcTool extends Component {
     }
 
     // eslint-disable-next-line
-    this.selectedItem = this.gearItemDb.find(item => item.id == selWeap)
+    this.selectedItem = this.gearItemDb.find(item => item.id == sWp)
 
     if (!this.selectedItem) {
       this.itemFixDb = []
@@ -199,9 +199,9 @@ class WeaponCalcTool extends Component {
     }
 
     // eslint-disable-next-line
-    this.prefix = this.itemFixDb.find(fix => fix.id == itemprefix)
+    this.prefix = this.itemFixDb.find(fix => fix.id == iPrf)
     // eslint-disable-next-line
-    this.suffix = this.itemFixDb.find(fix => fix.id == itemsuffix)
+    this.suffix = this.itemFixDb.find(fix => fix.id == iSuf)
 
     this.enchants = Object.keys(this.state.ench).map(cardId => {
       return {
@@ -243,9 +243,8 @@ class WeaponCalcTool extends Component {
               <select
                 id="weapsel"
                 ref="weapsel"
-                onChange={() =>
-                  this.setState({ selWeap: this.refs.weapsel.value })}
-                value={selWeap || ''}
+                onChange={() => this.setState({ sWp: this.refs.weapsel.value })}
+                value={sWp || ''}
               >
                 <option value="">Select item ...</option>
                 {this.gearItemDb.map(item => {
@@ -262,20 +261,20 @@ class WeaponCalcTool extends Component {
 
         <div className="columns">
           <div className="column">
-            <label className="label" htmlFor="itemprefix">
+            <label className="label" htmlFor="iPrf">
               Prefix
             </label>
             <div className="select is-fullwidth">
-              {this.renderFixSelect('itemprefix', true)}
+              {this.renderFixSelect('iPrf', true)}
             </div>
           </div>
 
           <div className="column">
-            <label className="label" htmlFor="itemsuffix">
+            <label className="label" htmlFor="iSuf">
               Suffix
             </label>
             <div className="select is-fullwidth">
-              {this.renderFixSelect('itemsuffix', false)}
+              {this.renderFixSelect('iSuf', false)}
             </div>
           </div>
         </div>
@@ -299,11 +298,9 @@ class WeaponCalcTool extends Component {
                   <option value="">Choose card</option>
                   {this.enchantItemDb
                     .filter(card => {
-                      return (
-                        COMPARE_ITEMKIND(
-                          card.ReqItemKind,
-                          this.selectedItem.kind
-                        ) || console.log(card.name, card.ReqItemKind)
+                      return COMPARE_ITEMKIND(
+                        card.ReqItemKind,
+                        this.selectedItem.kind
                       )
                     })
                     .map(item => {
