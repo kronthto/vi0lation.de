@@ -14,6 +14,8 @@ export const ITEMKIND_SKILL_DEFENSE = 51
 export const ITEMKIND_DEFENSE = 16
 export const ITEMKIND_ENCHANT = 21
 
+export const DES_ENCHANT_INITIALIZE = 105
+
 const ITEMKIND_PRIMARY_WEAPON = 44
 const ITEMKIND_SECONDARY_WEAPON = 48
 
@@ -52,7 +54,11 @@ export const DES_MAP = {
   HP: 13,
   DP: 89,
   STD_PIERCE: 184,
-  ADV_PIERCE: 185
+  ADV_PIERCE: 185,
+  STD_RA: 31,
+  ADV_RA: 32,
+  STD_WEIGHT: 75,
+  ADV_WEIGHT: 76
 }
 
 export const desKeyByDesNum = desNum => {
@@ -65,5 +71,6 @@ export const baseValuesToDesKeyMap = {
   AbilityMax: `_MAX`,
   HitRate: '_PROB',
   FractionResistance: '_PIERCE',
-  ReAttacktime: '_RA'
+  ReAttacktime: '_RA',
+  Weight: '_WEIGHT'
 }

@@ -10,7 +10,8 @@ import {
   ITEMKIND_DEFENSE,
   COMPARE_ITEMKIND,
   ITEMKIND_SKILL_DEFENSE,
-  ITEMKIND_ENCHANT
+  ITEMKIND_ENCHANT,
+  DES_ENCHANT_INITIALIZE
 } from '../../../data/ao'
 import LoadBlock from '../../LoadBlock'
 import WeaponPreview from './WeaponPreview'
@@ -20,7 +21,16 @@ const isEquip = item => eqKinds.indexOf(item.kind) !== -1
 
 const bannedEnchantNames = ['Swift ', '%]', 'E10', 'FFA']
 const isBannedEnchant = item =>
-  bannedEnchantNames.some(bannedName => item.name.includes(bannedName))
+  bannedEnchantNames.some(
+    bannedName =>
+      item.name.includes(bannedName) ||
+      DES_ENCHANT_INITIALIZE in item.DesParameters
+  )
+
+// noinspection JSBitwiseOperatorUsage
+const enchantCardMatches = (card, item, gear) =>
+  COMPARE_ITEMKIND(card.ReqItemKind, item.kind) &&
+  card.ReqUnitKind & unitKinds[gear]
 
 class WeaponCalcTool extends Component {
   gearItemDb = []
@@ -49,6 +59,7 @@ class WeaponCalcTool extends Component {
   }
 
   filterItemDbs(itemdb, gear) {
+    // noinspection JSBitwiseOperatorUsage
     let itemDbGear = itemdb.filter(item => item.ReqUnitKind & unitKinds[gear])
     this.gearItemDb = itemDbGear.filter(isEquip)
     this.gearSkillDb = itemDbGear.filter(
@@ -174,6 +185,26 @@ class WeaponCalcTool extends Component {
     this.setState({ ench: newEnches })
   }
 
+  cleanseEnchants(newItem, newGear) {
+    if (!newItem) {
+      return {}
+    }
+
+    let newEnchants = {}
+    Object.keys(this.state.ench).forEach(cardId => {
+      if (
+        enchantCardMatches(
+          this.enchantItemDb.find(item => item.id === Number(cardId)),
+          newItem,
+          newGear
+        )
+      ) {
+        newEnchants[cardId] = this.state.ench[cardId]
+      }
+    })
+    return newEnchants
+  }
+
   render() {
     if (!this.state.itemdb || !this.state.fixDb) {
       return <LoadBlock height="100px" />
@@ -187,8 +218,7 @@ class WeaponCalcTool extends Component {
       prevItemKind = this.selectedItem.kind
     }
 
-    // eslint-disable-next-line
-    this.selectedItem = this.gearItemDb.find(item => item.id == sWp)
+    this.selectedItem = this.gearItemDb.find(item => item.id === Number(sWp))
 
     if (!this.selectedItem) {
       this.itemFixDb = []
@@ -198,10 +228,8 @@ class WeaponCalcTool extends Component {
       })
     }
 
-    // eslint-disable-next-line
-    this.prefix = this.itemFixDb.find(fix => fix.id == iPrf)
-    // eslint-disable-next-line
-    this.suffix = this.itemFixDb.find(fix => fix.id == iSuf)
+    this.prefix = this.itemFixDb.find(fix => fix.id === Number(iPrf))
+    this.suffix = this.itemFixDb.find(fix => fix.id === Number(iSuf))
 
     this.enchants = Object.keys(this.state.ench).map(cardId => {
       return {
@@ -224,7 +252,10 @@ class WeaponCalcTool extends Component {
                 <a
                   onClick={() => {
                     this.filterItemDbs(this.state.itemdb, gearEach)
-                    this.setState({ gear: gearEach })
+                    this.setState({
+                      gear: gearEach,
+                      ench: this.cleanseEnchants(this.selectedItem, gearEach)
+                    })
                   }}
                 >
                   <span>{`${gearEach}-Gear`}</span>
@@ -243,7 +274,16 @@ class WeaponCalcTool extends Component {
               <select
                 id="weapsel"
                 ref="weapsel"
-                onChange={() => this.setState({ sWp: this.refs.weapsel.value })}
+                onChange={() =>
+                  this.setState({
+                    sWp: this.refs.weapsel.value,
+                    ench: this.cleanseEnchants(
+                      this.gearItemDb.find(
+                        item => item.id === Number(this.refs.weapsel.value)
+                      ),
+                      gear
+                    )
+                  })}
                 value={sWp || ''}
               >
                 <option value="">Select item ...</option>
@@ -297,12 +337,9 @@ class WeaponCalcTool extends Component {
                 >
                   <option value="">Choose card</option>
                   {this.enchantItemDb
-                    .filter(card => {
-                      return COMPARE_ITEMKIND(
-                        card.ReqItemKind,
-                        this.selectedItem.kind
-                      )
-                    })
+                    .filter(card =>
+                      enchantCardMatches(card, this.selectedItem, gear)
+                    )
                     .map(item => {
                       return (
                         <option key={item.id} value={item.id}>

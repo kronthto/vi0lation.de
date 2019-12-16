@@ -16,7 +16,9 @@ const WeaponPreview = props => {
       <header className="card-header">
         <p className="card-header-title is-centered">
           {prefix && colorName(prefix.name)}
-          &nbsp;{colorName(item.name)}&nbsp;
+          &nbsp;{colorName(item.name)}&nbsp;{colorName(
+            `\\e[E${enchants.reduce((acc, card) => acc + card.count, 0)}]\\e`
+          )}&nbsp;
           {suffix && colorName(suffix.name)}
         </p>
       </header>
@@ -54,6 +56,13 @@ const collectStats = (item, prefix, suffix, enchants) => {
   Object.keys(baseValuesToDesKeyMap).forEach(prop => {
     if (item[prop]) {
       let desKey = baseValuesToDesKeyMap[prop]
+      if (
+        !desKeyPrefix &&
+        desKey === '_WEIGHT' &&
+        item.kind === ITEMKIND_DEFENSE
+      ) {
+        desKey = 'WEIGHT'
+      }
       if (desKey.charAt(0) === '_') {
         if (!desKeyPrefix) {
           throw Error('Not a weapon item')
@@ -78,7 +87,7 @@ const collectStats = (item, prefix, suffix, enchants) => {
     values[desKey] += item.DesParameters[desNum]
   })
 
-  // TODO: Speed, Weight
+  // TODO: Speed
 
   return {
     base: values,
