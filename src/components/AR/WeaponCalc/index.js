@@ -14,7 +14,8 @@ import {
   DES_ENCHANT_INITIALIZE
 } from '../../../data/ao'
 import LoadBlock from '../../LoadBlock'
-import WeaponPreview from './WeaponPreview'
+import WeaponPreview, { prepareStats } from './WeaponPreview'
+import TotalResult from './TotalResult'
 
 const eqKinds = [ITEMKIND_DEFENSE].concat(standardWeapons, advWeapons)
 const isEquip = item => eqKinds.indexOf(item.kind) !== -1
@@ -26,6 +27,12 @@ const isBannedEnchant = item =>
       item.name.includes(bannedName) ||
       DES_ENCHANT_INITIALIZE in item.DesParameters
   )
+
+const stats = [
+  { id: 'Atk', label: 'Attack' },
+  { id: 'Def', label: 'Defense' },
+  { id: 'Eva', label: 'Evasion' }
+]
 
 // noinspection JSBitwiseOperatorUsage
 const enchantCardMatches = (card, item, gear) =>
@@ -45,9 +52,13 @@ class WeaponCalcTool extends Component {
   constructor(props) {
     super(props)
 
+    let defaultStat = {}
+    stats.forEach(stat => (defaultStat[stat.id] = 0))
+
     let initState = {
       gear: 'B',
-      ench: {}
+      ench: {},
+      stat: defaultStat
     }
 
     let hash = this.props.location.hash.substr(1)
@@ -238,6 +249,10 @@ class WeaponCalcTool extends Component {
       }
     })
 
+    const weaponStats = this.selectedItem
+      ? prepareStats(this.selectedItem, this.prefix, this.suffix, this.enchants)
+      : undefined
+
     return (
       <div>
         <div className="tabs is-toggle is-fullwidth">
@@ -379,14 +394,48 @@ class WeaponCalcTool extends Component {
                 prefix={this.prefix}
                 suffix={this.suffix}
                 enchants={this.enchants}
+                stats={weaponStats}
               />
             </div>
           </div>
         )}
         <hr />
-        TODO: Buffs/Items/Skills
+        <label className="label">Stats</label>
+        <div className="columns">
+          {stats.map(stat => {
+            const id = 'stat' + stat.id
+            return (
+              <div className="column" key={id}>
+                <label className="label" htmlFor={id}>
+                  {stat.label}
+                </label>
+                <input
+                  type="number"
+                  value={this.state.stat[stat.id]}
+                  className="input"
+                  id={id}
+                  min="0"
+                  max="340"
+                  onChange={e =>
+                    this.setState({
+                      stat: Object.assign({}, this.state.stat, {
+                        [stat.id]: Number(e.target.value)
+                      })
+                    })}
+                />
+              </div>
+            )
+          })}
+        </div>
+        TODO: Buffs/Items/Skills/armorbonus/..
         <hr />
-        TODO: Total, vs.
+        {this.selectedItem && (
+          <TotalResult
+            item={this.selectedItem}
+            weaponStats={weaponStats}
+            gearStatPoints={this.state.stat}
+          />
+        )}
       </div>
     )
   }

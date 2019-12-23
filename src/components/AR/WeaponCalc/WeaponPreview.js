@@ -8,9 +8,63 @@ import {
   ITEMKIND_DEFENSE
 } from '../../../data/ao'
 
-const WeaponPreview = props => {
-  const { item, prefix, suffix, enchants } = props
+export const prepareStats = (item, prefix, suffix, enchants) => {
   let stats = mergeStats(collectStats(item, prefix, suffix, enchants))
+  let displayStats = {}
+
+  Object.keys(stats).forEach(attr => {
+    let value = Object.assign({}, stats[attr])
+
+    if (!(value.base || value.enchants || value.fixes)) {
+      return
+    }
+
+    let baseIsPercentPoints = true
+    let upgradesArePercentPoints = true
+    let factorBaseBy = 1
+    let calcTotal = true
+
+    if (attr.includes('_RA')) {
+      factorBaseBy = 1000
+      baseIsPercentPoints = false
+    }
+    if (attr.includes('_MIN') || attr.includes('_MAX')) {
+      calcTotal = false
+      baseIsPercentPoints = false
+    }
+    if (attr === 'HP' || attr === 'DP') {
+      baseIsPercentPoints = false
+      upgradesArePercentPoints = false
+    }
+    if (attr.includes('WEIGHT')) {
+      baseIsPercentPoints = false
+    }
+
+    let base = (Number(value.base) || 0) / factorBaseBy
+
+    let bonuses = (value.enchants || 0) + (value.fixes || null)
+    value.additiv = !upgradesArePercentPoints || baseIsPercentPoints
+    if (calcTotal) {
+      if (value.additiv) {
+        value.total = base + bonuses
+      } else {
+        // Weight/MM/RA
+        value.total = base * (1 + bonuses)
+      }
+    }
+
+    value.base = base
+    value.bonuses = bonuses
+
+    displayStats[attr] = value
+  })
+
+  return displayStats
+}
+
+const WeaponPreview = props => {
+  const { item, prefix, suffix, enchants, stats } = props
+
   return (
     <div className="card">
       <header className="card-header">
@@ -38,59 +92,23 @@ const WeaponPreview = props => {
 const DisplayStat = props => {
   const { attr, value } = props
 
-  if (!(value.base || value.enchants || value.fixes)) {
-    return null
-  }
-
-  let baseIsPercentPoints = true
-  let upgradesArePercentPoints = true
-  let factorBaseBy = 1
-  let calcTotal = true
-
-  if (attr.includes('_RA')) {
-    factorBaseBy = 1000
-    baseIsPercentPoints = false
-  }
-  if (attr.includes('_MIN') || attr.includes('_MAX')) {
-    calcTotal = false
-    baseIsPercentPoints = false
-  }
-  if (attr === 'HP' || attr === 'DP') {
-    baseIsPercentPoints = false
-    upgradesArePercentPoints = false
-  }
-  if (attr.includes('WEIGHT')) {
-    baseIsPercentPoints = false
-  }
-
-  let base = (Number(value.base) || 0) / factorBaseBy
-
-  let total = null
-  if (calcTotal) {
-    let bonuses = (value.enchants || 0) + (value.fixes || null)
-    if (!upgradesArePercentPoints || baseIsPercentPoints) {
-      total = base + bonuses
-    } else {
-      // Weight/MM/RA
-      total = base * (1 + bonuses)
-    }
-  }
-
   return (
     <li>
-      {attr}: {base || null}{' '}
+      {attr}: {value.base || null}{' '}
       {value.fixes
         ? colorName(`\\g[${PlusMinusNumber(value.fixes)}]\\g`)
         : null}{' '}
       {value.enchants
         ? colorName(`\\e[${PlusMinusNumber(value.enchants)}]\\e`)
         : null}{' '}
-      {total !== null && (value.fixes || value.enchants) && ` = ${total}`}
+      {'total' in value &&
+        (value.fixes || value.enchants) &&
+        ` = ${value.total}`}
     </li>
   )
 }
 
-const PlusMinusNumber = num => {
+export const PlusMinusNumber = num => {
   num = Number(num)
   if (num <= 0) {
     return num
@@ -98,7 +116,7 @@ const PlusMinusNumber = num => {
   return '+' + num
 }
 
-const determinePrefix = item => {
+export const determinePrefix = item => {
   if (IS_PRIMARY_WEAPON(item.kind)) {
     return 'STD'
   }
