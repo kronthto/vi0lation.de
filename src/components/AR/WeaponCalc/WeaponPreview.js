@@ -85,7 +85,7 @@ const DisplayStat = props => {
       {value.enchants
         ? colorName(`\\e[${PlusMinusNumber(value.enchants)}]\\e`)
         : null}{' '}
-      {total !== null && ` = ${total}`}
+      {total !== null && (value.fixes || value.enchants) && ` = ${total}`}
     </li>
   )
 }

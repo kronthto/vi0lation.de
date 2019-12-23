@@ -289,7 +289,7 @@ class WeaponCalcTool extends Component {
                 {this.gearItemDb.map(item => {
                   return (
                     <option key={item.id} value={item.id}>
-                      {item.name}
+                      {item.name} [{item.ReqMinLevel}]
                     </option>
                   )
                 })}
@@ -384,7 +384,9 @@ class WeaponCalcTool extends Component {
           </div>
         )}
         <hr />
-        TODO: Stats, Buffs/Items/Skills
+        TODO: Buffs/Items/Skills
+        <hr />
+        TODO: Total, vs.
       </div>
     )
   }
