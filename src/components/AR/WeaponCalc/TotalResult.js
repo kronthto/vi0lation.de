@@ -1,6 +1,6 @@
 import React from 'react'
 import aostats from 'aceonline-stats'
-import { ITEMKIND_DEFENSE } from '../../../data/ao'
+import { desKeyByDesNum, ITEMKIND_DEFENSE } from '../../../data/ao'
 import { determinePrefix, PlusMinusNumber } from './WeaponPreview'
 import { colorName } from '../../../utils/AR/names'
 
@@ -12,7 +12,7 @@ const WEAPON_ATTRS = ['_MIN', '_MAX', '_PROB', '_PIERCE']
 const ARMOR_ATTRS = ['HP', 'DP', 'STD_DEF', 'ADV_DEF', 'STD_EVA', 'ADV_EVA']
 
 const TotalResult = props => {
-  const { item, weaponStats, gearStatPoints } = props
+  const { item, weaponStats, gearStatPoints, skills } = props
 
   const weaponElseArmor = item.kind !== ITEMKIND_DEFENSE
   const attrPrefix = determinePrefix(item)
@@ -39,6 +39,25 @@ const TotalResult = props => {
     }
   }
 
+  let skillsBonus = {}
+  skills.forEach(skill => {
+    Object.keys(skill.DesParameters).forEach(desNum => {
+      // TODO: Duplicated code 4x
+      desNum = Number(desNum)
+      let desKey = desKeyByDesNum(desNum)
+      if (!desKey) {
+        console.warn(`DesNum ${desNum} not mapped`)
+        return
+      }
+
+      if (!(desKey in skillsBonus)) {
+        skillsBonus[desKey] = 0
+      }
+
+      skillsBonus[desKey] += skill.DesParameters[desNum]
+    })
+  })
+
   return (
     <ul>
       {(weaponElseArmor ? WEAPON_ATTRS : ARMOR_ATTRS).map(attr => {
@@ -54,6 +73,7 @@ const TotalResult = props => {
             attr={attr}
             value={weaponStats[attr]}
             statBonus={gearStatBonus[attr]}
+            skillBonus={skillsBonus[attr]}
           />
         )
       })}
@@ -62,13 +82,13 @@ const TotalResult = props => {
 }
 
 const DisplayStat = props => {
-  const { attr, value, statBonus } = props
+  const { attr, value, statBonus, skillBonus } = props
 
   if (typeof value === 'undefined') {
     return null
   }
 
-  let totalBonuses = (value.bonuses || 0) + (statBonus || 0)
+  let totalBonuses = (value.bonuses || 0) + (statBonus || 0) + (skillBonus || 0)
   let total
 
   if (value.additiv) {
@@ -80,8 +100,13 @@ const DisplayStat = props => {
   return (
     <li>
       {attr}:{' '}
-      {statBonus ? colorName(`\\d[${PlusMinusNumber(statBonus)}]\\d`) : null} ={' '}
-      {total}
+      {statBonus
+        ? colorName(`\\d[${PlusMinusNumber(statBonus)}]\\d`)
+        : null}{' '}
+      {skillBonus
+        ? colorName(`\\g[${PlusMinusNumber(skillBonus)}]\\g`)
+        : null}{' '}
+      = {total}
     </li>
   )
 }

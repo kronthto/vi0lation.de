@@ -16,6 +16,7 @@ import {
 import LoadBlock from '../../LoadBlock'
 import WeaponPreview, { prepareStats } from './WeaponPreview'
 import TotalResult from './TotalResult'
+import { colorName } from '../../../utils/AR/names'
 
 const eqKinds = [ITEMKIND_DEFENSE].concat(standardWeapons, advWeapons)
 const isEquip = item => eqKinds.indexOf(item.kind) !== -1
@@ -58,7 +59,8 @@ class WeaponCalcTool extends Component {
     let initState = {
       gear: 'B',
       ench: {},
-      stat: defaultStat
+      stat: defaultStat,
+      sk: []
     }
 
     let hash = this.props.location.hash.substr(1)
@@ -75,8 +77,9 @@ class WeaponCalcTool extends Component {
     this.gearItemDb = itemDbGear.filter(isEquip)
     this.gearSkillDb = itemDbGear.filter(
       item =>
-        item.kind === ITEMKIND_SKILL_ATTACK ||
-        item.kind === ITEMKIND_SKILL_DEFENSE
+        (item.kind === ITEMKIND_SKILL_ATTACK ||
+          item.kind === ITEMKIND_SKILL_DEFENSE) &&
+        item.name.indexOf('\\c') === 0
     )
   }
 
@@ -427,17 +430,48 @@ class WeaponCalcTool extends Component {
             )
           })}
         </div>
-        TODO: Buffs/Items/Skills/armorbonus/..
+        <div className="tags">
+          {this.gearSkillDb.map(skill => (
+            <span
+              style={{ cursor: 'pointer' }}
+              className={
+                'tag' +
+                (this.state.sk.indexOf(skill.id) !== -1 ? ' is-success' : '')
+              }
+              key={skill.id}
+              onClick={() => this.handleSkillClick(skill)}
+            >
+              {colorName(skill.name)}
+            </span>
+          ))}
+        </div>
+        todo: unset skills on gear change; Ragings for every gear TODO:
+        Buffs/Items/Skills/armorbonus/..
         <hr />
         {this.selectedItem && (
           <TotalResult
             item={this.selectedItem}
             weaponStats={weaponStats}
             gearStatPoints={this.state.stat}
+            skills={this.state.sk.map(skillId =>
+              this.gearSkillDb.find(skill => skill.id === skillId)
+            )}
           />
         )}
       </div>
     )
+  }
+
+  handleSkillClick(skill) {
+    let skillState = this.state.sk
+
+    if (skillState.indexOf(skill.id) === -1) {
+      skillState.push(skill.id)
+    } else {
+      skillState = skillState.filter(skillId => skillId !== skill.id)
+    }
+
+    this.setState({ sk: skillState })
   }
 }
 
