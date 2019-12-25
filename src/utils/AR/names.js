@@ -31,8 +31,9 @@ function specialNames(name) {
 }
 
 export function colorName(name) {
-  let regex = name.match(/^\\([a-z])(.+)\\[a-z]$/)
-  if (!regex) {
+  let regex = name.match(/^\\([a-z])(.+)\\([a-z])$/)
+  if (!regex || regex[1] !== regex[3]) {
+    // opening/closing color differ?
     return specialNames(name)
   }
   let color = colorMap[regex[1]]
