@@ -1,7 +1,11 @@
 import React from 'react'
 import aostats from 'aceonline-stats'
-import { desKeyByDesNum, ITEMKIND_DEFENSE } from '../../../data/ao'
-import { determinePrefix, PlusMinusNumber } from './WeaponPreview'
+import { ITEMKIND_DEFENSE } from '../../../data/ao'
+import {
+  determinePrefix,
+  getMergedDesBoni,
+  PlusMinusNumber
+} from './WeaponPreview'
 import { colorName } from '../../../utils/AR/names'
 
 // skill/other green
@@ -39,24 +43,7 @@ const TotalResult = props => {
     }
   }
 
-  let skillsBonus = {}
-  skills.forEach(skill => {
-    Object.keys(skill.DesParameters).forEach(desNum => {
-      // TODO: Duplicated code 4x
-      desNum = Number(desNum)
-      let desKey = desKeyByDesNum(desNum)
-      if (!desKey) {
-        console.warn(`DesNum ${desNum} not mapped`)
-        return
-      }
-
-      if (!(desKey in skillsBonus)) {
-        skillsBonus[desKey] = 0
-      }
-
-      skillsBonus[desKey] += skill.DesParameters[desNum]
-    })
-  })
+  let skillsBonus = getMergedDesBoni(skills)
 
   return (
     <ul>

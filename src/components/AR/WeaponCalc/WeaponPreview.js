@@ -153,7 +153,51 @@ const collectStats = (item, prefix, suffix, enchants) => {
       values[desKey] = item[prop]
     }
   })
-  Object.keys(item.DesParameters).forEach(desNum => {
+  values = mergeAndSum(values, getBonusValuesFromDesParams(item.DesParameters))
+
+  // TODO: Speed
+
+  return {
+    base: values,
+    fixes: getFixesStats([prefix, suffix].filter(Boolean)),
+    enchants: getEnchantsStats(enchants)
+  }
+}
+
+const transformDesAttrsToArray = item => {
+  let desResult = {}
+  for (let i = 1; i <= 9; i++) {
+    let desNum = item[`DesParameter${i}`]
+    if (!desNum) {
+      continue
+    }
+    desResult[desNum] = item[`ParameterValue${i}`]
+  }
+  return desResult
+}
+
+const getFixesStats = fixes =>
+  getMergedDesBoni(
+    fixes.map(fix => {
+      fix.DesParameters = transformDesAttrsToArray(fix)
+      return fix
+    })
+  )
+
+export const mergeAndSum = (o1, o2) => {
+  // is there a core-func for this?
+  Object.keys(o2).forEach(key => {
+    if (key in o1) {
+      o1[key] += o2[key]
+    } else {
+      o1[key] = o2[key]
+    }
+  })
+  return o1
+}
+export const getBonusValuesFromDesParams = desParameters => {
+  let values = {}
+  Object.keys(desParameters).forEach(desNum => {
     desNum = Number(desNum)
     let desKey = desKeyByDesNum(desNum)
     if (!desKey) {
@@ -165,63 +209,28 @@ const collectStats = (item, prefix, suffix, enchants) => {
       values[desKey] = 0
     }
 
-    values[desKey] += item.DesParameters[desNum]
-  })
-
-  // TODO: Speed
-
-  return {
-    base: values,
-    fixes: getFixesStats([prefix, suffix].filter(Boolean)),
-    enchants: getEnchantsStats(enchants)
-  }
-}
-
-const getFixesStats = fixes => {
-  let res = {}
-  fixes.forEach(fix => {
-    for (let i = 1; i <= 9; i++) {
-      let desNum = fix[`DesParameter${i}`]
-      if (!desNum) {
-        continue
-      }
-
-      let desKey = desKeyByDesNum(desNum)
-      if (!desKey) {
-        console.warn(`DesNum ${desNum} not mapped`)
-        continue
-      }
-
-      if (!(desKey in res)) {
-        res[desKey] = 0
-      }
-
-      res[desKey] += fix[`ParameterValue${i}`]
-    }
-  })
-  return res
-}
-
-const getEnchantsStats = enchants => {
-  let values = {}
-  enchants.forEach(enchInfo => {
-    Object.keys(enchInfo.card.DesParameters).forEach(desNum => {
-      desNum = Number(desNum)
-      let desKey = desKeyByDesNum(desNum)
-      if (!desKey) {
-        console.warn(`DesNum ${desNum} not mapped`)
-        return
-      }
-
-      if (!(desKey in values)) {
-        values[desKey] = 0
-      }
-
-      values[desKey] += enchInfo.card.DesParameters[desNum] * enchInfo.count
-    })
+    values[desKey] += desParameters[desNum]
   })
   return values
 }
+export const getMergedDesBoni = thingsWithDesParams =>
+  thingsWithDesParams.reduce(
+    (acc, cur) =>
+      mergeAndSum(acc, getBonusValuesFromDesParams(cur.DesParameters)),
+    {}
+  )
+
+const getEnchantsStats = enchants =>
+  enchants.reduce((acc, currentEnchantInfo) => {
+    let enchantBonusValues = getBonusValuesFromDesParams(
+      currentEnchantInfo.card.DesParameters
+    )
+    Object.keys(enchantBonusValues).forEach(key => {
+      enchantBonusValues[key] =
+        enchantBonusValues[key] * currentEnchantInfo.count
+    })
+    return mergeAndSum(acc, enchantBonusValues)
+  }, {})
 
 const mergeStats = stats => {
   let res = {}
