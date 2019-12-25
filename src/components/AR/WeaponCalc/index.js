@@ -272,7 +272,8 @@ class WeaponCalcTool extends Component {
                     this.filterItemDbs(this.state.itemdb, gearEach)
                     this.setState({
                       gear: gearEach,
-                      ench: this.cleanseEnchants(this.selectedItem, gearEach)
+                      ench: this.cleanseEnchants(this.selectedItem, gearEach),
+                      sk: []
                     })
                   }}
                 >
@@ -445,8 +446,7 @@ class WeaponCalcTool extends Component {
             </span>
           ))}
         </div>
-        todo: unset skills on gear change; Ragings for every gear TODO:
-        Buffs/Items/Skills/armorbonus/..
+        todo: Ragings for every gear TODO: Buffs/Items/armorbonus/..
         <hr />
         {this.selectedItem && (
           <TotalResult
