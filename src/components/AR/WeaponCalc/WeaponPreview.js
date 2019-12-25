@@ -19,31 +19,20 @@ export const prepareStats = (item, prefix, suffix, enchants) => {
       return
     }
 
-    let baseIsPercentPoints = true
-    let upgradesArePercentPoints = true
     let factorBaseBy = 1
     let calcTotal = true
 
     if (attr.includes('_RA')) {
       factorBaseBy = 1000
-      baseIsPercentPoints = false
     }
     if (attr.includes('_MIN') || attr.includes('_MAX')) {
       calcTotal = false
-      baseIsPercentPoints = false
-    }
-    if (attr === 'HP' || attr === 'DP') {
-      baseIsPercentPoints = false
-      upgradesArePercentPoints = false
-    }
-    if (attr.includes('WEIGHT')) {
-      baseIsPercentPoints = false
     }
 
     let base = (Number(value.base) || 0) / factorBaseBy
 
     let bonuses = (value.enchants || 0) + (value.fixes || null)
-    value.additiv = !upgradesArePercentPoints || baseIsPercentPoints
+    value.additiv = isAttrAdditiv(attr)
     if (calcTotal) {
       if (value.additiv) {
         value.total = base + bonuses
@@ -60,6 +49,26 @@ export const prepareStats = (item, prefix, suffix, enchants) => {
   })
 
   return displayStats
+}
+export const isAttrAdditiv = attr => {
+  let baseIsPercentPoints = true
+  let upgradesArePercentPoints = true
+
+  if (attr.includes('_RA')) {
+    baseIsPercentPoints = false
+  }
+  if (attr.includes('_MIN') || attr.includes('_MAX')) {
+    baseIsPercentPoints = false
+  }
+  if (attr === 'HP' || attr === 'DP') {
+    baseIsPercentPoints = false
+    upgradesArePercentPoints = false
+  }
+  if (attr.includes('WEIGHT')) {
+    baseIsPercentPoints = false
+  }
+
+  return !upgradesArePercentPoints || baseIsPercentPoints
 }
 
 const WeaponPreview = props => {

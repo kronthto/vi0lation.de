@@ -4,6 +4,7 @@ import { ITEMKIND_DEFENSE } from '../../../data/ao'
 import {
   determinePrefix,
   getMergedDesBoni,
+  isAttrAdditiv,
   PlusMinusNumber
 } from './WeaponPreview'
 import { colorName } from '../../../utils/AR/names'
@@ -69,10 +70,14 @@ const TotalResult = props => {
 }
 
 const DisplayStat = props => {
-  const { attr, value, statBonus, skillBonus } = props
+  const { attr, statBonus, skillBonus } = props
+  let value = props.value
 
   if (typeof value === 'undefined') {
-    return null
+    value = {
+      additiv: isAttrAdditiv(attr),
+      base: 0
+    }
   }
 
   let totalBonuses = (value.bonuses || 0) + (statBonus || 0) + (skillBonus || 0)
