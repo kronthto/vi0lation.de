@@ -73,7 +73,11 @@ class WeaponCalcTool extends Component {
 
   filterItemDbs(itemdb, gear) {
     // noinspection JSBitwiseOperatorUsage
-    let itemDbGear = itemdb.filter(item => item.ReqUnitKind & unitKinds[gear])
+    let itemDbGear = itemdb.filter(
+      item =>
+        item.ReqUnitKind & unitKinds[gear] ||
+        (item.kind >= 50 && item.SkillTargetType === 2 && item.Range)
+    ) // Matches Gear or is a skill that applies to form (Type&Range) (Ragings)
     this.gearItemDb = itemDbGear.filter(isEquip)
     this.gearSkillDb = itemDbGear.filter(
       item =>
@@ -446,7 +450,7 @@ class WeaponCalcTool extends Component {
             </span>
           ))}
         </div>
-        todo: Ragings for every gear TODO: Buffs/Items/armorbonus/..
+        TODO: Buffs/Items/armorbonus/..
         <hr />
         {this.selectedItem && (
           <TotalResult
