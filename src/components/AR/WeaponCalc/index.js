@@ -11,7 +11,8 @@ import {
   COMPARE_ITEMKIND,
   ITEMKIND_SKILL_DEFENSE,
   ITEMKIND_ENCHANT,
-  DES_ENCHANT_INITIALIZE
+  DES_ENCHANT_INITIALIZE,
+  ITEMKIND_ACCESSORY_TIMELIMIT
 } from '../../../data/ao'
 import LoadBlock from '../../LoadBlock'
 import WeaponPreview, { prepareStats } from './WeaponPreview'
@@ -29,6 +30,10 @@ const isBannedEnchant = item =>
       DES_ENCHANT_INITIALIZE in item.DesParameters
   )
 
+const bannedCharmDes = [162, 159, 160, 129, 130, 158, 157] // 161 (Blue Saph) would also remove Hax-Charm
+const isBannedCharm = item =>
+  bannedCharmDes.some(bannedDesNum => bannedDesNum in item.DesParameters)
+
 const stats = [
   { id: 'Atk', label: 'Attack' },
   { id: 'Def', label: 'Defense' },
@@ -45,6 +50,7 @@ class WeaponCalcTool extends Component {
   gearSkillDb = []
   itemFixDb = []
   enchantItemDb = []
+  charmDb = []
   selectedItem
   prefix
   suffix
@@ -97,7 +103,8 @@ class WeaponCalcTool extends Component {
           if (
             kind === ITEMKIND_SKILL_ATTACK ||
             kind === ITEMKIND_SKILL_DEFENSE ||
-            kind === ITEMKIND_ENCHANT
+            kind === ITEMKIND_ENCHANT ||
+            kind === ITEMKIND_ACCESSORY_TIMELIMIT
           ) {
             return true
           }
@@ -114,6 +121,14 @@ class WeaponCalcTool extends Component {
       this.filterItemDbs(reducedItemDb, this.state.gear)
       this.enchantItemDb = reducedItemDb.filter(
         item => item.kind === ITEMKIND_ENCHANT && !isBannedEnchant(item)
+      )
+      this.charmDb = reducedItemDb.filter(
+        item =>
+          item.kind === ITEMKIND_ACCESSORY_TIMELIMIT &&
+          item.Time === 18000000 &&
+          item.name.indexOf('(5H)') !== -1 &&
+          !isBannedCharm(item) &&
+          item.name.indexOf('Holy') === -1
       )
       this.setState({ itemdb: reducedItemDb })
     })
@@ -450,6 +465,20 @@ class WeaponCalcTool extends Component {
             </span>
           ))}
         </div>
+        <div className="tags">
+          {this.charmDb.map(charmItem => (
+            <span
+              style={{ cursor: 'pointer' }}
+              className={
+                'tag' + (this.state.ch === charmItem.id ? ' is-success' : '')
+              }
+              key={charmItem.id}
+              onClick={() => this.handleCharmClick(charmItem)}
+            >
+              {colorName(charmItem.name)}
+            </span>
+          ))}
+        </div>
         TODO: Buffs/Items/armorbonus/..
         <hr />
         {this.selectedItem && (
@@ -460,10 +489,21 @@ class WeaponCalcTool extends Component {
             skills={this.state.sk.map(skillId =>
               this.gearSkillDb.find(skill => skill.id === skillId)
             )}
+            charm={this.charmDb.find(
+              charmItem => charmItem.id === this.state.ch
+            )}
           />
         )}
       </div>
     )
+  }
+
+  handleCharmClick(charm) {
+    if (this.state.ch === charm.id) {
+      this.setState({ ch: null })
+    } else {
+      this.setState({ ch: charm.id })
+    }
   }
 
   handleSkillClick(skill) {
