@@ -15,7 +15,10 @@ import {
   ITEMKIND_ACCESSORY_TIMELIMIT
 } from '../../../data/ao'
 import LoadBlock from '../../LoadBlock'
-import WeaponPreview, { prepareStats } from './WeaponPreview'
+import WeaponPreview, {
+  addDesParamsArrayToFixes,
+  prepareStats
+} from './WeaponPreview'
 import TotalResult from './TotalResult'
 import { colorName } from '../../../utils/AR/names'
 
@@ -49,6 +52,7 @@ class WeaponCalcTool extends Component {
   gearItemDb = []
   gearSkillDb = []
   itemFixDb = []
+  armorFixDb = []
   enchantItemDb = []
   charmDb = []
   selectedItem
@@ -142,6 +146,11 @@ class WeaponCalcTool extends Component {
             ['m', 'c', 'r', 'l', 'y'].indexOf(fix.name.charAt(1)) !== -1
         )
         .sort((a, b) => a.probability - b.probability)
+      this.armorFixDb = addDesParamsArrayToFixes(
+        fixDb.filter(fix => {
+          return COMPARE_ITEMKIND(fix.ReqItemKind, ITEMKIND_DEFENSE)
+        })
+      )
       this.setState({ fixDb })
     })
   }
@@ -159,7 +168,7 @@ class WeaponCalcTool extends Component {
     return obj
   }
 
-  renderFixSelect(saveAs, prefix) {
+  renderFixSelect(saveAs, prefix, fixDb) {
     const def = this.state[saveAs]
     return (
       <select
@@ -169,7 +178,7 @@ class WeaponCalcTool extends Component {
         value={def || ''}
       >
         <option value="">-</option>
-        {this.itemFixDb
+        {(fixDb || this.itemFixDb)
           .filter(fix => {
             if (prefix) {
               return fix.id < 5000
@@ -275,6 +284,10 @@ class WeaponCalcTool extends Component {
       ? prepareStats(this.selectedItem, this.prefix, this.suffix, this.enchants)
       : undefined
 
+    const isArmor =
+      this.selectedItem &&
+      COMPARE_ITEMKIND(ITEMKIND_DEFENSE, this.selectedItem.kind)
+
     return (
       <div>
         <div className="tabs is-toggle is-fullwidth">
@@ -311,16 +324,51 @@ class WeaponCalcTool extends Component {
               <select
                 id="weapsel"
                 ref="weapsel"
-                onChange={() =>
-                  this.setState({
+                onChange={() => {
+                  let newItem = this.gearItemDb.find(
+                    item => item.id === Number(this.refs.weapsel.value)
+                  )
+                  let stateUpdate = {
                     sWp: this.refs.weapsel.value,
-                    ench: this.cleanseEnchants(
-                      this.gearItemDb.find(
-                        item => item.id === Number(this.refs.weapsel.value)
-                      ),
-                      gear
-                    )
-                  })}
+                    ench: this.cleanseEnchants(newItem, gear)
+                  }
+
+                  if (newItem && this.selectedItem) {
+                    // oof
+                    if (COMPARE_ITEMKIND(ITEMKIND_DEFENSE, newItem.kind)) {
+                      // Switched to armor
+                      //console.log(this.state, "toArmor");
+                      if (this.state.aPrf) {
+                        stateUpdate['iPrf'] = this.state.aPrf
+                      }
+                      if (this.state.aSuf) {
+                        stateUpdate['iSuf'] = this.state.aSuf
+                      }
+                      stateUpdate['aPrf'] = null
+                      stateUpdate['aSuf'] = null
+                    } else {
+                      if (
+                        COMPARE_ITEMKIND(
+                          ITEMKIND_DEFENSE,
+                          this.selectedItem.kind
+                        )
+                      ) {
+                        // switched from armor to weapon
+                        // console.log(this.state, "toWeap");
+                        if (this.state.iPrf) {
+                          stateUpdate['aPrf'] = this.state.iPrf
+                        }
+                        if (this.state.iSuf) {
+                          stateUpdate['aSuf'] = this.state.iSuf
+                        }
+                        stateUpdate['iPrf'] = null
+                        stateUpdate['iSuf'] = null
+                      }
+                    }
+                  }
+
+                  this.setState(stateUpdate)
+                }}
                 value={sWp || ''}
               >
                 <option value="">Select item ...</option>
@@ -354,6 +402,27 @@ class WeaponCalcTool extends Component {
             </div>
           </div>
         </div>
+        {!isArmor && (
+          <div className="columns">
+            <div className="column">
+              <label className="label" htmlFor="aPrf">
+                Armor-Prefix
+              </label>
+              <div className="select is-fullwidth">
+                {this.renderFixSelect('aPrf', true, this.armorFixDb)}
+              </div>
+            </div>
+
+            <div className="column">
+              <label className="label" htmlFor="aSuf">
+                Armor-Suffix
+              </label>
+              <div className="select is-fullwidth">
+                {this.renderFixSelect('aSuf', false, this.armorFixDb)}
+              </div>
+            </div>
+          </div>
+        )}
         {this.selectedItem && (
           <div className="columns">
             <div className="column">
@@ -479,7 +548,7 @@ class WeaponCalcTool extends Component {
             </span>
           ))}
         </div>
-        TODO: Buffs/Items/armorbonus/..
+        TODO: Buff-Items/?
         <hr />
         {this.selectedItem && (
           <TotalResult
@@ -492,6 +561,13 @@ class WeaponCalcTool extends Component {
             charm={this.charmDb.find(
               charmItem => charmItem.id === this.state.ch
             )}
+            armorBonus={
+              isArmor
+                ? []
+                : [this.state.aPrf, this.state.aSuf].map(fixId =>
+                    this.armorFixDb.find(fix => fix.id === Number(fixId))
+                  )
+            }
           />
         )}
       </div>

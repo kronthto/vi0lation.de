@@ -17,7 +17,7 @@ const WEAPON_ATTRS = ['_MIN', '_MAX', '_PROB', '_PIERCE']
 const ARMOR_ATTRS = ['HP', 'DP', 'STD_DEF', 'ADV_DEF', 'STD_EVA', 'ADV_EVA']
 
 const TotalResult = props => {
-  const { item, weaponStats, gearStatPoints, skills, charm } = props
+  const { item, weaponStats, gearStatPoints, skills, charm, armorBonus } = props
 
   const weaponElseArmor = item.kind !== ITEMKIND_DEFENSE
   const attrPrefix = determinePrefix(item)
@@ -48,6 +48,11 @@ const TotalResult = props => {
   if (charm) {
     greenAdditives.push(charm)
   }
+  armorBonus.forEach(armorFix => {
+    if (armorFix) {
+      greenAdditives.push(armorFix)
+    }
+  })
   let skillsBonus = getMergedDesBoni(greenAdditives)
 
   return (
@@ -99,7 +104,7 @@ const DisplayStat = props => {
       {statBonus
         ? colorName(`\\d[${PlusMinusNumber(statBonus)}]\\d`)
         : null}{' '}
-      {skillBonus
+      {typeof skillBonus !== 'undefined'
         ? colorName(`\\g[${PlusMinusNumber(skillBonus)}]\\g`)
         : null}{' '}
       = {total}
