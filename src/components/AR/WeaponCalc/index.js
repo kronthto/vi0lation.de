@@ -426,6 +426,8 @@ class WeaponCalcTool extends Component {
         {this.selectedItem && (
           <div className="columns">
             <div className="column">
+              Armor Bonus [select all armors with extras und übernahme bei
+              wechsel]
               <label className="label" htmlFor="addench">
                 Add enchants
               </label>
@@ -519,6 +521,7 @@ class WeaponCalcTool extends Component {
             )
           })}
         </div>
+        <label className="label">Skills/Buffs & Consumables</label>
         <div className="tags">
           {this.gearSkillDb.map(skill => (
             <span
@@ -535,20 +538,48 @@ class WeaponCalcTool extends Component {
           ))}
         </div>
         <div className="tags">
-          {this.charmDb.map(charmItem => (
+          {['Rapier', 'Turkey', 'Leadbuff', '?'].map(buff => (
             <span
               style={{ cursor: 'pointer' }}
-              className={
-                'tag' + (this.state.ch === charmItem.id ? ' is-success' : '')
-              }
-              key={charmItem.id}
-              onClick={() => this.handleCharmClick(charmItem)}
+              className={'tag' + (false ? ' is-success' : '')}
+              key={buff}
             >
-              {colorName(charmItem.name)}
+              {colorName(buff)}
             </span>
           ))}
         </div>
-        TODO: Buff-Items/?
+        <div className="columns">
+          <div className="column">
+            <label className="label" htmlFor="charmsel">
+              Charm
+            </label>
+            <div className="select is-fullwidth">
+              <select
+                id="charmsel"
+                onChange={e => {
+                  let newCharmId = Number(e.target.value)
+                  if (!newCharmId) {
+                    newCharmId = null
+                  }
+
+                  this.setState({ ch: newCharmId })
+                }}
+                value={this.state.ch || ''}
+              >
+                <option value="">- None -</option>
+                {this.charmDb.map(item => {
+                  return (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  )
+                })}
+              </select>
+            </div>
+          </div>
+        </div>
+        TODO: Buff-Items/Armor base pierce/Engine/PET? dps vs. (firerate per s
+        // per volley)
         <hr />
         {this.selectedItem && (
           <TotalResult
@@ -572,14 +603,6 @@ class WeaponCalcTool extends Component {
         )}
       </div>
     )
-  }
-
-  handleCharmClick(charm) {
-    if (this.state.ch === charm.id) {
-      this.setState({ ch: null })
-    } else {
-      this.setState({ ch: charm.id })
-    }
   }
 
   handleSkillClick(skill) {
