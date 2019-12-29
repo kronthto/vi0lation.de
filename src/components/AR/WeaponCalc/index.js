@@ -37,6 +37,19 @@ const bannedCharmDes = [162, 159, 160, 129, 130, 158, 157] // 161 (Blue Saph) wo
 const isBannedCharm = item =>
   bannedCharmDes.some(bannedDesNum => bannedDesNum in item.DesParameters)
 
+const hasNonArmorDesParams = item => {
+  let desParams = Object.assign({}, item.DesParameters)
+
+  delete desParams[13]
+  delete desParams[89]
+  delete desParams[22]
+  delete desParams[23]
+  delete desParams[24]
+  delete desParams[25]
+
+  return Object.keys(desParams).length > 0
+}
+
 const stats = [
   { id: 'Atk', label: 'Attack' },
   { id: 'Def', label: 'Defense' },
@@ -50,6 +63,7 @@ const enchantCardMatches = (card, item, gear) =>
 
 class WeaponCalcTool extends Component {
   gearItemDb = []
+  gearArmorsWithBonus = []
   gearSkillDb = []
   itemFixDb = []
   armorFixDb = []
@@ -89,6 +103,9 @@ class WeaponCalcTool extends Component {
         (item.kind >= 50 && item.SkillTargetType === 2 && item.Range)
     ) // Matches Gear or is a skill that applies to form (Type&Range) (Ragings)
     this.gearItemDb = itemDbGear.filter(isEquip)
+    this.gearArmorsWithBonus = this.gearItemDb.filter(
+      item => item.kind === ITEMKIND_DEFENSE && hasNonArmorDesParams(item)
+    )
     this.gearSkillDb = itemDbGear.filter(
       item =>
         (item.kind === ITEMKIND_SKILL_ATTACK ||
@@ -426,8 +443,41 @@ class WeaponCalcTool extends Component {
         {this.selectedItem && (
           <div className="columns">
             <div className="column">
-              Armor Bonus [select all armors with extras und übernahme bei
-              wechsel]
+              {!isArmor && (
+                <React.Fragment>
+                  <label className="label" htmlFor="armorsel">
+                    Armor-Bonus
+                  </label>
+                  TODO: Übernahme bei Wechsel
+                  <div
+                    className="select is-fullwidth"
+                    style={{ marginBottom: 'calc(1.5rem - 0.75rem)' }}
+                  >
+                    <select
+                      id="armorsel"
+                      onChange={e => {
+                        let newArmorId = Number(e.target.value)
+                        if (!newArmorId) {
+                          newArmorId = null
+                        }
+
+                        this.setState({ arm: newArmorId })
+                      }}
+                      value={this.state.arm || ''}
+                    >
+                      <option value="">- None -</option>
+                      {this.gearArmorsWithBonus.map(item => {
+                        return (
+                          <option key={item.id} value={item.id}>
+                            {item.name} [{item.ReqMinLevel}]
+                          </option>
+                        )
+                      })}
+                    </select>
+                  </div>
+                </React.Fragment>
+              )}
+
               <label className="label" htmlFor="addench">
                 Add enchants
               </label>
@@ -578,8 +628,7 @@ class WeaponCalcTool extends Component {
             </div>
           </div>
         </div>
-        TODO: Buff-Items/Armor base pierce/Engine/PET? dps vs. (firerate per s
-        // per volley)
+        TODO: Buff-Items / ? / dps vs. (firerate per s / per volley)
         <hr />
         {this.selectedItem && (
           <TotalResult
@@ -595,9 +644,15 @@ class WeaponCalcTool extends Component {
             armorBonus={
               isArmor
                 ? []
-                : [this.state.aPrf, this.state.aSuf].map(fixId =>
-                    this.armorFixDb.find(fix => fix.id === Number(fixId))
-                  )
+                : [this.state.aPrf, this.state.aSuf]
+                    .map(fixId =>
+                      this.armorFixDb.find(fix => fix.id === Number(fixId))
+                    )
+                    .concat([
+                      this.gearArmorsWithBonus.find(
+                        item => item.id === this.state.arm
+                      )
+                    ])
             }
           />
         )}

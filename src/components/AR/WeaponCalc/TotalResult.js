@@ -55,6 +55,11 @@ const TotalResult = props => {
   })
   let skillsBonus = getMergedDesBoni(greenAdditives)
 
+  // TODO: Show firemode
+  // TODO: ao-framebrake to calc bps ONLY for x1 stds
+
+  // if std/adv p s p v in min/max stats
+
   return (
     <ul>
       {(weaponElseArmor ? WEAPON_ATTRS : ARMOR_ATTRS).map(attr => {
