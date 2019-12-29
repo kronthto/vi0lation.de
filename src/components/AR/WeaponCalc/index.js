@@ -12,7 +12,8 @@ import {
   ITEMKIND_SKILL_DEFENSE,
   ITEMKIND_ENCHANT,
   DES_ENCHANT_INITIALIZE,
-  ITEMKIND_ACCESSORY_TIMELIMIT
+  ITEMKIND_ACCESSORY_TIMELIMIT,
+  ITEMKIND_CARD
 } from '../../../data/ao'
 import LoadBlock from '../../LoadBlock'
 import WeaponPreview, {
@@ -36,6 +37,8 @@ const isBannedEnchant = item =>
 const bannedCharmDes = [162, 159, 160, 129, 130, 158, 157] // 161 (Blue Saph) would also remove Hax-Charm
 const isBannedCharm = item =>
   bannedCharmDes.some(bannedDesNum => bannedDesNum in item.DesParameters)
+
+const BUFF_CARD_ITEMS = [7026601, 7026571, 7020641, 7020651, 7001100]
 
 const hasNonArmorDesParams = item => {
   let desParams = Object.assign({}, item.DesParameters)
@@ -68,6 +71,7 @@ class WeaponCalcTool extends Component {
   itemFixDb = []
   armorFixDb = []
   enchantItemDb = []
+  buffItemDb = []
   charmDb = []
   selectedItem
   prefix
@@ -84,7 +88,8 @@ class WeaponCalcTool extends Component {
       gear: 'B',
       ench: {},
       stat: defaultStat,
-      sk: []
+      sk: [],
+      bc: []
     }
 
     let hash = this.props.location.hash.substr(1)
@@ -125,7 +130,8 @@ class WeaponCalcTool extends Component {
             kind === ITEMKIND_SKILL_ATTACK ||
             kind === ITEMKIND_SKILL_DEFENSE ||
             kind === ITEMKIND_ENCHANT ||
-            kind === ITEMKIND_ACCESSORY_TIMELIMIT
+            kind === ITEMKIND_ACCESSORY_TIMELIMIT ||
+            kind === ITEMKIND_CARD
           ) {
             return true
           }
@@ -142,6 +148,9 @@ class WeaponCalcTool extends Component {
       this.filterItemDbs(reducedItemDb, this.state.gear)
       this.enchantItemDb = reducedItemDb.filter(
         item => item.kind === ITEMKIND_ENCHANT && !isBannedEnchant(item)
+      )
+      this.buffItemDb = reducedItemDb.filter(
+        item => BUFF_CARD_ITEMS.indexOf(item.id) !== -1
       )
       this.charmDb = reducedItemDb.filter(
         item =>
@@ -588,13 +597,17 @@ class WeaponCalcTool extends Component {
           ))}
         </div>
         <div className="tags">
-          {['Rapier', 'Turkey', 'Leadbuff', '?'].map(buff => (
+          {this.buffItemDb.map(buff => (
             <span
               style={{ cursor: 'pointer' }}
-              className={'tag' + (false ? ' is-success' : '')}
-              key={buff}
+              className={
+                'tag' +
+                (this.state.bc.indexOf(buff.id) !== -1 ? ' is-success' : '')
+              }
+              key={buff.id}
+              onClick={() => this.handleBuffcardClick(buff)}
             >
-              {colorName(buff)}
+              {colorName(buff.name)}
             </span>
           ))}
         </div>
@@ -635,9 +648,15 @@ class WeaponCalcTool extends Component {
             item={this.selectedItem}
             weaponStats={weaponStats}
             gearStatPoints={this.state.stat}
-            skills={this.state.sk.map(skillId =>
-              this.gearSkillDb.find(skill => skill.id === skillId)
-            )}
+            skills={this.state.sk
+              .map(skillId =>
+                this.gearSkillDb.find(skill => skill.id === skillId)
+              )
+              .concat(
+                this.state.bc.map(buffId =>
+                  this.buffItemDb.find(skill => skill.id === buffId)
+                )
+              )}
             charm={this.charmDb.find(
               charmItem => charmItem.id === this.state.ch
             )}
@@ -670,6 +689,18 @@ class WeaponCalcTool extends Component {
     }
 
     this.setState({ sk: skillState })
+  }
+
+  handleBuffcardClick(skill) {
+    let buffCardState = this.state.bc
+
+    if (buffCardState.indexOf(skill.id) === -1) {
+      buffCardState.push(skill.id)
+    } else {
+      buffCardState = buffCardState.filter(skillId => skillId !== skill.id)
+    }
+
+    this.setState({ bc: buffCardState })
   }
 }
 

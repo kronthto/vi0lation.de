@@ -13,6 +13,7 @@ export const ITEMKIND_ACCESSORY_TIMELIMIT = 32
 export const ITEMKIND_SKILL_ATTACK = 50
 export const ITEMKIND_SKILL_DEFENSE = 51
 export const ITEMKIND_DEFENSE = 16
+export const ITEMKIND_CARD = 20
 export const ITEMKIND_ENCHANT = 21
 
 export const DES_ENCHANT_INITIALIZE = 105
