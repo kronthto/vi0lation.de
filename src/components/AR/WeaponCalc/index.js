@@ -11,10 +11,15 @@ import {
   COMPARE_ITEMKIND,
   ITEMKIND_SKILL_DEFENSE,
   ITEMKIND_ENCHANT,
-  DES_ENCHANT_INITIALIZE
+  DES_ENCHANT_INITIALIZE,
+  ITEMKIND_ACCESSORY_TIMELIMIT,
+  ITEMKIND_CARD
 } from '../../../data/ao'
 import LoadBlock from '../../LoadBlock'
-import WeaponPreview, { prepareStats } from './WeaponPreview'
+import WeaponPreview, {
+  addDesParamsArrayToFixes,
+  prepareStats
+} from './WeaponPreview'
 import TotalResult from './TotalResult'
 import { colorName } from '../../../utils/AR/names'
 
@@ -29,6 +34,25 @@ const isBannedEnchant = item =>
       DES_ENCHANT_INITIALIZE in item.DesParameters
   )
 
+const bannedCharmDes = [162, 159, 160, 129, 130, 158, 157] // 161 (Blue Saph) would also remove Hax-Charm
+const isBannedCharm = item =>
+  bannedCharmDes.some(bannedDesNum => bannedDesNum in item.DesParameters)
+
+const BUFF_CARD_ITEMS = [7026601, 7026571, 7020641, 7020651, 7001100]
+
+const hasNonArmorDesParams = item => {
+  let desParams = Object.assign({}, item.DesParameters)
+
+  delete desParams[13]
+  delete desParams[89]
+  delete desParams[22]
+  delete desParams[23]
+  delete desParams[24]
+  delete desParams[25]
+
+  return Object.keys(desParams).length > 0
+}
+
 const stats = [
   { id: 'Atk', label: 'Attack' },
   { id: 'Def', label: 'Defense' },
@@ -42,9 +66,13 @@ const enchantCardMatches = (card, item, gear) =>
 
 class WeaponCalcTool extends Component {
   gearItemDb = []
+  gearArmorsWithBonus = []
   gearSkillDb = []
   itemFixDb = []
+  armorFixDb = []
   enchantItemDb = []
+  buffItemDb = []
+  charmDb = []
   selectedItem
   prefix
   suffix
@@ -60,7 +88,8 @@ class WeaponCalcTool extends Component {
       gear: 'B',
       ench: {},
       stat: defaultStat,
-      sk: []
+      sk: [],
+      bc: []
     }
 
     let hash = this.props.location.hash.substr(1)
@@ -79,6 +108,9 @@ class WeaponCalcTool extends Component {
         (item.kind >= 50 && item.SkillTargetType === 2 && item.Range)
     ) // Matches Gear or is a skill that applies to form (Type&Range) (Ragings)
     this.gearItemDb = itemDbGear.filter(isEquip)
+    this.gearArmorsWithBonus = this.gearItemDb.filter(
+      item => item.kind === ITEMKIND_DEFENSE && hasNonArmorDesParams(item)
+    )
     this.gearSkillDb = itemDbGear.filter(
       item =>
         (item.kind === ITEMKIND_SKILL_ATTACK ||
@@ -97,7 +129,9 @@ class WeaponCalcTool extends Component {
           if (
             kind === ITEMKIND_SKILL_ATTACK ||
             kind === ITEMKIND_SKILL_DEFENSE ||
-            kind === ITEMKIND_ENCHANT
+            kind === ITEMKIND_ENCHANT ||
+            kind === ITEMKIND_ACCESSORY_TIMELIMIT ||
+            kind === ITEMKIND_CARD
           ) {
             return true
           }
@@ -115,6 +149,17 @@ class WeaponCalcTool extends Component {
       this.enchantItemDb = reducedItemDb.filter(
         item => item.kind === ITEMKIND_ENCHANT && !isBannedEnchant(item)
       )
+      this.buffItemDb = reducedItemDb.filter(
+        item => BUFF_CARD_ITEMS.indexOf(item.id) !== -1
+      )
+      this.charmDb = reducedItemDb.filter(
+        item =>
+          item.kind === ITEMKIND_ACCESSORY_TIMELIMIT &&
+          item.Time === 18000000 &&
+          item.name.indexOf('(5H)') !== -1 &&
+          !isBannedCharm(item) &&
+          item.name.indexOf('Holy') === -1
+      )
       this.setState({ itemdb: reducedItemDb })
     })
     callApi(
@@ -127,6 +172,11 @@ class WeaponCalcTool extends Component {
             ['m', 'c', 'r', 'l', 'y'].indexOf(fix.name.charAt(1)) !== -1
         )
         .sort((a, b) => a.probability - b.probability)
+      this.armorFixDb = addDesParamsArrayToFixes(
+        fixDb.filter(fix => {
+          return COMPARE_ITEMKIND(fix.ReqItemKind, ITEMKIND_DEFENSE)
+        })
+      )
       this.setState({ fixDb })
     })
   }
@@ -144,7 +194,7 @@ class WeaponCalcTool extends Component {
     return obj
   }
 
-  renderFixSelect(saveAs, prefix) {
+  renderFixSelect(saveAs, prefix, fixDb) {
     const def = this.state[saveAs]
     return (
       <select
@@ -154,7 +204,7 @@ class WeaponCalcTool extends Component {
         value={def || ''}
       >
         <option value="">-</option>
-        {this.itemFixDb
+        {(fixDb || this.itemFixDb)
           .filter(fix => {
             if (prefix) {
               return fix.id < 5000
@@ -260,6 +310,10 @@ class WeaponCalcTool extends Component {
       ? prepareStats(this.selectedItem, this.prefix, this.suffix, this.enchants)
       : undefined
 
+    const isArmor =
+      this.selectedItem &&
+      COMPARE_ITEMKIND(ITEMKIND_DEFENSE, this.selectedItem.kind)
+
     return (
       <div>
         <div className="tabs is-toggle is-fullwidth">
@@ -296,16 +350,51 @@ class WeaponCalcTool extends Component {
               <select
                 id="weapsel"
                 ref="weapsel"
-                onChange={() =>
-                  this.setState({
+                onChange={() => {
+                  let newItem = this.gearItemDb.find(
+                    item => item.id === Number(this.refs.weapsel.value)
+                  )
+                  let stateUpdate = {
                     sWp: this.refs.weapsel.value,
-                    ench: this.cleanseEnchants(
-                      this.gearItemDb.find(
-                        item => item.id === Number(this.refs.weapsel.value)
-                      ),
-                      gear
-                    )
-                  })}
+                    ench: this.cleanseEnchants(newItem, gear)
+                  }
+
+                  if (newItem && this.selectedItem) {
+                    // oof
+                    if (COMPARE_ITEMKIND(ITEMKIND_DEFENSE, newItem.kind)) {
+                      // Switched to armor
+                      //console.log(this.state, "toArmor");
+                      if (this.state.aPrf) {
+                        stateUpdate['iPrf'] = this.state.aPrf
+                      }
+                      if (this.state.aSuf) {
+                        stateUpdate['iSuf'] = this.state.aSuf
+                      }
+                      stateUpdate['aPrf'] = null
+                      stateUpdate['aSuf'] = null
+                    } else {
+                      if (
+                        COMPARE_ITEMKIND(
+                          ITEMKIND_DEFENSE,
+                          this.selectedItem.kind
+                        )
+                      ) {
+                        // switched from armor to weapon
+                        // console.log(this.state, "toWeap");
+                        if (this.state.iPrf) {
+                          stateUpdate['aPrf'] = this.state.iPrf
+                        }
+                        if (this.state.iSuf) {
+                          stateUpdate['aSuf'] = this.state.iSuf
+                        }
+                        stateUpdate['iPrf'] = null
+                        stateUpdate['iSuf'] = null
+                      }
+                    }
+                  }
+
+                  this.setState(stateUpdate)
+                }}
                 value={sWp || ''}
               >
                 <option value="">Select item ...</option>
@@ -339,9 +428,65 @@ class WeaponCalcTool extends Component {
             </div>
           </div>
         </div>
+        {!isArmor && (
+          <div className="columns">
+            <div className="column">
+              <label className="label" htmlFor="aPrf">
+                Armor-Prefix
+              </label>
+              <div className="select is-fullwidth">
+                {this.renderFixSelect('aPrf', true, this.armorFixDb)}
+              </div>
+            </div>
+
+            <div className="column">
+              <label className="label" htmlFor="aSuf">
+                Armor-Suffix
+              </label>
+              <div className="select is-fullwidth">
+                {this.renderFixSelect('aSuf', false, this.armorFixDb)}
+              </div>
+            </div>
+          </div>
+        )}
         {this.selectedItem && (
           <div className="columns">
             <div className="column">
+              {!isArmor && (
+                <React.Fragment>
+                  <label className="label" htmlFor="armorsel">
+                    Armor-Bonus
+                  </label>
+                  TODO: Übernahme bei Wechsel
+                  <div
+                    className="select is-fullwidth"
+                    style={{ marginBottom: 'calc(1.5rem - 0.75rem)' }}
+                  >
+                    <select
+                      id="armorsel"
+                      onChange={e => {
+                        let newArmorId = Number(e.target.value)
+                        if (!newArmorId) {
+                          newArmorId = null
+                        }
+
+                        this.setState({ arm: newArmorId })
+                      }}
+                      value={this.state.arm || ''}
+                    >
+                      <option value="">- None -</option>
+                      {this.gearArmorsWithBonus.map(item => {
+                        return (
+                          <option key={item.id} value={item.id}>
+                            {item.name} [{item.ReqMinLevel}]
+                          </option>
+                        )
+                      })}
+                    </select>
+                  </div>
+                </React.Fragment>
+              )}
+
               <label className="label" htmlFor="addench">
                 Add enchants
               </label>
@@ -435,6 +580,7 @@ class WeaponCalcTool extends Component {
             )
           })}
         </div>
+        <label className="label">Skills/Buffs & Consumables</label>
         <div className="tags">
           {this.gearSkillDb.map(skill => (
             <span
@@ -450,16 +596,83 @@ class WeaponCalcTool extends Component {
             </span>
           ))}
         </div>
-        TODO: Buffs/Items/armorbonus/..
+        <div className="tags">
+          {this.buffItemDb.map(buff => (
+            <span
+              style={{ cursor: 'pointer' }}
+              className={
+                'tag' +
+                (this.state.bc.indexOf(buff.id) !== -1 ? ' is-success' : '')
+              }
+              key={buff.id}
+              onClick={() => this.handleBuffcardClick(buff)}
+            >
+              {colorName(buff.name)}
+            </span>
+          ))}
+        </div>
+        <div className="columns">
+          <div className="column">
+            <label className="label" htmlFor="charmsel">
+              Charm
+            </label>
+            <div className="select is-fullwidth">
+              <select
+                id="charmsel"
+                onChange={e => {
+                  let newCharmId = Number(e.target.value)
+                  if (!newCharmId) {
+                    newCharmId = null
+                  }
+
+                  this.setState({ ch: newCharmId })
+                }}
+                value={this.state.ch || ''}
+              >
+                <option value="">- None -</option>
+                {this.charmDb.map(item => {
+                  return (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  )
+                })}
+              </select>
+            </div>
+          </div>
+        </div>
+        TODO: Buff-Items / ? / dps vs. (firerate per s / per volley)
         <hr />
         {this.selectedItem && (
           <TotalResult
             item={this.selectedItem}
             weaponStats={weaponStats}
             gearStatPoints={this.state.stat}
-            skills={this.state.sk.map(skillId =>
-              this.gearSkillDb.find(skill => skill.id === skillId)
+            skills={this.state.sk
+              .map(skillId =>
+                this.gearSkillDb.find(skill => skill.id === skillId)
+              )
+              .concat(
+                this.state.bc.map(buffId =>
+                  this.buffItemDb.find(skill => skill.id === buffId)
+                )
+              )}
+            charm={this.charmDb.find(
+              charmItem => charmItem.id === this.state.ch
             )}
+            armorBonus={
+              isArmor
+                ? []
+                : [this.state.aPrf, this.state.aSuf]
+                    .map(fixId =>
+                      this.armorFixDb.find(fix => fix.id === Number(fixId))
+                    )
+                    .concat([
+                      this.gearArmorsWithBonus.find(
+                        item => item.id === this.state.arm
+                      )
+                    ])
+            }
           />
         )}
       </div>
@@ -476,6 +689,18 @@ class WeaponCalcTool extends Component {
     }
 
     this.setState({ sk: skillState })
+  }
+
+  handleBuffcardClick(skill) {
+    let buffCardState = this.state.bc
+
+    if (buffCardState.indexOf(skill.id) === -1) {
+      buffCardState.push(skill.id)
+    } else {
+      buffCardState = buffCardState.filter(skillId => skillId !== skill.id)
+    }
+
+    this.setState({ bc: buffCardState })
   }
 }
 

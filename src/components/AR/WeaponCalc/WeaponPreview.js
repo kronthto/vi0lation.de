@@ -119,7 +119,7 @@ const DisplayStat = props => {
 
 export const PlusMinusNumber = num => {
   num = Number(num)
-  if (num <= 0) {
+  if (num < 0) {
     return num
   }
   return '+' + num
@@ -185,13 +185,13 @@ const transformDesAttrsToArray = item => {
   return desResult
 }
 
-const getFixesStats = fixes =>
-  getMergedDesBoni(
-    fixes.map(fix => {
-      fix.DesParameters = transformDesAttrsToArray(fix)
-      return fix
-    })
-  )
+export const addDesParamsArrayToFixes = fixes =>
+  fixes.map(fix => {
+    fix.DesParameters = transformDesAttrsToArray(fix)
+    return fix
+  })
+
+const getFixesStats = fixes => getMergedDesBoni(addDesParamsArrayToFixes(fixes))
 
 export const mergeAndSum = (o1, o2) => {
   // is there a core-func for this?
