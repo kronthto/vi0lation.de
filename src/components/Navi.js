@@ -55,6 +55,9 @@ class Navi extends Component {
             style={{ paddingBottom: 0 }}
           >
             <div className="navbar-start">
+              <NavLink to={crTopKillsIntervalUrl} className="is-tab">
+                Ranking
+              </NavLink>
               <NavLink to="/weaponcalc" className="is-tab">
                 WeaponCalc
               </NavLink>

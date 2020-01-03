@@ -8,7 +8,7 @@ import lazyImport from './utils/lazyImportHack'
 import { asyncComponent } from 'react-async-component'
 import LoadBlock from './components/LoadBlock'
 
-export const crTopKillsIntervalUrl = '/ranking/chromerivals/topkillsinterval'
+export const crTopKillsIntervalUrl = '/killsBetween'
 
 const LoadingComponent = () => <LoadBlock height="220px" />
 

@@ -19,20 +19,6 @@ import {
 } from '../../components/ChromeRivals/PlayerFameChart'
 import AsyncLineChart from '../../components/AsyncLineChart'
 
-export const CRDisclaimer = () => (
-  <small>
-    Server:{' '}
-    <a
-      href="https://chromerivals.net"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      ChromeRivals
-    </a>. Stats displayed here are based on leaderboard data kindly provided by
-    their staff / API.
-  </small>
-)
-
 const StatTag = props => (
   <div className="tags has-addons" style={{ marginBottom: 0 }}>
     <span className="tag" style={{ minWidth: '75px' }}>
@@ -256,7 +242,7 @@ class KillsInInterval extends Component {
           <title>{`ChromeRivals: Fame between`}</title>
         </Helmet>
 
-        <h1 className="title">ChromeRivals: Fame between</h1>
+        <h1 className="title">CR Fame between</h1>
 
         {this.renderForm()}
 
@@ -267,8 +253,6 @@ class KillsInInterval extends Component {
         ) : (
           this.renderTable(result)
         )}
-
-        <CRDisclaimer />
       </div>
     )
   }

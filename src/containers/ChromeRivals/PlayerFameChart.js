@@ -3,7 +3,6 @@ import { Helmet } from 'react-helmet'
 import debounce from 'lodash.debounce'
 import withRouter from 'react-router/withRouter'
 import PlayerFameChartChart from '../../components/ChromeRivals/PlayerFameChart'
-import { CRDisclaimer } from './KillsInInterval'
 import { parse, stringify } from 'querystring'
 
 class PlayerFameChart extends Component {
@@ -119,8 +118,6 @@ class PlayerFameChart extends Component {
             brigade={brigade}
           />
         )}
-
-        <CRDisclaimer />
       </div>
     )
   }

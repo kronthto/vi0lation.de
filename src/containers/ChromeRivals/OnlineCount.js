@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Helmet } from 'react-helmet'
 import OnlineCountChart from '../../components/ChromeRivals/OnlineCountChart'
-import { CRDisclaimer } from './KillsInInterval'
 import debounce from 'lodash.debounce'
 
 class OnlineCount extends Component {
@@ -61,8 +60,6 @@ class OnlineCount extends Component {
         {this.renderForm()}
 
         {backdays > 0 && <OnlineCountChart backdays={backdays} />}
-
-        <CRDisclaimer />
       </div>
     )
   }
