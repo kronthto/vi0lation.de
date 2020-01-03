@@ -20,3 +20,7 @@ body {
 img.profile {
   border-radius: 10%;
 }
+
+.button.is-info {
+  background-color: #006488;
+}
