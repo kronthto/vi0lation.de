@@ -1,8 +1,8 @@
 import React from 'react'
 
 const colorMap = {
-  e: '#F5B930',
-  c: '#00FFFF',
+  e: '#F4AE0B',
+  c: '#00CCCC',
   m: '#ff00ff'
 }
 
