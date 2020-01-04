@@ -33,3 +33,7 @@ img.profile {
     #ec9726
   ) !important;
 }
+
+.tag:not(body).is-activated {
+  box-shadow: 0 0 0 2pt #48c774;
+}

@@ -26,7 +26,7 @@ import { colorName } from '../../../utils/AR/names'
 const eqKinds = [ITEMKIND_DEFENSE].concat(standardWeapons, advWeapons)
 const isEquip = item => eqKinds.indexOf(item.kind) !== -1
 
-const bannedEnchantNames = ['Swift ', '%]', 'E10', 'FFA']
+const bannedEnchantNames = ['Swift ', '%]', 'E10', 'FFA', 'Platinum Guard']
 const isBannedEnchant = item =>
   bannedEnchantNames.some(
     bannedName =>
@@ -609,7 +609,7 @@ class WeaponCalcTool extends Component {
               style={{ cursor: 'pointer' }}
               className={
                 'tag' +
-                (this.state.sk.indexOf(skill.id) !== -1 ? ' is-success' : '')
+                (this.state.sk.indexOf(skill.id) !== -1 ? ' is-activated' : '')
               }
               key={skill.id}
               onClick={() => this.handleSkillClick(skill)}
@@ -624,7 +624,7 @@ class WeaponCalcTool extends Component {
               style={{ cursor: 'pointer' }}
               className={
                 'tag' +
-                (this.state.bc.indexOf(buff.id) !== -1 ? ' is-success' : '')
+                (this.state.bc.indexOf(buff.id) !== -1 ? ' is-activated' : '')
               }
               key={buff.id}
               onClick={() => this.handleBuffcardClick(buff)}

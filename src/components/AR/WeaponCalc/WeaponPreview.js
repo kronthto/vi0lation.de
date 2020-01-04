@@ -111,7 +111,7 @@ const DisplayStat = props => {
         ? colorName(`\\e[${PlusMinusNumber(value.enchants)}]\\e`)
         : null}{' '}
       {'total' in value && (value.fixes || value.enchants)
-        ? ` = ${value.total}`
+        ? ` = ${Number(value.total.toFixed(6))}`
         : null}
     </li>
   )
@@ -120,9 +120,9 @@ const DisplayStat = props => {
 export const PlusMinusNumber = num => {
   num = Number(num)
   if (num < 0) {
-    return num
+    return num.toFixed(2)
   }
-  return '+' + num
+  return '+' + num.toFixed(2)
 }
 
 export const determinePrefix = item => {

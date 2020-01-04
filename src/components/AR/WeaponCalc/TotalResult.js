@@ -55,7 +55,8 @@ const TotalResult = props => {
   })
   let skillsBonus = getMergedDesBoni(greenAdditives)
 
-  // TODO: Show firemode
+  // ShotNum / MultiNum
+  // TODO: Show firemode for weapons / Siegemod DES
   // TODO: ao-framebrake to calc bps ONLY for x1 stds
 
   // if std/adv p s p v in min/max stats
@@ -112,7 +113,7 @@ const DisplayStat = props => {
       {typeof skillBonus !== 'undefined'
         ? colorName(`\\g[${PlusMinusNumber(skillBonus)}]\\g`)
         : null}{' '}
-      = {total}
+      = {Number(total.toFixed(6))}
     </li>
   )
 }
