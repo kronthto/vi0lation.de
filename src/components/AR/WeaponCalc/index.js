@@ -182,8 +182,11 @@ class WeaponCalcTool extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    const serializedState = this.serializeState()
     this.props.history.replace({
-      hash: btoa(JSON.stringify(this.serializeState()))
+      hash: Object.keys(serializedState).length
+        ? btoa(JSON.stringify(this.serializeState()))
+        : null
     })
   }
 
@@ -191,6 +194,22 @@ class WeaponCalcTool extends Component {
     let obj = Object.assign({}, this.state)
     delete obj.itemdb
     delete obj.fixDb
+
+    Object.keys(obj).forEach(stateKey => {
+      const stateKeyVal = obj[stateKey]
+      if (
+        !stateKeyVal ||
+        (Array.isArray(stateKeyVal) && stateKeyVal.length === 0) ||
+        (typeof stateKeyVal === 'object' &&
+          Object.values(stateKeyVal).filter(Boolean).length === 0)
+      ) {
+        delete obj[stateKey]
+      }
+    })
+    if (Object.keys(obj).length === 1 && 'gear' in obj) {
+      delete obj.gear
+    }
+
     return obj
   }
 
@@ -357,6 +376,9 @@ class WeaponCalcTool extends Component {
                   let stateUpdate = {
                     sWp: this.refs.weapsel.value,
                     ench: this.cleanseEnchants(newItem, gear)
+                  }
+                  if (stateUpdate.sWp && !isNaN(stateUpdate.sWp)) {
+                    stateUpdate.sWp = Number(stateUpdate.sWp)
                   }
 
                   if (newItem && this.selectedItem) {
@@ -641,7 +663,7 @@ class WeaponCalcTool extends Component {
             </div>
           </div>
         </div>
-        TODO: Buff-Items / ? / dps vs. (firerate per s / per volley)
+        TODO: ? / dps vs. (firerate per s / per volley)
         <hr />
         {this.selectedItem && (
           <TotalResult
