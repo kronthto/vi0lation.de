@@ -58,6 +58,12 @@ class Navi extends Component {
               <NavLink to={crTopKillsIntervalUrl} className="is-tab">
                 Ranking
               </NavLink>
+              <NavLink to="/fameChart" className="is-tab">
+                Fame-Chart
+              </NavLink>
+              <NavLink to="/usercount" className="is-tab">
+                Playercount
+              </NavLink>
               <NavLink to="/weaponcalc" className="is-tab">
                 WeaponCalc
               </NavLink>

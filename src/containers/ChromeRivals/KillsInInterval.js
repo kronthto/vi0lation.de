@@ -325,10 +325,7 @@ class KillsInInterval extends Component {
                       <th>{showLadder ? idx + 1 : null}</th>
                       <td>
                         <Link
-                          to={
-                            '/ranking/chromerivals/playerFame?name=' +
-                            encodeURIComponent(row.name)
-                          }
+                          to={'/fameChart?name=' + encodeURIComponent(row.name)}
                           style={{ color: 'inherit' }}
                         >
                           {colorName(row.name)}

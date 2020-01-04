@@ -106,7 +106,7 @@ class PlayerFameChart extends Component {
           <title>{title}</title>
         </Helmet>
 
-        <h1 className="title">{title}</h1>
+        <h1 className="title">CR Fame growth chart</h1>
 
         {this.renderForm()}
 

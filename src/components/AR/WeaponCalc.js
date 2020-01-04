@@ -14,9 +14,9 @@ class WeaponCalc extends Component {
         <Helmet>
           <meta
             name="description"
-            content="Chromerivals equipment / weapon/armor calculator"
+            content="ChromeRivals equipment / weapon/armor calculator"
           />
-          <title>ChromeRivals WeaponCalc</title>
+          <title>ChromeRivals: WeaponCalc</title>
         </Helmet>
 
         <h1 className="title">CR WeaponCalc</h1>
