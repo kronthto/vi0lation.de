@@ -24,25 +24,14 @@ class Home extends Component {
           </div>
 
           <div className="column is-half">
-            <Link to="/ts3">
-              <div className="hero is-primary is-bold">
+            <a href="https://cr.vi0.de">
+              <div className="hero is-primary is-bold crt">
                 <div className="hero-body">
-                  <h1 className="title">TeamSpeak 3</h1>
-                  <h2 className="subtitle">Listing of the TS3 Servers</h2>
+                  <h1 className="title">CR-Tools</h1>
+                  <h2 className="subtitle">ChromeRivals apps</h2>
                 </div>
               </div>
-            </Link>
-          </div>
-
-          <div className="column is-half">
-            <Link to="/tera">
-              <div className="hero is-primary is-bold">
-                <div className="hero-body">
-                  <h1 className="title">TERA</h1>
-                  <h2 className="subtitle">Gameplay / services / stats</h2>
-                </div>
-              </div>
-            </Link>
+            </a>
           </div>
         </div>
       </div>

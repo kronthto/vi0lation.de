@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import Redirect from 'react-router/Redirect'
 
 import Home from './components/Home'
@@ -17,9 +17,12 @@ import { maxDate } from './data/dataset'
 import lazyImport from './utils/lazyImportHack'
 import { asyncComponent } from 'react-async-component'
 import LoadBlock from './components/LoadBlock'
+import { withRouter } from 'react-router-dom'
+import { isBrowser } from './utils/env'
+import PropTypes from 'prop-types'
 
 export const highscoresUrl = '/ranking/de/highscores'
-export const crTopKillsIntervalUrl = '/ranking/chromerivals/topkillsinterval'
+const crTopKillsIntervalUrl = '/ranking/chromerivals/topkillsinterval'
 
 const LoadingComponent = () => <LoadBlock height="220px" />
 
@@ -29,6 +32,35 @@ const makeAsync = resolve => {
     LoadingComponent
   })
 }
+
+class ExternalRedirectClass extends Component {
+  static contextTypes = {
+    router: PropTypes.shape({
+      staticContext: PropTypes.object
+    }).isRequired
+  }
+
+  render() {
+    let newUrl = this.props.target + this.props.location.search
+
+    if (this.props.location.hash) {
+      newUrl = newUrl + '#' + this.props.location.hash
+    }
+
+    if (this.context.router.staticContext) {
+      this.context.router.staticContext.statusCode = 301
+      this.context.router.staticContext.url = newUrl
+    }
+
+    if (isBrowser) {
+      window.location.href = newUrl
+    }
+
+    return null
+  }
+}
+
+const ExternalRedirectComponent = withRouter(ExternalRedirectClass)
 
 const routes = [
   {
@@ -90,20 +122,20 @@ const routes = [
   },
   {
     path: crTopKillsIntervalUrl,
-    component: makeAsync(() =>
-      lazyImport(import('./containers/ChromeRivals/KillsInInterval'))
+    component: () => (
+      <ExternalRedirectComponent target="https://cr.vi0.de/killsBetween" />
     )
   },
   {
     path: '/ranking/chromerivals/playerFame',
-    component: makeAsync(() =>
-      lazyImport(import('./containers/ChromeRivals/PlayerFameChart'))
+    component: () => (
+      <ExternalRedirectComponent target="https://cr.vi0.de/fameChart" />
     )
   },
   {
     path: '/ranking/chromerivals/usercount',
-    component: makeAsync(() =>
-      lazyImport(import('./containers/ChromeRivals/OnlineCount'))
+    component: () => (
+      <ExternalRedirectComponent target="https://cr.vi0.de/usercount" />
     )
   },
   {
