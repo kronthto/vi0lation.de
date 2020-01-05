@@ -60,7 +60,11 @@ export const DES_MAP = {
   STD_RA: 31,
   ADV_RA: 32,
   STD_WEIGHT: 75,
-  ADV_WEIGHT: 76
+  ADV_WEIGHT: 76,
+  STD_SHOTS: 44,
+  ADV_SHOTS: 69,
+  STD_MULTI: 45,
+  ADV_MULTI: 70
 }
 
 export const desKeyByDesNum = desNum => {
@@ -74,5 +78,7 @@ export const baseValuesToDesKeyMap = {
   HitRate: '_PROB',
   FractionResistance: '_PIERCE',
   ReAttacktime: '_RA',
-  Weight: '_WEIGHT'
+  Weight: '_WEIGHT',
+  ShotNum: '_SHOTS',
+  MultiNum: '_MULTI'
 }

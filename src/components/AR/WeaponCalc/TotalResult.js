@@ -1,5 +1,6 @@
 import React from 'react'
 import aostats from 'aceonline-stats'
+import aofb from 'aceonline-framebreak'
 import { ITEMKIND_DEFENSE } from '../../../data/ao'
 import {
   determinePrefix,
@@ -12,7 +13,7 @@ import { colorName } from '../../../utils/AR/names'
 // skill/other green
 // todo: vs other gears
 
-const WEAPON_ATTRS = ['_MIN', '_MAX', '_PROB', '_PIERCE']
+const WEAPON_ATTRS = ['_MIN', '_MAX', '_PROB', '_PIERCE', '_SHOTS', '_MULTI']
 
 const ARMOR_ATTRS = ['HP', 'DP', 'STD_DEF', 'ADV_DEF', 'STD_EVA', 'ADV_EVA']
 
@@ -55,67 +56,113 @@ const TotalResult = props => {
   })
   let skillsBonus = getMergedDesBoni(greenAdditives)
 
-  // ShotNum / MultiNum
-  // TODO: Show firemode for weapons / Siegemod DES
-  // TODO: ao-framebrake to calc bps ONLY for x1 stds
+  const totalValues = calcTotalValues(
+    weaponElseArmor,
+    attrPrefix,
+    weaponStats,
+    gearStatBonus,
+    skillsBonus
+  )
 
-  // if std/adv p s p v in min/max stats
+  let stdDps = null
+  if (attrPrefix === 'STD') {
+    const fbRes = aofb(
+      weaponStats.STD_RA.base,
+      totalValues.STD_SHOTS.total,
+      60,
+      weaponStats.STD_RA.bonuses * -100 + 1
+    )
+    const bps = fbRes[fbRes.length - 1].bps * totalValues.STD_MULTI.total
+    stdDps = (
+      <li>
+        DPS <abbr title={`${fbRes[fbRes.length - 1].rea}ra BP`}>@60fps</abbr>:{' '}
+        {(bps * totalValues.STD_MIN.total).toFixed(3)} ~{' '}
+        {(bps * totalValues.STD_MAX.total).toFixed(3)}
+      </li>
+    )
+  }
 
   return (
     <ul>
-      {(weaponElseArmor ? WEAPON_ATTRS : ARMOR_ATTRS).map(attr => {
-        if (attr.charAt(0) === '_') {
-          if (!attrPrefix) {
-            throw Error('Not a weapon item')
-          }
-          attr = attrPrefix + attr
-        }
-        return (
-          <DisplayStat
-            key={attr}
-            attr={attr}
-            value={weaponStats[attr]}
-            statBonus={gearStatBonus[attr]}
-            skillBonus={skillsBonus[attr]}
-          />
-        )
-      })}
+      {Object.keys(totalValues).map(attr => (
+        <DisplayStat key={attr} attr={attr} {...totalValues[attr]} />
+      ))}
+      {stdDps}
+      {attrPrefix === 'ADV' ? (
+        <li>
+          DMG/Volley:{' '}
+          {(totalValues['ADV_MIN'].total *
+            totalValues['ADV_SHOTS'].total *
+            totalValues['ADV_MULTI'].total
+          ).toFixed(3)}{' '}
+          ~{' '}
+          {(totalValues['ADV_MAX'].total *
+            totalValues['ADV_SHOTS'].total *
+            totalValues['ADV_MULTI'].total
+          ).toFixed(3)}
+        </li>
+      ) : null}
     </ul>
   )
 }
 
-const DisplayStat = props => {
-  const { attr, statBonus, skillBonus } = props
-  let value = props.value
-
-  if (typeof value === 'undefined') {
-    value = {
-      additiv: isAttrAdditiv(attr),
-      base: 0
+const calcTotalValues = (
+  weaponElseArmor,
+  attrPrefix,
+  weaponStats,
+  gearStatBonus,
+  skillsBonus
+) => {
+  let res = {}
+  ;(weaponElseArmor ? WEAPON_ATTRS : ARMOR_ATTRS).forEach(attr => {
+    if (attr.charAt(0) === '_') {
+      if (!attrPrefix) {
+        throw Error('Not a weapon item')
+      }
+      attr = attrPrefix + attr
     }
-  }
 
-  let totalBonuses = (value.bonuses || 0) + (statBonus || 0) + (skillBonus || 0)
-  let total
+    const statBonus = gearStatBonus[attr]
+    const skillBonus = skillsBonus[attr]
+    let value = weaponStats[attr]
 
-  if (value.additiv) {
-    total = value.base + totalBonuses
-  } else {
-    total = value.base * (1 + totalBonuses)
-  }
+    if (typeof value === 'undefined') {
+      value = {
+        additiv: isAttrAdditiv(attr),
+        base: 0
+      }
+    }
 
-  return (
-    <li>
-      {attr}:{' '}
-      {statBonus
-        ? colorName(`\\d[${PlusMinusNumber(statBonus)}]\\d`)
-        : null}{' '}
-      {typeof skillBonus !== 'undefined'
-        ? colorName(`\\g[${PlusMinusNumber(skillBonus)}]\\g`)
-        : null}{' '}
-      = {Number(total.toFixed(6))}
-    </li>
-  )
+    let totalBonuses =
+      (value.bonuses || 0) + (statBonus || 0) + (skillBonus || 0)
+    let total
+
+    if (value.additiv) {
+      total = value.base + totalBonuses
+    } else {
+      total = value.base * (1 + totalBonuses)
+    }
+
+    res[attr] = {
+      statBonus,
+      skillBonus,
+      total
+    }
+  })
+  return res
 }
+
+const DisplayStat = props => (
+  <li>
+    {props.attr}:{' '}
+    {props.statBonus
+      ? colorName(`\\d[${PlusMinusNumber(props.statBonus)}]\\d`)
+      : null}{' '}
+    {typeof props.skillBonus !== 'undefined'
+      ? colorName(`\\g[${PlusMinusNumber(props.skillBonus)}]\\g`)
+      : null}{' '}
+    = {Number(props.total.toFixed(6))}
+  </li>
+)
 
 export default TotalResult

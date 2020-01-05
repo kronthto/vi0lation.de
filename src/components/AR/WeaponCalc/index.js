@@ -663,7 +663,7 @@ class WeaponCalcTool extends Component {
             </div>
           </div>
         </div>
-        TODO: ? / dps vs. (firerate per s / per volley)
+        TODO: ? / dps vs. def/eva
         <hr />
         {this.selectedItem && (
           <TotalResult
