@@ -663,7 +663,6 @@ class WeaponCalcTool extends Component {
             </div>
           </div>
         </div>
-        TODO: ? / dps vs. def/eva
         <hr />
         {this.selectedItem && (
           <TotalResult
