@@ -3,6 +3,7 @@ import withRouter from 'react-router/withRouter'
 import NavLink from './NavLink'
 
 import { crTopKillsIntervalUrl } from '../routes'
+import { resetCurrentInstance as resetCurrentWeapCalcInstance } from './AR/WeaponCalc/index'
 
 const responsiveExpandedClass = 'is-active'
 const mainNav = 'mainNav'
@@ -64,7 +65,11 @@ class Navi extends Component {
               <NavLink to="/usercount" className="is-tab">
                 Playercount
               </NavLink>
-              <NavLink to="/weaponcalc" className="is-tab">
+              <NavLink
+                to="/weaponcalc"
+                className="is-tab"
+                onClick={() => resetCurrentWeapCalcInstance()}
+              >
                 WeaponCalc
               </NavLink>
             </div>

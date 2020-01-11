@@ -64,7 +64,17 @@ const enchantCardMatches = (card, item, gear) =>
   COMPARE_ITEMKIND(card.ReqItemKind, item.kind) &&
   card.ReqUnitKind & unitKinds[gear]
 
+let instance
+
+export const resetCurrentInstance = () => {
+  if (instance) {
+    instance.reset()
+  }
+}
+
 class WeaponCalcTool extends Component {
+  initState
+
   gearItemDb = []
   gearArmorsWithBonus = []
   gearSkillDb = []
@@ -78,26 +88,51 @@ class WeaponCalcTool extends Component {
   suffix
   enchants
 
+  reset() {
+    this.setState(
+      Object.assign(
+        {
+          arm: undefined,
+          ch: undefined,
+          sWp: undefined,
+          iPrf: undefined,
+          iSuf: undefined,
+          aPrf: undefined,
+          aSuf: undefined
+        },
+        this.initState,
+        { gear: this.state.gear, sk: [], bc: [] }
+      )
+    )
+  }
+
   constructor(props) {
     super(props)
 
     let defaultStat = {}
     stats.forEach(stat => (defaultStat[stat.id] = 0))
 
-    let initState = {
+    this.initState = {
       gear: 'B',
       ench: {},
       stat: defaultStat,
       sk: [],
       bc: []
     }
+    let initStateWithFrag = Object.assign({}, this.initState)
 
     let hash = this.props.location.hash.substr(1)
     if (hash) {
-      Object.assign(initState, JSON.parse(atob(hash)))
+      Object.assign(initStateWithFrag, JSON.parse(atob(hash)))
     }
 
-    this.state = initState
+    this.state = initStateWithFrag
+
+    instance = this
+  }
+
+  componentWillUnmount() {
+    instance = null
   }
 
   filterItemDbs(itemdb, gear) {
