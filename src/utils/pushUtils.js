@@ -1,6 +1,5 @@
 import { callApiChecked } from '../middleware/api'
 import config from '../config'
-import { store } from '../index'
 
 const applicationServerKey =
   'BKj3l3KSXQlD52OW8NszYbgGYmIuk_BUevF5u7TDTfaY9HDtPO_iwcYHgY1jpAkBouP5MwdQ2B-45acMXZMDVRg'
@@ -60,7 +59,6 @@ export function generateSubscriptionBody(subscription) {
   }
 }
 
-// TODO: Call on app start if canUsePush
 export function push_updateSubscription(stateCallback) {
   navigator.serviceWorker.ready
     .then(serviceWorkerRegistration =>
@@ -116,7 +114,7 @@ export function push_subscribe(stateCallback) {
         // means we failed to subscribe and the user will need
         // to manually change the notification permission to
         // subscribe to push messages
-        console.warn('Notifications are denied by the user.')
+        console.warn('Notifications are denied by the user :(')
         stateCallback('incompatible')
       } else {
         // A problem occurred with the subscription; common reasons
@@ -128,7 +126,7 @@ export function push_subscribe(stateCallback) {
 }
 
 export function sendPushToServer(method, body) {
-  body.events = store.getState().push.events
+  body.events = require('../index').store.getState().push.events
   return callApiChecked(config.apibase + 'pushsub', {
     method: method,
     body: JSON.stringify(body)
