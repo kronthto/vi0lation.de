@@ -12,6 +12,7 @@ import {
 } from '../utils/pushUtils'
 import LoadBlock from './LoadBlock'
 import classNames from 'classnames'
+import { isNode } from '../utils/env'
 
 const POSSIBLE_EVENTS = [
   { key: 'sp', name: 'Strategic Point (up to 4 min after spawn)' },
@@ -32,6 +33,9 @@ class PushSub extends Component {
   }
 
   componentDidMount() {
+    if (isNode) {
+      return
+    }
     if (!checkServiceWorkerSupported()) {
       this.changePushButtonState('incompatible')
       this.setState({
