@@ -9,6 +9,7 @@ import Navi from '../components/Navi'
 import Footer from '../components/Footer'
 
 import { isNode } from '../utils/env'
+import { canUsePush, push_updateSubscription } from '../utils/pushUtils'
 
 const defaultMeta = () => {
   return (
@@ -29,7 +30,9 @@ class App extends Component {
   }
 
   componentDidMount() {
-    //    queryData(this.props.dispatch)
+    if (canUsePush() && navigator.onLine) {
+      push_updateSubscription(() => {})
+    }
   }
 
   render() {
