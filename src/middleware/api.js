@@ -6,6 +6,10 @@ export function callApi(url, options = {}, acceptableErrorCodes = []) {
     Accept: 'application/json'
   }
 
+  if ('body' in options) {
+    headers['Content-Type'] = 'application/json'
+  }
+
   let fetchOpts = Object.assign(
     {
       headers

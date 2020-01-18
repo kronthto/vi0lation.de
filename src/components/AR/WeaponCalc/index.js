@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import withRouter from 'react-router/withRouter'
-import { callApi } from '../../../middleware/api'
+import { callApiChecked } from '../../../middleware/api'
 import config from '../../../config'
 import {
   unitKinds,
@@ -155,7 +155,7 @@ class WeaponCalcTool extends Component {
   }
 
   componentDidMount() {
-    callApi(
+    callApiChecked(
       config.apibase + 'chromerivals/omi?category=item'
     ).then(allItems => {
       let reducedItemDb = Object.values(allItems)
@@ -197,7 +197,7 @@ class WeaponCalcTool extends Component {
       )
       this.setState({ itemdb: reducedItemDb })
     })
-    callApi(
+    callApiChecked(
       config.apibase + 'chromerivals/omi?category=rareitems'
     ).then(allFixes => {
       let fixDb = Object.values(allFixes)

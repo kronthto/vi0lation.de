@@ -72,6 +72,9 @@ class Navi extends Component {
               >
                 WeaponCalc
               </NavLink>
+              <NavLink to="/events" className="is-tab">
+                Events
+              </NavLink>
             </div>
             <div className="navbar-end" />
           </div>

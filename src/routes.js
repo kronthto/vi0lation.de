@@ -52,6 +52,10 @@ const routes = [
     )
   },
   {
+    path: '/events',
+    component: makeAsync(() => lazyImport(import('./components/PushSub')))
+  },
+  {
     component: NoMatch
   }
 ]

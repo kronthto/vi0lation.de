@@ -21,7 +21,7 @@ import toast from './utils/toast'
 
 // If provided by server, use it, else let the reducers handle initial state
 // const initialState = window.DATA || {}
-const store = configureStore()
+export const store = configureStore()
 
 const app = (
   <AsyncComponentProvider
