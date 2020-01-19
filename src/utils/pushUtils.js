@@ -114,7 +114,7 @@ export function push_subscribe(stateCallback) {
         // means we failed to subscribe and the user will need
         // to manually change the notification permission to
         // subscribe to push messages
-        console.warn('Notifications are denied by the user :(')
+        console.warn('Notifications are denied by the user :((')
         stateCallback('incompatible')
       } else {
         // A problem occurred with the subscription; common reasons
