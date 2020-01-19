@@ -13,6 +13,8 @@ npm run build
 npm run start:server
 ```
 
+For the Push Notifications we sadly need a manual edit of the webpack config and add `importScripts: ['pushSw.js'],` to `GenerateSW`
+
 ## Technologies
 
 * React
