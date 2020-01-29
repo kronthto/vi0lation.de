@@ -16,6 +16,29 @@ const WEAPON_ATTRS = ['_MIN', '_MAX', '_PROB', '_PIERCE', '_SHOTS', '_MULTI']
 
 const ARMOR_ATTRS = ['HP', 'DP', 'STD_DEF', 'ADV_DEF', 'STD_EVA', 'ADV_EVA']
 
+const dmgPerSecond = (min, max, weaponStats, totalValues) => {
+  const fbRes = aofb(
+    weaponStats.STD_RA.base,
+    totalValues.STD_SHOTS.total,
+    60,
+    weaponStats.STD_RA.bonuses * -100 + 1
+  )
+  const bps = fbRes[fbRes.length - 1].bps * totalValues.STD_MULTI.total
+  return {
+    min: bps * min,
+    max: bps * max,
+    bp: fbRes[fbRes.length - 1].rea
+  }
+}
+const dmgPerVolley = (min, max, totalValues) => {
+  let missilesPerVolley =
+    totalValues['ADV_SHOTS'].total * totalValues['ADV_MULTI'].total
+  return {
+    min: min * missilesPerVolley,
+    max: max * missilesPerVolley
+  }
+}
+
 class TotalResult extends Component {
   constructor(props) {
     super(props)
@@ -77,18 +100,29 @@ class TotalResult extends Component {
 
     let stdDps = null
     if (attrPrefix === 'STD') {
-      const fbRes = aofb(
-        weaponStats.STD_RA.base,
-        totalValues.STD_SHOTS.total,
-        60,
-        weaponStats.STD_RA.bonuses * -100 + 1
+      const stdDpsData = dmgPerSecond(
+        totalValues['STD_MIN'].total,
+        totalValues['STD_MAX'].total,
+        weaponStats,
+        totalValues
       )
-      const bps = fbRes[fbRes.length - 1].bps * totalValues.STD_MULTI.total
       stdDps = (
         <li>
-          DPS <abbr title={`${fbRes[fbRes.length - 1].rea}ra BP`}>@60fps</abbr>:{' '}
-          {(bps * totalValues.STD_MIN.total).toFixed(3)} ~{' '}
-          {(bps * totalValues.STD_MAX.total).toFixed(3)}
+          DPS <abbr title={`${stdDpsData.bp}ra BP`}>@60fps</abbr>:{' '}
+          {stdDpsData.min.toFixed(3)} ~ {stdDpsData.max.toFixed(3)}
+        </li>
+      )
+    }
+    let advDps = null
+    if (attrPrefix === 'ADV') {
+      const advDpsData = dmgPerVolley(
+        totalValues['ADV_MIN'].total,
+        totalValues['ADV_MAX'].total,
+        totalValues
+      )
+      advDps = (
+        <li>
+          DMG/Volley: {advDpsData.min.toFixed(3)} ~ {advDpsData.max.toFixed(3)}
         </li>
       )
     }
@@ -100,20 +134,7 @@ class TotalResult extends Component {
             <DisplayStat key={attr} attr={attr} {...totalValues[attr]} />
           ))}
           {stdDps}
-          {attrPrefix === 'ADV' ? (
-            <li>
-              DMG/Volley:{' '}
-              {(totalValues['ADV_MIN'].total *
-                totalValues['ADV_SHOTS'].total *
-                totalValues['ADV_MULTI'].total
-              ).toFixed(3)}{' '}
-              ~{' '}
-              {(totalValues['ADV_MAX'].total *
-                totalValues['ADV_SHOTS'].total *
-                totalValues['ADV_MULTI'].total
-              ).toFixed(3)}
-            </li>
-          ) : null}
+          {advDps}
         </ul>
         {weaponElseArmor ? (
           <React.Fragment>
@@ -143,14 +164,14 @@ class TotalResult extends Component {
                 )
               })}
             </div>
-            {this.valuesVs(totalValues, attrPrefix)}
+            {this.valuesVs(totalValues, attrPrefix, weaponStats)}
           </React.Fragment>
         ) : null}
       </section>
     )
   }
 
-  valuesVs(totalValues, attrPrefix) {
+  valuesVs(totalValues, attrPrefix, weaponStats) {
     if (!Object.values(this.state).some(Boolean)) {
       return null
     }
@@ -187,7 +208,42 @@ class TotalResult extends Component {
       trueMax = Math.max(1, trueMax * trueFraction)
     }
 
-    // TODO: Per S / Per Volley to func with MM params
+    let defEvaReducedMin = trueMin
+    let defEvaReducedMax = trueMax
+    if (typeof hitRate !== 'undefined') {
+      let evaTrueFraction = hitRate / 100
+      defEvaReducedMin *= evaTrueFraction
+      defEvaReducedMax *= evaTrueFraction
+    }
+    let stdDpsTrue = null
+    let advDpsTrue = null
+    if (attrPrefix === 'STD') {
+      const stdDpsData = dmgPerSecond(
+        defEvaReducedMin,
+        defEvaReducedMax,
+        weaponStats,
+        totalValues
+      )
+      stdDpsTrue = (
+        <li>
+          Expected Avg. True DPS: {stdDpsData.min.toFixed(3)} ~{' '}
+          {stdDpsData.max.toFixed(3)}
+        </li>
+      )
+    }
+    if (attrPrefix === 'ADV') {
+      const advDpsData = dmgPerVolley(
+        defEvaReducedMin,
+        defEvaReducedMax,
+        totalValues
+      )
+      advDpsTrue = (
+        <li>
+          Expected Avg. True DMG/Volley: {advDpsData.min.toFixed(3)} ~{' '}
+          {advDpsData.max.toFixed(3)}
+        </li>
+      )
+    }
 
     return (
       <ul>
@@ -200,6 +256,8 @@ class TotalResult extends Component {
         <li>
           True MM / Hit: {trueMin.toFixed(6)} ~ {trueMax.toFixed(6)}
         </li>
+        {stdDpsTrue}
+        {advDpsTrue}
       </ul>
     )
   } // refactor to class vars
