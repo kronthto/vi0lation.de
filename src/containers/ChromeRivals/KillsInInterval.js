@@ -51,8 +51,52 @@ class KillsInInterval extends Component {
   }
 
   componentDidMount() {
+    // We already have all the dates from last visit persisted, but immediately fetch all and show loading. Causes a useless render of the select fields
     this.queryAvailableDates()
     this.queryData()
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.isFetchingDates &&
+      !this.props.isFetchingDates &&
+      this.props.rankingDates
+    ) {
+      this.preselectOnLoad()
+    }
+  }
+
+  preselectOnLoad() {
+    const currentQs = this.getQueryParams()
+    if (currentQs.from || currentQs.to) {
+      return
+    }
+    let latestDate = this.props.rankingDates[0]
+    let to = latestDate[0] + latestDate[1]
+
+    let latestDateDate = new Date(latestDate[0] + latestDate[1])
+    let from
+    let fromDefault = this.props.rankingDates.find(
+      date => diffMins(latestDateDate, new Date(date[0] + date[1])) > 59
+    )
+    if (fromDefault) {
+      from = fromDefault[0] + fromDefault[1]
+    }
+
+    let qs = {}
+    if (from) {
+      qs.from = from
+    }
+    if (to) {
+      qs.to = to
+    }
+    this.props.history.replace({
+      search: stringify(qs)
+    })
+    this.queryData({
+      from,
+      to
+    })
   }
 
   queryAvailableDates() {
