@@ -18,7 +18,7 @@ const colorMap = {
 }
 
 function specialNames(name) {
-  let regex = name.match(/^(.+)4K$/)
+  let regex = name.match(/^(.*)4K(.*)$/)
   if (!regex) {
     return name
   }
@@ -26,6 +26,7 @@ function specialNames(name) {
     <span>
       {regex[1]}
       <i style={{ color: 'red' }}>4K</i>
+      {regex[2]}
     </span>
   )
 }
