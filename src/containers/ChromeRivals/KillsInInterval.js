@@ -35,7 +35,7 @@ const StatTag = props => (
       {props.label}
     </span>
     <span className="tag is-primary" style={{ minWidth: '50px' }}>
-      {props.val.toLocaleString()}
+      {props.val !== '' ? props.val.toLocaleString() : ''}
     </span>
   </div>
 )
@@ -43,7 +43,7 @@ const StatTag = props => (
 class KillsInInterval extends Component {
   constructor(props) {
     super(props)
-    this.state = { result: null }
+    this.state = { result: null, resultNation: null, resultGearDeaths: null }
     this.TableInfo = (
       <tr>
         <th>
@@ -115,36 +115,63 @@ class KillsInInterval extends Component {
       qs = this.getQueryParams()
     }
 
-    let dataPromise = this.constructor.queryForDate(qs.from, qs.to) // TODO: Alle endpoints & promise.all
+    if (!(qs.to && qs.from)) {
+      this.setState({
+        result: null,
+        loadingData: null,
+        topchartdata: null
+      })
+      return
+    }
+
+    let dateQuery =
+      '?' +
+      stringify({
+        from: formatDateForTransfer(qs.from),
+        to: formatDateForTransfer(qs.to)
+      })
+
+    let playerKillsPromise = callApiChecked(
+      config.crapibase + 'killsBetween' + dateQuery
+    )
+    let nationKillsPromise = callApiChecked(
+      config.crapibase + 'nationKillsBetween' + dateQuery
+    )
+    let gearDeathsPromise = callApiChecked(
+      config.crapibase + 'gearDeathsBetween' + dateQuery
+    )
+
     this.setState({
+      resultNation: null,
+      resultGearDeaths: null,
       result: null,
-      loadingData: dataPromise,
+      loadingData: Promise.all([
+        playerKillsPromise,
+        nationKillsPromise,
+        gearDeathsPromise
+      ]),
       topchartdata: null // Make this working again?
     })
-    if (dataPromise) {
-      dataPromise.then(result => {
-        if (!('stats' in result)) {
-          result = false
-        }
-        this.setState({ result, loadingData: false })
+    playerKillsPromise.then(result => {
+      if (!('stats' in result) || result.data.length === 0) {
+        result = false
+      }
+      this.setState({ result, loadingData: false })
+    })
+    nationKillsPromise.then(result => {
+      let resultObj = {}
+      result.forEach(nation => {
+        resultObj[nation.nation] = nation.killcount
       })
-    }
-  }
-
-  static queryForDate(from, to) {
-    if (!(to && from)) {
-      return null
-    }
-    let endpoint =
-      config.crapibase +
-      'killsBetween?' +
-      stringify({
-        from: formatDateForTransfer(from),
-        to: formatDateForTransfer(to)
+      this.setState({ resultNation: resultObj })
+    })
+    gearDeathsPromise.then(result => {
+      let resultObj = {}
+      result.forEach(gear => {
+        resultObj[gear.gear] = gear.deathcount
       })
-    let hsPromise = callApiChecked(endpoint)
-
-    return hsPromise
+      this.setState({ resultGearDeaths: resultObj })
+    })
   }
 
   getQueryParams() {
@@ -268,12 +295,43 @@ class KillsInInterval extends Component {
       <div className="columns">
         <div className="column">
           <h3 className="subtitle">Kills</h3>
-          <StatTag label="ANI" val={'TODO'} />
-          <StatTag label="BCU" val={'TODO'} />
+          <StatTag
+            label="ANI"
+            val={this.state.resultNation ? this.state.resultNation.ANI : ''}
+          />
+          <StatTag
+            label="BCU"
+            val={this.state.resultNation ? this.state.resultNation.BCU : ''}
+          />
           <StatTag label="I" val={stats.byGear.I} />
           <StatTag label="M" val={stats.byGear.M} />
           <StatTag label="B" val={stats.byGear.B} />
           <StatTag label="A" val={stats.byGear.A} />
+          <h3 className="subtitle">Deaths</h3>
+          <StatTag
+            label="I"
+            val={
+              this.state.resultGearDeaths ? this.state.resultGearDeaths.I : ''
+            }
+          />
+          <StatTag
+            label="M"
+            val={
+              this.state.resultGearDeaths ? this.state.resultGearDeaths.M : ''
+            }
+          />
+          <StatTag
+            label="B"
+            val={
+              this.state.resultGearDeaths ? this.state.resultGearDeaths.B : ''
+            }
+          />
+          <StatTag
+            label="A"
+            val={
+              this.state.resultGearDeaths ? this.state.resultGearDeaths.A : ''
+            }
+          />
         </div>
         <div className="column">
           <h3 className="subtitle">Player-Count (Fame-Diff ≠ 0)</h3>
