@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { Helmet } from 'react-helmet'
 import dateformat from 'date-fns/format'
 import subHours from 'date-fns/subHours'
-import startOfMinute from 'date-fns/startOfMinute'
 import NumTD from '../../components/AR/NumTD'
 import withRouter from 'react-router/withRouter'
 import Link from 'react-router-dom/Link'
@@ -52,7 +51,19 @@ const StatTag = props => (
 class KillsInInterval extends Component {
   constructor(props) {
     super(props)
-    this.state = { result: null, resultNation: null, resultGearDeaths: null }
+
+    let nowServerTimeDate = utcToZonedTime(
+      zonedTimeToUtc(new Date(), browserTimeZone),
+      serverTimeZone
+    )
+
+    this.state = {
+      result: null,
+      resultNation: null,
+      resultGearDeaths: null,
+      nowServerTime: nowServerTimeDate,
+      nowInServerTimezone: dateformat(nowServerTimeDate, dateTimeLocalFormat)
+    }
     this.TableInfo = (
       <tr>
         <th>
@@ -65,20 +76,21 @@ class KillsInInterval extends Component {
         <th>Nation</th>
       </tr>
     )
-    this.nowServerTime = utcToZonedTime(
-      zonedTimeToUtc(new Date(), browserTimeZone),
-      serverTimeZone
-    )
-    this.nowInServerTimezone = dateformat(
-      this.nowServerTime,
-      dateTimeLocalFormat
-    )
   }
 
   componentDidMount() {
-    if (this.preselectOnLoad() === false) {
-      this.queryData()
-    }
+    this.queryData()
+    let latestKillDatePromise = callApiChecked(
+      config.crapibase + 'latestKillDate'
+    )
+    latestKillDatePromise.then(res => {
+      let resDate = new Date(res)
+      this.setState({
+        nowServerTime: resDate,
+        nowInServerTimezone: dateformat(resDate, dateTimeLocalFormat)
+      })
+      this.preselectOnLoad()
+    })
   }
 
   preselectOnLoad() {
@@ -92,10 +104,10 @@ class KillsInInterval extends Component {
 
     let qs = {
       from: dateformat(
-        startOfMinute(subHours(this.nowServerTime, 1)),
+        subHours(this.state.nowServerTime, 1),
         dateTimeLocalFormat
       ),
-      to: this.nowInServerTimezone
+      to: this.state.nowInServerTimezone
     }
     this.props.history.replace({
       search: stringify(qs)
@@ -160,14 +172,14 @@ class KillsInInterval extends Component {
       this.setState({ result, loadingData: false })
     })
     nationKillsPromise.then(result => {
-      let resultObj = {}
+      let resultObj = { BCU: 0, ANI: 0 }
       result.forEach(nation => {
         resultObj[nation.nation] = nation.killcount
       })
       this.setState({ resultNation: resultObj })
     })
     gearDeathsPromise.then(result => {
-      let resultObj = {}
+      let resultObj = { I: 0, M: 0, B: 0, A: 0 }
       result.forEach(gear => {
         resultObj[gear.gear] = gear.deathcount
       })
@@ -248,7 +260,7 @@ class KillsInInterval extends Component {
             name={fromto}
             id={fromto}
             min="2018-08-24T18:00:00"
-            max={this.nowInServerTimezone}
+            max={this.state.nowInServerTimezone}
             step="1"
             onChange={e => this.dateSelected(e.target.value, fromto)}
           />
