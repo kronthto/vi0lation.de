@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { Helmet } from 'react-helmet'
 import dateformat from 'date-fns/format'
-import diffMins from 'date-fns/differenceInMinutes'
+import subHours from 'date-fns/subHours'
+import startOfMinute from 'date-fns/startOfMinute'
 import NumTD from '../../components/AR/NumTD'
 import withRouter from 'react-router/withRouter'
 import Link from 'react-router-dom/Link'
@@ -22,12 +23,20 @@ import AsyncLineChart from '../../components/AsyncLineChart'
 */
 
 const serverTimeZone = 'Europe/Paris'
-// TODO: Prevent error if Intl is not defined in node or browsers
-const browserTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
-const formatDateForTransfer = dateString =>
-  format(new Date(dateString), 'yyyy-MM-dd HH:mm:ssXXX', {
+const browserTimeZone =
+  Intl && Intl.DateTimeFormat
+    ? Intl.DateTimeFormat().resolvedOptions().timeZone
+    : serverTimeZone
+const formatDateForTransfer = dateString => {
+  let parseDate = new Date(dateString)
+  if (isNaN(parseDate) || !(parseDate instanceof Date)) {
+    return null
+  }
+  return format(parseDate, 'yyyy-MM-dd HH:mm:ssXXX', {
     timeZone: serverTimeZone
   })
+}
+const dateTimeLocalFormat = "yyyy-MM-dd'T'HH:mm:ss"
 
 const StatTag = props => (
   <div className="tags has-addons" style={{ marginBottom: 0 }}>
@@ -56,13 +65,13 @@ class KillsInInterval extends Component {
         <th>Nation</th>
       </tr>
     )
-    const nowServerTime = utcToZonedTime(
+    this.nowServerTime = utcToZonedTime(
       zonedTimeToUtc(new Date(), browserTimeZone),
       serverTimeZone
     )
     this.nowInServerTimezone = dateformat(
-      nowServerTime,
-      "yyyy-MM-dd'T'HH:mm:ss"
+      this.nowServerTime,
+      dateTimeLocalFormat
     )
   }
 
@@ -80,41 +89,38 @@ class KillsInInterval extends Component {
     if (currentQs.from || currentQs.to) {
       return false
     }
-    return false // TODO
-    let latestDate = this.props.rankingDates[0]
-    let to = latestDate[0] + latestDate[1]
 
-    let latestDateDate = new Date(latestDate[0] + latestDate[1])
-    let from
-    let fromDefault = this.props.rankingDates.find(
-      // TODO: Latest hour, irgendwie noch runden?
-      date => diffMins(latestDateDate, new Date(date[0] + date[1])) > 59
-    )
-    if (fromDefault) {
-      from = fromDefault[0] + fromDefault[1]
-    }
-
-    let qs = {}
-    if (from) {
-      qs.from = from
-    }
-    if (to) {
-      qs.to = to
+    let qs = {
+      from: dateformat(
+        startOfMinute(subHours(this.nowServerTime, 1)),
+        dateTimeLocalFormat
+      ),
+      to: this.nowInServerTimezone
     }
     this.props.history.replace({
       search: stringify(qs)
     })
-    this.queryData({
-      from,
-      to
-    })
+    this.queryData(qs)
   }
 
-  queryData(qs) {
-    if (!qs) {
-      qs = this.getQueryParams()
+  queryData(qsOrg) {
+    if (!qsOrg) {
+      qsOrg = this.getQueryParams()
     }
 
+    if (!(qsOrg.to && qsOrg.from)) {
+      this.setState({
+        result: null,
+        loadingData: null,
+        topchartdata: null
+      })
+      return
+    }
+
+    let qs = {
+      from: formatDateForTransfer(qsOrg.from),
+      to: formatDateForTransfer(qsOrg.to)
+    }
     if (!(qs.to && qs.from)) {
       this.setState({
         result: null,
@@ -124,12 +130,7 @@ class KillsInInterval extends Component {
       return
     }
 
-    let dateQuery =
-      '?' +
-      stringify({
-        from: formatDateForTransfer(qs.from),
-        to: formatDateForTransfer(qs.to)
-      })
+    let dateQuery = '?' + stringify(qs)
 
     let playerKillsPromise = callApiChecked(
       config.crapibase + 'killsBetween' + dateQuery
@@ -179,6 +180,7 @@ class KillsInInterval extends Component {
   }
 
   dateSelected(v, arg) {
+    console.log(v)
     const currentQs = this.getQueryParams()
 
     let dateSelected = v
@@ -307,6 +309,8 @@ class KillsInInterval extends Component {
           <StatTag label="M" val={stats.byGear.M} />
           <StatTag label="B" val={stats.byGear.B} />
           <StatTag label="A" val={stats.byGear.A} />
+        </div>
+        <div className="column">
           <h3 className="subtitle">Deaths</h3>
           <StatTag
             label="I"
