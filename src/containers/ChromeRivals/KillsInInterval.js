@@ -1,10 +1,8 @@
 import React, { Component } from 'react'
 import { Helmet } from 'react-helmet'
-import { connect } from 'react-redux'
 import dateformat from 'date-fns/format'
-import diffMins from 'date-fns/difference_in_minutes'
+import diffMins from 'date-fns/differenceInMinutes'
 import NumTD from '../../components/AR/NumTD'
-import { fetchDatesIfNeeded } from '../../actions/cr'
 import withRouter from 'react-router/withRouter'
 import Link from 'react-router-dom/Link'
 import { parse, stringify } from 'querystring'
@@ -12,12 +10,24 @@ import { callApiChecked } from '../../middleware/api'
 import config from '../../config'
 import { colorName } from '../../utils/AR/names'
 import blankImg from '../../img/000000-0.png'
+import { zonedTimeToUtc, utcToZonedTime, format } from 'date-fns-tz'
+import { isNode } from '../../utils/env'
+/*
 import {
   buildPlayerFameDatasets,
   options as playerFameChartOpts,
   queryPlayers
 } from '../../components/ChromeRivals/PlayerFameChart'
 import AsyncLineChart from '../../components/AsyncLineChart'
+*/
+
+const serverTimeZone = 'Europe/Paris'
+// TODO: Prevent error if Intl is not defined in node or browsers
+const browserTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+const formatDateForTransfer = dateString =>
+  format(new Date(dateString), 'yyyy-MM-dd HH:mm:ssXXX', {
+    timeZone: serverTimeZone
+  })
 
 const StatTag = props => (
   <div className="tags has-addons" style={{ marginBottom: 0 }}>
@@ -31,8 +41,6 @@ const StatTag = props => (
 )
 
 class KillsInInterval extends Component {
-  // TODO: shouldUpdate/Perf
-
   constructor(props) {
     super(props)
     this.state = { result: null }
@@ -48,35 +56,38 @@ class KillsInInterval extends Component {
         <th>Nation</th>
       </tr>
     )
+    const nowServerTime = utcToZonedTime(
+      zonedTimeToUtc(new Date(), browserTimeZone),
+      serverTimeZone
+    )
+    this.nowInServerTimezone = dateformat(
+      nowServerTime,
+      "yyyy-MM-dd'T'HH:mm:ss"
+    )
   }
 
   componentDidMount() {
-    // We already have all the dates from last visit persisted, but immediately fetch all and show loading. Causes a useless render of the select fields
-    this.queryAvailableDates()
-    this.queryData()
-  }
-
-  componentDidUpdate(prevProps) {
-    if (
-      prevProps.isFetchingDates &&
-      !this.props.isFetchingDates &&
-      this.props.rankingDates
-    ) {
-      this.preselectOnLoad()
+    if (this.preselectOnLoad() === false) {
+      this.queryData()
     }
   }
 
   preselectOnLoad() {
-    const currentQs = this.getQueryParams()
-    if (currentQs.from || currentQs.to) {
+    if (isNode) {
       return
     }
+    const currentQs = this.getQueryParams()
+    if (currentQs.from || currentQs.to) {
+      return false
+    }
+    return false // TODO
     let latestDate = this.props.rankingDates[0]
     let to = latestDate[0] + latestDate[1]
 
     let latestDateDate = new Date(latestDate[0] + latestDate[1])
     let from
     let fromDefault = this.props.rankingDates.find(
+      // TODO: Latest hour, irgendwie noch runden?
       date => diffMins(latestDateDate, new Date(date[0] + date[1])) > 59
     )
     if (fromDefault) {
@@ -99,22 +110,16 @@ class KillsInInterval extends Component {
     })
   }
 
-  queryAvailableDates() {
-    this.props.dispatch(fetchDatesIfNeeded())
-  }
-
   queryData(qs) {
-    const { dispatch } = this.props
-
     if (!qs) {
       qs = this.getQueryParams()
     }
 
-    let dataPromise = this.constructor.queryForDate(dispatch, qs.from, qs.to)
+    let dataPromise = this.constructor.queryForDate(qs.from, qs.to) // TODO: Alle endpoints & promise.all
     this.setState({
       result: null,
       loadingData: dataPromise,
-      topchartdata: null
+      topchartdata: null // Make this working again?
     })
     if (dataPromise) {
       dataPromise.then(result => {
@@ -122,53 +127,22 @@ class KillsInInterval extends Component {
           result = false
         }
         this.setState({ result, loadingData: false })
-        if (
-          result &&
-          result.data.length > 4 &&
-          diffMins(qs.to, qs.from) > 59 &&
-          diffMins(qs.to, qs.from) < 600
-        ) {
-          let topnames = result.data
-            .slice(0, Math.min(8, result.data.length))
-            .map(row => row.name)
-          let topChartPromises = queryPlayers(
-            topnames,
-            stringify({
-              from: qs.from,
-              to: qs.to
-            })
-          )
-          this.setState({ loadingTopChartData: topChartPromises })
-          topChartPromises.then(data => {
-            this.setState({
-              topchartdata: data.map(player => {
-                let playerStartFame = player.data[0].fame
-                player.data = player.data.map(playerdataRow => {
-                  playerdataRow.fame = playerdataRow.fame - playerStartFame
-                  return playerdataRow
-                })
-                return player
-              }),
-              loadingTopChartData: false
-            })
-          })
-        }
       })
     }
   }
 
-  static queryForDate(dispatch, from, to) {
+  static queryForDate(from, to) {
     if (!(to && from)) {
       return null
     }
     let endpoint =
-      config.apibase +
-      'chromerivals/topkillsinterval?' +
+      config.crapibase +
+      'killsBetween?' +
       stringify({
-        from,
-        to
+        from: formatDateForTransfer(from),
+        to: formatDateForTransfer(to)
       })
-    let hsPromise = callApiChecked(endpoint, {}, [400, 404])
+    let hsPromise = callApiChecked(endpoint)
 
     return hsPromise
   }
@@ -218,10 +192,6 @@ class KillsInInterval extends Component {
   }
 
   renderForm() {
-    if (this.props.rankingDates === null || this.props.isFetchingDates) {
-      return <span className="button is-info is-loading">...</span>
-    }
-
     return (
       <form onSubmit={e => e.preventDefault()} className="margin-bot">
         <div className="field is-horizontal">
@@ -242,25 +212,17 @@ class KillsInInterval extends Component {
     return (
       <div className="field">
         <div className="control">
-          <div className="select is-fullwidth">
-            <select
-              value={current}
-              name={fromto}
-              id={fromto}
-              onChange={e => this.dateSelected(e.target.value, fromto)}
-            >
-              <option value="">Select {fromto} date ...</option>
-              {this.props.rankingDates.map(date => {
-                let display = date[0]
-                let fullDate = date[0] + date[1]
-                return (
-                  <option key={fullDate} value={fullDate}>
-                    {display}
-                  </option>
-                )
-              })}
-            </select>
-          </div>
+          <input
+            type="datetime-local"
+            className="input is-fullwidth"
+            value={current || ''}
+            name={fromto}
+            id={fromto}
+            min="2018-08-24T18:00:00"
+            max={this.nowInServerTimezone}
+            step="1"
+            onChange={e => this.dateSelected(e.target.value, fromto)}
+          />
         </div>
       </div>
     )
@@ -268,7 +230,6 @@ class KillsInInterval extends Component {
 
   render() {
     const { result } = this.state
-    const is404 = result === false
 
     const { from, to } = this.getQueryParams()
 
@@ -290,13 +251,7 @@ class KillsInInterval extends Component {
 
         {this.renderForm()}
 
-        {is404 ? (
-          <div className="notification is-info">
-            No data available for the selected date
-          </div>
-        ) : (
-          this.renderTable(result)
-        )}
+        {this.renderTable(result)}
       </div>
     )
   }
@@ -313,8 +268,8 @@ class KillsInInterval extends Component {
       <div className="columns">
         <div className="column">
           <h3 className="subtitle">Kills</h3>
-          <StatTag label="ANI" val={stats.byNation.ANI} />
-          <StatTag label="BCU" val={stats.byNation.BCU} />
+          <StatTag label="ANI" val={'TODO'} />
+          <StatTag label="BCU" val={'TODO'} />
           <StatTag label="I" val={stats.byGear.I} />
           <StatTag label="M" val={stats.byGear.M} />
           <StatTag label="B" val={stats.byGear.B} />
@@ -336,7 +291,7 @@ class KillsInInterval extends Component {
   }
 
   renderDataLoading() {
-    if (this.state.loadingData || this.state.loadingTopChartData) {
+    if (this.state.loadingData) {
       return (
         <span className="button is-info is-loading" style={{ width: '80px' }}>
           ...
@@ -361,29 +316,37 @@ class KillsInInterval extends Component {
               {result &&
                 result.data &&
                 result.data.map(function(row, idx) {
-                  let showLadder = lastKillNum !== row.diff
-                  lastKillNum = row.diff
+                  let showLadder = lastKillNum !== row.killcount
+                  lastKillNum = row.killcount
+
+                  if (!row.player) {
+                    console.warn('Row without player entity', row)
+                    return null
+                  }
 
                   return (
-                    <tr key={row.name}>
+                    <tr key={row.player.name}>
                       <th>{showLadder ? idx + 1 : null}</th>
                       <td>
                         <Link
-                          to={'/fameChart?name=' + encodeURIComponent(row.name)}
+                          to={
+                            '/fameChart?name=' +
+                            encodeURIComponent(row.player.name)
+                          }
                           style={{ color: 'inherit' }}
                         >
-                          {colorName(row.name)}
+                          {colorName(row.player.name)}
                         </Link>
                       </td>
-                      <NumTD num={row.diff} />
-                      <td>{row.gear}</td>
+                      <NumTD num={row.killcount} />
+                      <td>{row.player.gear}</td>
                       <td style={{ whiteSpace: 'nowrap' }}>
-                        {row.brigade && (
+                        {row.player.brigade && (
                           <img
                             src={`${config.apibase}chromerivals/brigmark?name=${encodeURIComponent(
-                              row.brigade
+                              row.player.brigade
                             )}`}
-                            alt={row.brigade}
+                            alt={row.player.brigade}
                             width="24"
                             loading="lazy"
                             height="12"
@@ -394,9 +357,9 @@ class KillsInInterval extends Component {
                             }}
                           />
                         )}{' '}
-                        {row.brigade}
+                        {row.player.brigade}
                       </td>
-                      <td>{row.nation}</td>
+                      <td>{row.player.nation}</td>
                     </tr>
                   )
                 })}
@@ -404,43 +367,9 @@ class KillsInInterval extends Component {
             <tfoot>{this.TableInfo}</tfoot>
           </table>
         </div>
-        {this.state.topchartdata && (
-          <AsyncLineChart
-            options={playerFameChartOpts('minute')}
-            data={{
-              datasets: buildPlayerFameDatasets(this.state.topchartdata)
-            }}
-            type="line"
-          />
-        )}
       </div>
     )
   }
 }
 
-const mapStateToProps = state => {
-  const rankingDatesStore = state.cr.dates
-
-  let rankingDates = null
-  let isFetchingDates = false
-  if (rankingDatesStore) {
-    isFetchingDates = rankingDatesStore.isFetching
-  }
-  if (rankingDatesStore && 'data' in rankingDatesStore) {
-    const tzRegex = /(\+.*)$/
-    rankingDates = rankingDatesStore.data.map(date => {
-      let tz = date.match(tzRegex)[1]
-      return [
-        dateformat(new Date(date.replace(/\+.*$/, '')), 'YYYY-MM-DD HH:mm'),
-        tz
-      ]
-    })
-  }
-
-  return {
-    rankingDates,
-    isFetchingDates
-  }
-}
-
-export default withRouter(connect(mapStateToProps)(KillsInInterval))
+export default withRouter(KillsInInterval)

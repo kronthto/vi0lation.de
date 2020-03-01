@@ -3,10 +3,10 @@ import { callApiChecked } from '../../middleware/api'
 import config from '../../config'
 import { seriesColorCoding } from '../../utils/colors'
 import AsyncLineChart from '../AsyncLineChart'
-import isBefore from 'date-fns/is_before'
-import subDays from 'date-fns/sub_days'
-import startOfHour from 'date-fns/start_of_hour'
-import startOfday from 'date-fns/start_of_day'
+import isBefore from 'date-fns/isBefore'
+import subDays from 'date-fns/subDays'
+import startOfHour from 'date-fns/startOfHour'
+import startOfday from 'date-fns/startOfDay'
 
 const options = (scale = 'day') => {
   return {
