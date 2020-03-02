@@ -84,7 +84,10 @@ class KillsInInterval extends Component {
       config.crapibase + 'latestKillDate'
     )
     latestKillDatePromise.then(res => {
-      let resDate = new Date(res)
+      let resDate = utcToZonedTime(
+        zonedTimeToUtc(new Date(res), browserTimeZone),
+        serverTimeZone
+      )
       this.setState({
         nowServerTime: resDate,
         nowInServerTimezone: dateformat(resDate, dateTimeLocalFormat)
@@ -394,7 +397,6 @@ class KillsInInterval extends Component {
                   lastKillNum = row.killcount
 
                   if (!row.player) {
-                    console.warn('Row without player entity', row)
                     return null
                   }
 
