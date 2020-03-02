@@ -392,6 +392,8 @@ class KillsInInterval extends Component {
             <tbody>
               {result &&
                 result.data &&
+                this.state.resultGearDeaths &&
+                this.state.resultNation &&
                 result.data.map(function(row, idx) {
                   let showLadder = lastKillNum !== row.killcount
                   lastKillNum = row.killcount
