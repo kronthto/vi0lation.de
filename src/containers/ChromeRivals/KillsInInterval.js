@@ -62,6 +62,7 @@ class KillsInInterval extends Component {
       result: null,
       resultNation: null,
       resultGearDeaths: null,
+      resultMaps: null,
       nowServerTime: nowServerTimeDate,
       nowInServerTimezone: dateformat(nowServerTimeDate, dateTimeLocalFormat)
     }
@@ -157,15 +158,20 @@ class KillsInInterval extends Component {
     let gearDeathsPromise = callApiChecked(
       config.crapibase + 'gearDeathsBetween' + dateQuery
     )
+    let mapsPromise = callApiChecked(
+      config.crapibase + 'mapKillsBetween' + dateQuery
+    )
 
     this.setState({
       resultNation: null,
       resultGearDeaths: null,
+      resultMaps: null,
       result: null,
       loadingData: Promise.all([
         playerKillsPromise,
         nationKillsPromise,
-        gearDeathsPromise
+        gearDeathsPromise,
+        mapsPromise
       ]),
       topchartdata: null // Make this working again?
     })
@@ -188,6 +194,9 @@ class KillsInInterval extends Component {
         resultObj[gear.gear] = gear.deathcount
       })
       this.setState({ resultGearDeaths: resultObj })
+    })
+    mapsPromise.then(result => {
+      this.setState({ resultMaps: result })
     })
   }
 
@@ -373,6 +382,17 @@ class KillsInInterval extends Component {
               this.state.resultGearDeaths ? this.state.resultGearDeaths.A : ''
             }
           />
+          <h3 className="subtitle">Maps</h3>
+          {this.state.resultMaps &&
+            this.state.resultMaps
+              .slice(0, 3)
+              .map(map => (
+                <StatTag
+                  label={colorName(map.map)}
+                  key={map.map}
+                  val={map.killcount}
+                />
+              ))}
         </div>
         <div className="column">
           <h3 className="subtitle">Player-Count (Fame-Diff ≠ 0)</h3>
@@ -416,6 +436,7 @@ class KillsInInterval extends Component {
                 result.data &&
                 this.state.resultGearDeaths &&
                 this.state.resultNation &&
+                this.state.resultMaps &&
                 result.data.map(function(row, idx) {
                   let showLadder = lastKillNum !== row.killcount
                   lastKillNum = row.killcount
