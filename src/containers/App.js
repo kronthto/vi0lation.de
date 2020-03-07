@@ -8,7 +8,7 @@ import routes from '../routes'
 import Navi from '../components/Navi'
 import Footer from '../components/Footer'
 
-import { isBrowser, isNode } from '../utils/env'
+import { isBrowser } from '../utils/env'
 import { canUsePush, push_updateSubscription } from '../utils/pushUtils'
 
 const defaultMeta = () => {
@@ -23,12 +23,6 @@ const defaultMeta = () => {
 }
 
 class App extends Component {
-  bootstrap() {
-    if (isNode) {
-      // return queryData(this.props.dispatch)
-    }
-  }
-
   componentDidMount() {
     if (isBrowser && canUsePush() && navigator.onLine) {
       push_updateSubscription(() => {})

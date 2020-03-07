@@ -15,9 +15,27 @@ import App from './containers/App'
 import * as serviceWorker from './serviceWorker'
 
 import { AsyncComponentProvider } from 'react-async-component'
-import asyncBootstrapper from 'react-async-bootstrapper'
 
 import toast from './utils/toast'
+
+import { MuiPickersUtilsProvider } from '@material-ui/pickers'
+import DateFnsUtils from '@material-ui/pickers/adapter/date-fns'
+import { ThemeProvider } from '@material-ui/styles'
+import { createMuiTheme } from '@material-ui/core'
+
+const baseTheme = createMuiTheme({
+  palette: {
+    primary: {
+      // light: will be calculated from palette.primary.main,
+      main: '#006488'
+      // dark: will be calculated from palette.primary.main,
+      // contrastText: will be calculated to contrast with palette.primary.main
+    },
+    secondary: {
+      main: '#080325'
+    }
+  }
+})
 
 // If provided by server, use it, else let the reducers handle initial state
 // const initialState = window.DATA || {}
@@ -30,14 +48,16 @@ const app = (
     <Provider store={store}>
       <Router history={createBrowserHistory()}>
         <ScrollToTop>
-          <App />
+          <ThemeProvider theme={baseTheme}>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <App />
+            </MuiPickersUtilsProvider>
+          </ThemeProvider>
         </ScrollToTop>
       </Router>
     </Provider>
   </AsyncComponentProvider>
 )
-
-let asyncBsPromise = asyncBootstrapper(app)
 
 let rehydratePromise = new Promise(resolve => {
   persistStore(store, { storage: localForage }, resolve)
@@ -46,7 +66,7 @@ let rehydratePromise = new Promise(resolve => {
 const root = document.getElementById('root')
 const preloader = document.getElementById('preloader')
 
-Promise.all([asyncBsPromise, rehydratePromise]).then(() => {
+Promise.all([rehydratePromise]).then(() => {
   renderApp()
 })
 

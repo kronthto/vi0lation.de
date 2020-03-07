@@ -12,6 +12,7 @@ import { colorName } from '../../utils/AR/names'
 import blankImg from '../../img/000000-0.png'
 import { zonedTimeToUtc, utcToZonedTime, format } from 'date-fns-tz'
 import { isNode } from '../../utils/env'
+import { DateTimePicker } from '@material-ui/pickers'
 /*
 import {
   buildPlayerFameDatasets,
@@ -199,6 +200,13 @@ class KillsInInterval extends Component {
     const currentQs = this.getQueryParams()
 
     let dateSelected = v
+    if (dateSelected) {
+      if (isNaN(dateSelected) || !(dateSelected instanceof Date)) {
+        dateSelected = null
+      } else {
+        dateSelected = dateformat(dateSelected, dateTimeLocalFormat)
+      }
+    }
 
     let { from, to } = currentQs
 
@@ -252,20 +260,29 @@ class KillsInInterval extends Component {
   }
 
   renderDateField(fromto) {
+    if (isNode) {
+      return null
+    }
     let current = this.getQueryParams()[fromto]
     return (
       <div className="field">
         <div className="control">
-          <input
-            type="datetime-local"
-            className="input is-fullwidth"
-            value={current || ''}
+          <DateTimePicker
+            fullWidth
+            value={current || null}
             name={fromto}
-            id={fromto}
-            min="2018-08-24T18:00:00"
-            max={this.state.nowInServerTimezone}
-            step="1"
-            onChange={e => this.dateSelected(e.target.value, fromto)}
+            aria-label={fromto}
+            ampm={false}
+            minDate="2018-08-24T18:00:00"
+            minDateMessage="Date should not be before CR launched"
+            maxDateMessage="Date not recorded/available yet"
+            maxDate={this.state.nowInServerTimezone}
+            format={'yyyy-MM-dd HH:mm'}
+            mask={'____-__-__ __:__'}
+            clearable={true}
+            showTodayButton={false}
+            onChange={(date, keyboardInputValue) =>
+              this.dateSelected(date, fromto)}
           />
         </div>
       </div>
@@ -292,6 +309,11 @@ class KillsInInterval extends Component {
         </Helmet>
 
         <h1 className="title">CR Fame between</h1>
+
+        <small className="has-text-weight-light has-text-grey-light">
+          All dates in servertime (Europe/Paris). Data available until / Last
+          update: {this.state.nowInServerTimezone}
+        </small>
 
         {this.renderForm()}
 
