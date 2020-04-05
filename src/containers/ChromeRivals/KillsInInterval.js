@@ -14,6 +14,10 @@ import { zonedTimeToUtc, utcToZonedTime, format } from 'date-fns-tz'
 import { isNode } from '../../utils/env'
 import { DateTimePicker } from '@material-ui/pickers'
 /*
+import AsyncLineChart from "../../components/AsyncLineChart";
+import {options} from "../../components/ChromeRivals/PlayerFameChart";
+import LoadBlock from "../../components/LoadBlock";
+/*
 import {
   buildPlayerFameDatasets,
   options as playerFameChartOpts,
@@ -96,6 +100,22 @@ class KillsInInterval extends Component {
       })
       this.preselectOnLoad()
     })
+    /*
+    let timeViaTodayPromise = callApiChecked(
+      config.crapibase+'killsViaTimeRange?from=2020-03-07T00:00%2B0100' // TODO
+    )
+    timeViaTodayPromise.then(res => {
+      this.setState({killsViaToday: res.map(row => {
+          return {
+            x: utcToZonedTime(
+              zonedTimeToUtc(new Date(row.timebucket), browserTimeZone),
+              serverTimeZone
+            ),
+            y: row.killcount
+          };
+        })})
+    })
+    */
   }
 
   preselectOnLoad() {
@@ -205,16 +225,17 @@ class KillsInInterval extends Component {
   }
 
   dateSelected(v, arg) {
-    console.log(v)
     const currentQs = this.getQueryParams()
 
     let dateSelected = v
     if (dateSelected) {
       if (isNaN(dateSelected) || !(dateSelected instanceof Date)) {
-        dateSelected = null
+        return
       } else {
         dateSelected = dateformat(dateSelected, dateTimeLocalFormat)
       }
+    } else {
+      dateSelected = null
     }
 
     let { from, to } = currentQs
