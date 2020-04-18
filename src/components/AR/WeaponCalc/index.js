@@ -187,6 +187,16 @@ class WeaponCalcTool extends Component {
       this.buffItemDb = reducedItemDb.filter(
         item => BUFF_CARD_ITEMS.indexOf(item.id) !== -1
       )
+      this.buffItemDb.push({
+        id: 'PET10',
+        name: 'PET-Fixes +10% Dmg',
+        DesParameters: {
+          '18': 0.1,
+          '19': 0.1,
+          '71': 0.1,
+          '72': 0.1
+        }
+      })
       this.charmDb = reducedItemDb.filter(
         item =>
           item.kind === ITEMKIND_ACCESSORY_TIMELIMIT &&
@@ -610,7 +620,16 @@ class WeaponCalcTool extends Component {
           </div>
         )}
         <hr />
-        <label className="label">Stats</label>
+        <label className="label">
+          Stats{' '}
+          <a
+            target="_blank"
+            href="https://beta.vi0lation.de/ranking/statcalc"
+            rel="noopener noreferrer"
+          >
+            &rarr; StatCalc
+          </a>
+        </label>
         <div className="columns">
           {stats.map(stat => {
             const id = 'stat' + stat.id

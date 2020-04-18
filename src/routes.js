@@ -40,6 +40,12 @@ const routes = [
     )
   },
   {
+    path: '/topLists',
+    component: makeAsync(() =>
+      lazyImport(import('./containers/ChromeRivals/TopLists'))
+    )
+  },
+  {
     path: '/fameChart',
     component: makeAsync(() =>
       lazyImport(import('./containers/ChromeRivals/PlayerFameChart'))
