@@ -14,7 +14,7 @@ import ScrollToTop from './components/ScrollToTop'
 import App from './containers/App'
 import * as serviceWorker from './serviceWorker'
 
-import { AsyncComponentProvider } from 'react-async-component'
+import { AsyncComponentProvider } from './vendor/react-async-component'
 
 import toast from './utils/toast'
 

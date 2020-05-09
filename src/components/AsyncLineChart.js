@@ -1,5 +1,5 @@
 import React from 'react'
-import { asyncComponent } from 'react-async-component'
+import { asyncComponent } from '../vendor/react-async-component'
 import LoadBlock from './LoadBlock'
 
 const AsyncLineChart = asyncComponent({

@@ -5,7 +5,7 @@ import Home from './components/Home'
 import NoMatch from './components/NoMatch'
 
 import lazyImport from './utils/lazyImportHack'
-import { asyncComponent } from 'react-async-component'
+import { asyncComponent } from './vendor/react-async-component'
 import LoadBlock from './components/LoadBlock'
 
 export const crTopKillsIntervalUrl = '/killsBetween'

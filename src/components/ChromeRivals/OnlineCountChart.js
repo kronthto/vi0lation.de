@@ -8,7 +8,7 @@ import subDays from 'date-fns/subDays'
 import startOfHour from 'date-fns/startOfHour'
 import startOfday from 'date-fns/startOfDay'
 
-const options = (scale = 'day') => {
+const options = (scale = 'day', yLabelString = 'Pl. Count') => {
   return {
     elements: {
       point: { radius: 0 }
@@ -47,7 +47,7 @@ const options = (scale = 'day') => {
 
           scaleLabel: {
             display: true,
-            labelString: 'Pl. Count'
+            labelString: yLabelString
           }
         }
       ]
@@ -159,6 +159,7 @@ class PlayerFameChart extends Component {
     const startDate = subDays(new Date(), backdays)
 
     let serieses = { BCU: [], ANI: [] }
+    let diffSerieses = { BCU: [], ANI: [] }
 
     data.forEach(row => {
       const dt = row.timestamp
@@ -174,6 +175,15 @@ class PlayerFameChart extends Component {
       serieses.ANI.push({
         x: dt,
         y: row.ani
+      })
+
+      diffSerieses.ANI.push({
+        x: dt,
+        y: Math.max(0, row.ani - row.bcu)
+      })
+      diffSerieses.BCU.push({
+        x: dt,
+        y: Math.max(0, row.bcu - row.ani)
       })
     })
 
@@ -191,6 +201,20 @@ class PlayerFameChart extends Component {
         pointRadius: 3
       }
     })
+    let datasetsDiff = Object.keys(diffSerieses).map(function(seriesKey) {
+      return {
+        fill: true,
+        borderColor: seriesColorCoding[seriesKey],
+        backgroundColor: seriesColorCoding[seriesKey],
+        borderWidth: 0,
+        //cubicInterpolationMode:'monotone',
+        steppedLine: true,
+        //showLine: false,
+        label: seriesKey,
+        data: diffSerieses[seriesKey],
+        pointRadius: 0
+      }
+    })
 
     let width = 45 * backdays
 
@@ -206,6 +230,19 @@ class PlayerFameChart extends Component {
           <AsyncLineChart
             options={options(backdays < 4 ? 'hour' : 'day')}
             data={{ datasets }}
+            type="line"
+          />
+        </div>
+        <div
+          style={{
+            width: width > window.innerWidth ? width + 'px' : '100%',
+            height: '200px',
+            position: 'relative'
+          }}
+        >
+          <AsyncLineChart
+            options={options(backdays < 4 ? 'hour' : 'day', 'Nation diff')}
+            data={{ datasets: datasetsDiff }}
             type="line"
           />
         </div>
