@@ -102,7 +102,7 @@ class KillsInInterval extends Component {
     })
     /*
     let timeViaTodayPromise = callApiChecked(
-      config.crapibase+'killsViaTimeRange?from=2020-03-07T00:00%2B0100' // TODO
+      config.crapibase+'killsViaTimeRange?from=2020-05-07T00:00%2B0100&group=60' // TODO
     )
     timeViaTodayPromise.then(res => {
       this.setState({killsViaToday: res.map(row => {
@@ -409,7 +409,7 @@ class KillsInInterval extends Component {
               .slice(0, 3)
               .map(map => (
                 <StatTag
-                  label={colorName(map.map)}
+                  label={colorName(map.map.toString())}
                   key={map.map}
                   val={map.killcount}
                 />

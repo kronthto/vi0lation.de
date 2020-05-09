@@ -7,6 +7,7 @@ import routes from '../routes'
 
 import Navi from '../components/Navi'
 import Footer from '../components/Footer'
+import ErrorBoundary from '../components/ErrorBoundary'
 
 import { isBrowser } from '../utils/env'
 import { canUsePush, push_updateSubscription } from '../utils/pushUtils'
@@ -46,7 +47,7 @@ class App extends Component {
                 features of the site.
               </div>
             </noscript>
-            {renderRoutes(routes)}
+            <ErrorBoundary>{renderRoutes(routes)}</ErrorBoundary>
           </div>
         </main>
 
