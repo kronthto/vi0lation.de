@@ -7,6 +7,10 @@ import isBefore from 'date-fns/isBefore'
 import subDays from 'date-fns/subDays'
 import startOfHour from 'date-fns/startOfHour'
 import startOfday from 'date-fns/startOfDay'
+import { utcToZonedTime } from 'date-fns-tz'
+
+const average = arr =>
+  arr.length ? arr.reduce((p, c) => p + c, 0) / arr.length : 0
 
 const options = (scale = 'day', yLabelString = 'Pl. Count') => {
   return {
@@ -187,6 +191,29 @@ class PlayerFameChart extends Component {
       })
     })
 
+    let byHour
+    if (backdays > 2) {
+      byHour = { BCU: {}, ANI: {} }
+      this.state.dataHourly.forEach(row => {
+        const dt = row.timestamp
+
+        if (isBefore(dt, startDate)) {
+          return
+        }
+
+        if (row.ani > 0 || row.bcu > 0) {
+          let serverTimeDate = utcToZonedTime(dt, 'Europe/Paris')
+          let hour = serverTimeDate.getHours()
+          if (!(hour in byHour.BCU)) {
+            byHour.BCU[hour] = []
+            byHour.ANI[hour] = []
+          }
+          byHour.BCU[hour].push(row.bcu)
+          byHour.ANI[hour].push(row.ani)
+        }
+      })
+    }
+
     let datasets = Object.keys(serieses).map(function(seriesKey) {
       return {
         fill: false,
@@ -218,35 +245,83 @@ class PlayerFameChart extends Component {
 
     let width = 45 * backdays
 
+    let datasetsHeatmap
+    if (byHour) {
+      datasetsHeatmap = Object.keys(byHour).map(function(seriesKey) {
+        let series = []
+        for (let h = 0; h < 24; h++) {
+          let hDate = new Date()
+          hDate.setHours(h)
+          hDate.setMinutes(30)
+          hDate.setSeconds(0)
+          series.push({
+            x: hDate,
+            y: average(byHour[seriesKey][h])
+          })
+        }
+        return {
+          fill: false,
+          borderColor: seriesColorCoding[seriesKey],
+          backgroundColor: seriesColorCoding[seriesKey],
+          borderWidth: 1,
+          //cubicInterpolationMode:'monotone', // ?
+          //steppedLine: true,
+          //showLine: false,
+          label: seriesKey,
+          data: series,
+          pointRadius: 0
+        }
+      })
+    }
+
     return (
-      <div ref="onlinescroll" style={{ overflowX: 'scroll' }}>
-        <div
-          style={{
-            width: width > window.innerWidth ? width + 'px' : '100%',
-            height: '350px',
-            position: 'relative'
-          }}
-        >
-          <AsyncLineChart
-            options={options(backdays < 4 ? 'hour' : 'day')}
-            data={{ datasets }}
-            type="line"
-          />
+      <React.Fragment>
+        <div ref="onlinescroll" style={{ overflowX: 'scroll' }}>
+          <div
+            style={{
+              width: width > window.innerWidth ? width + 'px' : '100%',
+              height: '350px',
+              position: 'relative'
+            }}
+          >
+            <AsyncLineChart
+              options={options(backdays < 4 ? 'hour' : 'day')}
+              data={{ datasets }}
+              type="line"
+            />
+          </div>
+          <h2 style={{ fontSize: '100%' }}>Nation difference</h2>
+          <div
+            style={{
+              width: width > window.innerWidth ? width + 'px' : '100%',
+              height: '200px',
+              position: 'relative'
+            }}
+          >
+            <AsyncLineChart
+              options={options(backdays < 4 ? 'hour' : 'day', 'Nation diff')}
+              data={{ datasets: datasetsDiff }}
+              type="line"
+            />
+          </div>
         </div>
-        <div
-          style={{
-            width: width > window.innerWidth ? width + 'px' : '100%',
-            height: '200px',
-            position: 'relative'
-          }}
-        >
-          <AsyncLineChart
-            options={options(backdays < 4 ? 'hour' : 'day', 'Nation diff')}
-            data={{ datasets: datasetsDiff }}
-            type="line"
-          />
-        </div>
-      </div>
+        {datasetsHeatmap && (
+          <div
+            style={{
+              width: '100%',
+              height: '350px',
+              position: 'relative'
+            }}
+          >
+            <h2 style={{ fontSize: '100%' }}>Average by servertime hour</h2>
+            <AsyncLineChart
+              options={options('hour', 'Hourly average')}
+              data={{ datasets: datasetsHeatmap }}
+              type="line"
+            />
+          </div>
+        )}
+      </React.Fragment>
     )
   }
 }
