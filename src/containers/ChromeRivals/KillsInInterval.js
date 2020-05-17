@@ -406,7 +406,7 @@ class KillsInInterval extends Component {
           <h3 className="subtitle">Maps</h3>
           {this.state.resultMaps &&
             this.state.resultMaps
-              .slice(0, this.state.allMaps ? this.state.resultMaps.length : 3)
+              .slice(0, this.state.allMaps ? 70 : 3)
               .map(map => (
                 <StatTag
                   label={colorName(map.map.toString())}
@@ -424,7 +424,7 @@ class KillsInInterval extends Component {
                   this.setState({ allMaps: true })
                 }}
               >
-                Show all
+                Show more
               </button>
             )}
         </div>
