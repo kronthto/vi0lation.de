@@ -406,7 +406,7 @@ class KillsInInterval extends Component {
           <h3 className="subtitle">Maps</h3>
           {this.state.resultMaps &&
             this.state.resultMaps
-              .slice(0, 3)
+              .slice(0, this.state.allMaps ? this.state.resultMaps.length : 3)
               .map(map => (
                 <StatTag
                   label={colorName(map.map.toString())}
@@ -414,6 +414,19 @@ class KillsInInterval extends Component {
                   val={map.killcount}
                 />
               ))}
+          {this.state.resultMaps &&
+            !this.state.allMaps &&
+            this.state.resultMaps.length > 3 && (
+              <button
+                type="button"
+                className="button is-text is-small"
+                onClick={() => {
+                  this.setState({ allMaps: true })
+                }}
+              >
+                Show all
+              </button>
+            )}
         </div>
         <div className="column">
           <h3 className="subtitle">Player-Count (Fame-Diff ≠ 0)</h3>
