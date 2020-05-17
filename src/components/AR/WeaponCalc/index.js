@@ -524,7 +524,6 @@ class WeaponCalcTool extends Component {
                   <label className="label" htmlFor="armorsel">
                     Armor-Bonus
                   </label>
-                  TODO: Übernahme bei Wechsel
                   <div
                     className="select is-fullwidth"
                     style={{ marginBottom: 'calc(1.5rem - 0.75rem)' }}
