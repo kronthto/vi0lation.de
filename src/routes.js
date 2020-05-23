@@ -62,6 +62,12 @@ const routes = [
     component: makeAsync(() => lazyImport(import('./components/PushSub')))
   },
   {
+    path: '/mapstats',
+    component: makeAsync(() =>
+      lazyImport(import('./containers/ChromeRivals/MapStats'))
+    )
+  },
+  {
     component: NoMatch
   }
 ]

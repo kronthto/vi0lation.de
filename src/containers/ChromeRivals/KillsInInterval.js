@@ -360,6 +360,13 @@ class KillsInInterval extends Component {
     const { stats } = result
     const countStats = stats.counts
 
+    let datefromQuery = this.getQueryParams()
+    let dateqs = {
+      from: formatDateForTransfer(datefromQuery.from),
+      to: formatDateForTransfer(datefromQuery.to)
+    }
+    let datequerystring = stringify(dateqs)
+
     return (
       <div className="columns">
         <div className="column">
@@ -408,11 +415,20 @@ class KillsInInterval extends Component {
             this.state.resultMaps
               .slice(0, this.state.allMaps ? 70 : 3)
               .map(map => (
-                <StatTag
-                  label={colorName(map.map.toString())}
-                  key={map.map}
-                  val={map.killcount}
-                />
+                <Link
+                  to={
+                    '/mapstats?map=' +
+                    encodeURIComponent(map.id) +
+                    '&' +
+                    datequerystring
+                  }
+                  key={map.id}
+                >
+                  <StatTag
+                    label={colorName(map.map.toString())}
+                    val={map.killcount}
+                  />
+                </Link>
               ))}
           {this.state.resultMaps &&
             !this.state.allMaps &&
