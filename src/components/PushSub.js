@@ -18,6 +18,7 @@ const POSSIBLE_EVENTS = [
   { key: 'sp', name: 'Strategic Point (up to 4 min after spawn)' },
   { key: 'ms', name: 'Mothership (1 hour in advance)' },
   { key: 'op', name: 'Outpost (1 hour in advance)' },
+  { key: 'nke', name: 'Nation Kill Event (up to 4 min after start)' },
   { key: 'custom', name: 'Custom/Manual notifications' }
 ]
 
