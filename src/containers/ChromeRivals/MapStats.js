@@ -74,6 +74,7 @@ class MapStats extends Component {
 
         <img
           src={heatmapRes.heatmap}
+          style={{ backgroundColor: 'black' }}
           alt={heatmapRes.mapname + ' kill heatmap'}
         />
       </React.Fragment>
