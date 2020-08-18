@@ -64,14 +64,14 @@ class Home extends Component {
             </a>
           </div>
           <div className="column is-half">
-            <a href="https://beta.vi0lation.de/ranking/statcalc">
-              <div className="hero is-primary is-bold vi0">
+            <Link to="/statcalc">
+              <div className="hero is-primary is-bold">
                 <div className="hero-body">
                   <h2 className="title">Stat Calc</h2>
                   <h3 className="subtitle">CPU builds</h3>
                 </div>
               </div>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

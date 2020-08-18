@@ -14,12 +14,12 @@ class StatCalc extends Component {
         <Helmet>
           <meta
             name="description"
-            content="AirRivals/AceOnline gear stat calculator"
+            content="ChromeRivals gear stat calculator"
           />
-          <title>AirRivals/AceOnline StatCalc</title>
+          <title>ChromeRivals StatCalc</title>
         </Helmet>
 
-        <h1 className="title">Ace StatCalc</h1>
+        <h1 className="title">CR StatCalc</h1>
 
         <StatCalcTool />
 
@@ -27,7 +27,7 @@ class StatCalc extends Component {
           <a
             href="https://github.com/kronthto/ao-stats"
             target="_blank"
-            title="Ace Stat Calculator"
+            title="Ace Stat Calculator source"
             rel="noopener noreferrer"
           >
             source on GitHub

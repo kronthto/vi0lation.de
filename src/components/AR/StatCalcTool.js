@@ -9,7 +9,41 @@ const stats = ['atk', 'def', 'eva', 'fuel', 'spirit', 'shield']
 const cardStyle = { height: '100%' }
 const btnStyle = { width: '30px', borderRadius: '10%' }
 
-const { gearStatChange } = aostats
+const gearStatChange = {
+  I: {
+    atk: 4,
+    def: 2,
+    fuel: 3,
+    spirit: 3,
+    shield: 2,
+    eva: 3
+  },
+  M: {
+    atk: 2,
+    def: 4,
+    fuel: 3,
+    spirit: 4,
+    shield: 3,
+    eva: 3
+  },
+  B: {
+    atk: 3,
+    def: 3,
+    fuel: 3,
+    spirit: 3,
+    shield: 3,
+    eva: 3
+  },
+  A: {
+    atk: 4,
+    def: 3,
+    fuel: 3,
+    spirit: 3,
+    shield: 4,
+    eva: 1
+  }
+}
+
 const cap = 340
 
 const defaultBonusStats = 144
