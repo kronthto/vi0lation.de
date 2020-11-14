@@ -14,6 +14,8 @@ const colorMap = {
   y: '#C2C200',
   l: '#00aaff',
   g: '#00ff00',
+  q: '#bababa',
+  o: '#77bb22',
   r: '#ff0000'
 }
 
@@ -32,6 +34,7 @@ function specialNames(name) {
 }
 
 export function colorName(name) {
+  // wenn hier zahl kommt
   let regex = name.match(/^\\([a-z])(.+)\\([a-z])$/)
   if (!regex || regex[1] !== regex[3]) {
     // opening/closing color differ?
