@@ -347,9 +347,30 @@ class KillsInInterval extends Component {
 
         {this.renderForm()}
 
+        {this.renderKillsViaToday()}
+
         {this.renderTable(result)}
       </div>
     )
+  }
+
+  renderKillsViaToday() {
+    return null
+
+    /*
+   {this.state.killsViaToday ?  <AsyncLineChart
+        options={options('hour')}
+        height={50}
+        data={{ datasets: [{ // TODO: No axis
+            label: 'kpm',
+            fill: false,
+            data: this.state.killsViaToday,
+            borderColor: 'grey',
+            cubicInterpolationMode: 'monotone' // TODO :?
+          }] }}
+        type="line"
+      />: <LoadBlock height="250px" />}
+ */
   }
 
   renderResultStats(result) {
