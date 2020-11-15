@@ -1,16 +1,10 @@
 {
-  "short_name": "CRT",
-  "name": "CR Tools",
-  "icons": [
-    {
-      "src": "img/logo.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ],
+  "short_name": "OSRT",
+  "name": "OSR Tools",
+  "icons": [],
   "start_url": "./",
   "display": "standalone",
   "theme_color": "#006488",
   "background_color": "#ffffff",
-  "description": "ChromeRivals tools, statistics, tracking"
+  "description": "OSR WeaponCalc"
 }

@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import withRouter from 'react-router/withRouter'
 import NavLink from './NavLink'
 
-import { crTopKillsIntervalUrl } from '../routes'
 import { resetCurrentInstance as resetCurrentWeapCalcInstance } from './AR/WeaponCalc/index'
 
 const responsiveExpandedClass = 'is-active'
@@ -36,7 +35,7 @@ class Navi extends Component {
         <div className="container">
           <div className="navbar-brand">
             <NavLink to="/" exact className="is-tab">
-              CRT
+              OSRT
             </NavLink>
             <div
               className="navbar-burger burger"
@@ -56,27 +55,12 @@ class Navi extends Component {
             style={{ paddingBottom: 0 }}
           >
             <div className="navbar-start">
-              <NavLink to={crTopKillsIntervalUrl} className="is-tab">
-                Ranking
-              </NavLink>
-              <NavLink to="/fameChart" className="is-tab">
-                Fame-Chart
-              </NavLink>
-              <NavLink to="/usercount" className="is-tab">
-                Playercount
-              </NavLink>
               <NavLink
                 to="/weaponcalc"
                 className="is-tab"
                 onClick={() => resetCurrentWeapCalcInstance()}
               >
                 WeaponCalc
-              </NavLink>
-              <NavLink to="/statcalc" className="is-tab">
-                StatCalc
-              </NavLink>
-              <NavLink to="/events" className="is-tab">
-                Events
               </NavLink>
             </div>
             <div className="navbar-end" />

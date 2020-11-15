@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Helmet } from 'react-helmet'
 import Link from 'react-router-dom/Link'
 
 class NoMatch extends Component {
@@ -22,9 +21,6 @@ class NoMatch extends Component {
   render() {
     return (
       <div>
-        <Helmet>
-          <title>Not found</title>
-        </Helmet>
         <h1 className="title">Not found</h1>
         <strong>We can't find that page you're looking for</strong>
         <p>

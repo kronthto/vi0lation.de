@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 import withRouter from 'react-router/withRouter'
-import { callApiChecked } from '../../../middleware/api'
-import config from '../../../config'
 import {
   unitKinds,
   standardWeapons,
@@ -22,6 +20,9 @@ import WeaponPreview, {
 } from './WeaponPreview'
 import TotalResult from './TotalResult'
 import { colorName } from '../../../utils/AR/names'
+
+import allItems from '../../../data/osr_items.json';
+import allFixes from '../../../data/osr_rareitems.json';
 
 const eqKinds = [ITEMKIND_DEFENSE].concat(standardWeapons, advWeapons)
 const isEquip = item => eqKinds.indexOf(item.kind) !== -1
@@ -155,9 +156,6 @@ class WeaponCalcTool extends Component {
   }
 
   componentDidMount() {
-    callApiChecked(
-      config.apibase + 'chromerivals/omi?category=item'
-    ).then(allItems => {
       let reducedItemDb = Object.values(allItems)
         .filter(item => {
           const { kind, ReqMinLevel, name } = item
@@ -171,10 +169,10 @@ class WeaponCalcTool extends Component {
             return true
           }
           if (name.charAt(0) !== '\\') {
-            return false
+          //  return false
           }
           // noinspection RedundantIfStatementJS
-          if (ReqMinLevel > 103 && ReqMinLevel <= 115 && isEquip(item)) {
+          if (ReqMinLevel > 75 && ReqMinLevel <= 115 && isEquip(item)) {
             return true
           }
           return false
@@ -200,16 +198,12 @@ class WeaponCalcTool extends Component {
       this.charmDb = reducedItemDb.filter(
         item =>
           item.kind === ITEMKIND_ACCESSORY_TIMELIMIT &&
-          item.Time === 18000000 &&
-          item.name.indexOf('(5H)') !== -1 &&
+        //  item.Time === 18000000 &&
+         // item.name.indexOf('(5H)') !== -1 &&
           !isBannedCharm(item) &&
           item.name.indexOf('Holy') === -1
       )
-      this.setState({ itemdb: reducedItemDb })
-    })
-    callApiChecked(
-      config.apibase + 'chromerivals/omi?category=rareitems'
-    ).then(allFixes => {
+
       let fixDb = Object.values(allFixes)
         .filter(
           fix =>
@@ -222,8 +216,8 @@ class WeaponCalcTool extends Component {
           return COMPARE_ITEMKIND(fix.ReqItemKind, ITEMKIND_DEFENSE)
         })
       )
-      this.setState({ fixDb })
-    })
+
+      this.setState({ itemdb: reducedItemDb, fixDb })
   }
 
   componentDidUpdate(prevProps, prevState) {
