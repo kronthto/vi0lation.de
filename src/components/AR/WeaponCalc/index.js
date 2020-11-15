@@ -21,8 +21,8 @@ import WeaponPreview, {
 import TotalResult from './TotalResult'
 import { colorName } from '../../../utils/AR/names'
 
-import allItems from '../../../data/osr_items.json';
-import allFixes from '../../../data/osr_rareitems.json';
+import allItems from '../../../data/osr_items.json'
+import allFixes from '../../../data/osr_rareitems.json'
 
 const eqKinds = [ITEMKIND_DEFENSE].concat(standardWeapons, advWeapons)
 const isEquip = item => eqKinds.indexOf(item.kind) !== -1
@@ -156,68 +156,70 @@ class WeaponCalcTool extends Component {
   }
 
   componentDidMount() {
-      let reducedItemDb = Object.values(allItems)
-        .filter(item => {
-          const { kind, ReqMinLevel, name } = item
-          if (
-            kind === ITEMKIND_SKILL_ATTACK ||
-            kind === ITEMKIND_SKILL_DEFENSE ||
-            kind === ITEMKIND_ENCHANT ||
-            kind === ITEMKIND_ACCESSORY_TIMELIMIT ||
-            kind === ITEMKIND_CARD
-          ) {
-            return true
-          }
-          if (name.charAt(0) !== '\\') {
-          //  return false
-          }
-          // noinspection RedundantIfStatementJS
-          if (ReqMinLevel > 75 && ReqMinLevel <= 115 && isEquip(item)) {
-            return true
-          }
-          return false
-        })
-        .sort((a, b) => b.ReqMinLevel - a.ReqMinLevel)
-      this.filterItemDbs(reducedItemDb, this.state.gear)
-      this.enchantItemDb = reducedItemDb.filter(
-        item => item.kind === ITEMKIND_ENCHANT && !isBannedEnchant(item)
-      )
-      this.buffItemDb = reducedItemDb.filter(
-        item => BUFF_CARD_ITEMS.indexOf(item.id) !== -1
-      )
-      this.buffItemDb.push({
-        id: 'PET10',
-        name: 'PET-Fixes +10% Dmg',
-        DesParameters: {
-          '18': 0.1,
-          '19': 0.1,
-          '71': 0.1,
-          '72': 0.1
+    let reducedItemDb = Object.values(allItems)
+      .filter(item => {
+        const { kind, ReqMinLevel, name } = item
+        if (
+          kind === ITEMKIND_SKILL_ATTACK ||
+          kind === ITEMKIND_SKILL_DEFENSE ||
+          kind === ITEMKIND_ENCHANT ||
+          kind === ITEMKIND_ACCESSORY_TIMELIMIT ||
+          kind === ITEMKIND_CARD
+        ) {
+          return true
         }
+        if (name.charAt(0) !== '\\') {
+          //  return false
+        }
+        // noinspection RedundantIfStatementJS
+        if (ReqMinLevel > 39 && ReqMinLevel <= 115 && isEquip(item)) {
+          return true
+        }
+        return false
       })
-      this.charmDb = reducedItemDb.filter(
-        item =>
-          item.kind === ITEMKIND_ACCESSORY_TIMELIMIT &&
+      .sort((a, b) => b.ReqMinLevel - a.ReqMinLevel)
+    this.filterItemDbs(reducedItemDb, this.state.gear)
+    this.enchantItemDb = reducedItemDb.filter(
+      item => item.kind === ITEMKIND_ENCHANT && !isBannedEnchant(item)
+    )
+    this.buffItemDb = reducedItemDb.filter(
+      item => BUFF_CARD_ITEMS.indexOf(item.id) !== -1
+    )
+    this.buffItemDb.push({
+      id: 'PET10',
+      name: 'PET-Fixes +10% Dmg',
+      DesParameters: {
+        '18': 0.1,
+        '19': 0.1,
+        '71': 0.1,
+        '72': 0.1
+      }
+    })
+    this.charmDb = reducedItemDb.filter(
+      item =>
+        item.kind === ITEMKIND_ACCESSORY_TIMELIMIT &&
         //  item.Time === 18000000 &&
-         // item.name.indexOf('(5H)') !== -1 &&
-          !isBannedCharm(item) &&
-          item.name.indexOf('Holy') === -1
-      )
+        // item.name.indexOf('(5H)') !== -1 &&
+        !isBannedCharm(item) &&
+        item.name.indexOf('Holy') === -1
+    )
 
-      let fixDb = Object.values(allFixes)
-        .filter(
-          fix =>
-            fix.probability !== 0 &&
-            ['m', 'c', 'r', 'l', 'y'].indexOf(fix.name.charAt(1)) !== -1
-        )
-        .sort((a, b) => a.probability - b.probability)
-      this.armorFixDb = addDesParamsArrayToFixes(
-        fixDb.filter(fix => {
-          return COMPARE_ITEMKIND(fix.ReqItemKind, ITEMKIND_DEFENSE)
-        })
-      )
+    let fixDb = Object.values(allFixes)
+      .filter(fix => fix.probability !== 0)
+      .sort((a, b) => {
+        let rarityDiff = a.probability - b.probability
+        if (rarityDiff !== 0) {
+          return rarityDiff
+        }
+        return a.name.localeCompare(b.name)
+      })
+    this.armorFixDb = addDesParamsArrayToFixes(
+      fixDb.filter(fix => {
+        return COMPARE_ITEMKIND(fix.ReqItemKind, ITEMKIND_DEFENSE)
+      })
+    )
 
-      this.setState({ itemdb: reducedItemDb, fixDb })
+    this.setState({ itemdb: reducedItemDb, fixDb })
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -489,64 +491,9 @@ class WeaponCalcTool extends Component {
             </div>
           </div>
         </div>
-        {!isArmor && (
-          <div className="columns">
-            <div className="column">
-              <label className="label" htmlFor="aPrf">
-                Armor-Prefix
-              </label>
-              <div className="select is-fullwidth">
-                {this.renderFixSelect('aPrf', true, this.armorFixDb)}
-              </div>
-            </div>
-
-            <div className="column">
-              <label className="label" htmlFor="aSuf">
-                Armor-Suffix
-              </label>
-              <div className="select is-fullwidth">
-                {this.renderFixSelect('aSuf', false, this.armorFixDb)}
-              </div>
-            </div>
-          </div>
-        )}
         {this.selectedItem && (
           <div className="columns">
             <div className="column">
-              {!isArmor && (
-                <React.Fragment>
-                  <label className="label" htmlFor="armorsel">
-                    Armor-Bonus
-                  </label>
-                  <div
-                    className="select is-fullwidth"
-                    style={{ marginBottom: 'calc(1.5rem - 0.75rem)' }}
-                  >
-                    <select
-                      id="armorsel"
-                      onChange={e => {
-                        let newArmorId = Number(e.target.value)
-                        if (!newArmorId) {
-                          newArmorId = null
-                        }
-
-                        this.setState({ arm: newArmorId })
-                      }}
-                      value={this.state.arm || ''}
-                    >
-                      <option value="">- None -</option>
-                      {this.gearArmorsWithBonus.map(item => {
-                        return (
-                          <option key={item.id} value={item.id}>
-                            {item.name} [{item.ReqMinLevel}]
-                          </option>
-                        )
-                      })}
-                    </select>
-                  </div>
-                </React.Fragment>
-              )}
-
               <label className="label" htmlFor="addench">
                 Add enchants
               </label>
