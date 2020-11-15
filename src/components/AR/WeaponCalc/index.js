@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import withRouter from 'react-router/withRouter'
+import Link from 'react-router-dom/Link'
 import { callApiChecked } from '../../../middleware/api'
 import config from '../../../config'
 import {
@@ -620,14 +621,7 @@ class WeaponCalcTool extends Component {
         )}
         <hr />
         <label className="label">
-          Stats{' '}
-          <a
-            target="_blank"
-            href="https://beta.vi0lation.de/ranking/statcalc"
-            rel="noopener noreferrer"
-          >
-            &rarr; StatCalc
-          </a>
+          Stats <Link to="/statcalc">&rarr; StatCalc</Link>
         </label>
         <div className="columns">
           {stats.map(stat => {
