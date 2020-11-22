@@ -41,7 +41,7 @@ class Navi extends Component {
 
   render() {
     return (
-      <nav className="navbar has-shadow is-primary" id="top">
+      <nav className="navbar has-shadow is-primary" id="top" role="navigation">
         <div className="container">
           <div className="navbar-brand">
             <NavLink to="/" exact className="is-tab">

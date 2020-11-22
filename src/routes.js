@@ -105,12 +105,6 @@ const routes = [
     path: '/ranking/statcalc',
     component: makeAsync(() => lazyImport(import('./components/AR/StatCalc')))
   },
-  /*
-  {
-    path: '/ranking/weaponcalc',
-    component: makeAsync(() => lazyImport(import('./components/AR/WeaponCalc')))
-  },
-  */
   {
     path: highscoresUrl,
     exact: true,

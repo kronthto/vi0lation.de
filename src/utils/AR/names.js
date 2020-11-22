@@ -3,7 +3,18 @@ import React from 'react'
 const colorMap = {
   e: '#F4AE0B',
   c: '#00CCCC',
-  m: '#ff00ff'
+  m: '#ff00ff',
+  a: '#bbbbff',
+  h: '#ff8811',
+  k: '#aa4400',
+  u: '#aa33ff',
+  v: '#007300',
+  b: '#2255ff',
+  d: '#777777',
+  y: '#ffff00',
+  l: '#00aaff',
+  g: '#00ff00',
+  r: '#ff0000'
 }
 
 function specialNames(name) {
