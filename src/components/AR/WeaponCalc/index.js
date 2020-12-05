@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import withRouter from 'react-router/withRouter'
+import Link from 'react-router-dom/Link'
 import {
   unitKinds,
   standardWeapons,
@@ -151,7 +152,8 @@ class WeaponCalcTool extends Component {
       item =>
         (item.kind === ITEMKIND_SKILL_ATTACK ||
           item.kind === ITEMKIND_SKILL_DEFENSE) &&
-        item.name.indexOf('\\c') === 0
+        item.name.indexOf('\\c') === 0 &&
+        item.ReqMinLevel !== 1
     )
   }
 
@@ -172,7 +174,10 @@ class WeaponCalcTool extends Component {
           //  return false
         }
         // noinspection RedundantIfStatementJS
-        if (ReqMinLevel > 39 && ReqMinLevel <= 115 && isEquip(item)) {
+        if (item.name.startsWith('\\m')) {
+          return true
+        }
+        if (ReqMinLevel >= 90 && ReqMinLevel <= 115 && isEquip(item)) {
           return true
         }
         return false
@@ -182,19 +187,7 @@ class WeaponCalcTool extends Component {
     this.enchantItemDb = reducedItemDb.filter(
       item => item.kind === ITEMKIND_ENCHANT && !isBannedEnchant(item)
     )
-    this.buffItemDb = reducedItemDb.filter(
-      item => BUFF_CARD_ITEMS.indexOf(item.id) !== -1
-    )
-    this.buffItemDb.push({
-      id: 'PET10',
-      name: 'PET-Fixes +10% Dmg',
-      DesParameters: {
-        '18': 0.1,
-        '19': 0.1,
-        '71': 0.1,
-        '72': 0.1
-      }
-    })
+    this.buffItemDb = []
     this.charmDb = reducedItemDb.filter(
       item =>
         item.kind === ITEMKIND_ACCESSORY_TIMELIMIT &&
@@ -561,14 +554,7 @@ class WeaponCalcTool extends Component {
         )}
         <hr />
         <label className="label">
-          Stats{' '}
-          <a
-            target="_blank"
-            href="https://beta.vi0lation.de/ranking/statcalc"
-            rel="noopener noreferrer"
-          >
-            &rarr; StatCalc
-          </a>
+          Stats <Link to="/statcalc">&rarr; StatCalc</Link>
         </label>
         <div className="columns">
           {stats.map(stat => {

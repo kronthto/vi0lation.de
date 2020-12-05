@@ -4,7 +4,7 @@
   "icons": [],
   "start_url": "./",
   "display": "standalone",
-  "theme_color": "#006488",
+  "theme_color": "#FF8477",
   "background_color": "#ffffff",
   "description": "OSR WeaponCalc"
 }

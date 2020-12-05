@@ -24,6 +24,10 @@ const routes = [
     component: Home
   },
   {
+    path: '/statcalc',
+    component: makeAsync(() => lazyImport(import('./components/AR/StatCalc')))
+  },
+  {
     path: '/weaponcalc',
     component: makeAsync(() => lazyImport(import('./components/AR/WeaponCalc')))
   },
