@@ -254,6 +254,9 @@ class PlayerFameChart extends Component {
           hDate.setHours(h)
           hDate.setMinutes(30)
           hDate.setSeconds(0)
+          if (!byHour[seriesKey][h]) {
+            continue
+          }
           series.push({
             x: hDate,
             y: average(byHour[seriesKey][h])
