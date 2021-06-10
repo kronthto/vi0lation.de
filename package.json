@@ -34,7 +34,7 @@
     "ignore-styles": "^5.0.1",
     "izitoast": "^1.4.0",
     "localforage": "^1.7.3",
-    "locutus": "^2.0.11",
+    "locutus": "^2.0.15",
     "lodash.debounce": "^4.0.8",
     "lodash.isequal": "^4.5.0",
     "lodash.merge": "^4.6.2",
