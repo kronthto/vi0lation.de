@@ -38,7 +38,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.isequal": "^4.5.0",
     "lodash.merge": "^4.6.2",
-    "marked": "^0.7.0",
+    "marked": "^4.0.10",
     "morgan": "^1.9.1",
     "prop-types": "^15.7.2",
     "react": "^16.12.0",
