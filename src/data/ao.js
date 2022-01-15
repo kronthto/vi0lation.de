@@ -15,6 +15,7 @@ export const ITEMKIND_SKILL_DEFENSE = 51
 export const ITEMKIND_DEFENSE = 16
 export const ITEMKIND_CARD = 20
 export const ITEMKIND_ENCHANT = 21
+export const ITEMKIND_ENGINE = 17
 
 export const DES_ENCHANT_INITIALIZE = 105
 

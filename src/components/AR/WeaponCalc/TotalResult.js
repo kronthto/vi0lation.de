@@ -51,7 +51,8 @@ class TotalResult extends Component {
       gearStatPoints,
       skills,
       charm,
-      armorBonus
+      armorBonus,
+      engine
     } = this.props
 
     const weaponElseArmor = item.kind !== ITEMKIND_DEFENSE
@@ -82,6 +83,9 @@ class TotalResult extends Component {
     let greenAdditives = [].concat(skills)
     if (charm) {
       greenAdditives.push(charm)
+    }
+    if (engine) {
+      greenAdditives.push(engine)
     }
     armorBonus.forEach(armorFix => {
       if (armorFix) {

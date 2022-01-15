@@ -14,7 +14,8 @@ import {
   ITEMKIND_ENCHANT,
   DES_ENCHANT_INITIALIZE,
   ITEMKIND_ACCESSORY_TIMELIMIT,
-  ITEMKIND_CARD
+  ITEMKIND_CARD,
+  ITEMKIND_ENGINE
 } from '../../../data/ao'
 import LoadBlock from '../../LoadBlock'
 import WeaponPreview, {
@@ -82,6 +83,7 @@ class WeaponCalcTool extends Component {
   itemFixDb = []
   armorFixDb = []
   enchantItemDb = []
+  engineDb = []
   buffItemDb = []
   charmDb = []
   selectedItem
@@ -95,6 +97,7 @@ class WeaponCalcTool extends Component {
         {
           arm: undefined,
           ch: undefined,
+          eng: undefined,
           sWp: undefined,
           iPrf: undefined,
           iSuf: undefined,
@@ -167,7 +170,8 @@ class WeaponCalcTool extends Component {
             kind === ITEMKIND_SKILL_DEFENSE ||
             kind === ITEMKIND_ENCHANT ||
             kind === ITEMKIND_ACCESSORY_TIMELIMIT ||
-            kind === ITEMKIND_CARD
+            kind === ITEMKIND_CARD ||
+            kind === ITEMKIND_ENGINE
           ) {
             return true
           }
@@ -188,6 +192,11 @@ class WeaponCalcTool extends Component {
       this.buffItemDb = reducedItemDb.filter(
         item => BUFF_CARD_ITEMS.indexOf(item.id) !== -1
       )
+      this.engineDb = reducedItemDb.filter(
+        item =>
+          item.kind === ITEMKIND_ENGINE &&
+          Object.keys(item.DesParameters).length
+      )
       this.buffItemDb.push({
         id: 'PET10',
         name: 'PET-Fixes +10% Dmg',
@@ -196,6 +205,32 @@ class WeaponCalcTool extends Component {
           '19': 0.1,
           '71': 0.1,
           '72': 0.1
+        }
+      })
+      this.buffItemDb.push({
+        id: 'OP_5DMG',
+        name: 'Outpost +5% Dmg',
+        DesParameters: {
+          '18': 0.05,
+          '19': 0.05,
+          '71': 0.05,
+          '72': 0.05
+        }
+      })
+      this.buffItemDb.push({
+        id: 'PET_EVA',
+        name: 'PET +2% Eva',
+        DesParameters: {
+          '24': 2,
+          '25': 2
+        }
+      })
+      this.buffItemDb.push({
+        id: 'PET_DEF',
+        name: 'PET +2% Def',
+        DesParameters: {
+          '22': 2,
+          '23': 2
         }
       })
       this.charmDb = reducedItemDb.filter(
@@ -554,6 +589,36 @@ class WeaponCalcTool extends Component {
                 </React.Fragment>
               )}
 
+              <label className="label" htmlFor="armorsel">
+                Engine-Bonus
+              </label>
+              <div
+                className="select is-fullwidth"
+                style={{ marginBottom: 'calc(1.5rem - 0.75rem)' }}
+              >
+                <select
+                  id="enginesel"
+                  onChange={e => {
+                    let newArmorId = Number(e.target.value)
+                    if (!newArmorId) {
+                      newArmorId = null
+                    }
+
+                    this.setState({ eng: newArmorId })
+                  }}
+                  value={this.state.eng || ''}
+                >
+                  <option value="">- None -</option>
+                  {this.engineDb.map(item => {
+                    return (
+                      <option key={item.id} value={item.id}>
+                        {item.name}
+                      </option>
+                    )
+                  })}
+                </select>
+              </div>
+
               <label className="label" htmlFor="addench">
                 Add enchants
               </label>
@@ -727,6 +792,9 @@ class WeaponCalcTool extends Component {
               )}
             charm={this.charmDb.find(
               charmItem => charmItem.id === this.state.ch
+            )}
+            engine={this.engineDb.find(
+              engineItem => engineItem.id === this.state.eng
             )}
             armorBonus={
               isArmor
