@@ -90,7 +90,7 @@ class Navi extends Component {
                 </NavLink>
               </NavTab>
               <NavTab>
-                <a href="https://wf.vi0.de" className="is-tab navbar-item">
+                <a href="https://wf.vi0.de" target="_blank" className="is-tab navbar-item">
                   Warframe
                 </a>
               </NavTab>
