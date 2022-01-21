@@ -89,6 +89,11 @@ class Navi extends Component {
                   TERA
                 </NavLink>
               </NavTab>
+              <NavTab>
+                <a href="https://wf.vi0.de" className="is-tab navbar-item">
+                  Warframe
+                </a>
+              </NavTab>
             </div>
             <div className="navbar-end" />
           </div>
